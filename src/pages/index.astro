@@ -4,60 +4,93 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="The Blank Front Page">
   
-  <!-- 满屏固定背景层 -->
-  <div class="fixed-bg">
-    <div class="bg-image" id="bg-image"></div>
-    <div class="bg-overlay"></div>
+  <!-- 纯粹的浓雾与光影底层 -->
+  <div class="fog-bg"></div>
+
+  <!-- 悬浮的年代物件层 -->
+  <div class="objects-layer" id="objects-layer">
+    <!-- 埃菲尔铁塔 (深景，慢速，大) -->
+    <div class="object obj-tower" data-speed="0.15">
+      <svg viewBox="0 0 100 200" fill="#1a1918">
+        <path d="M45,200 L55,200 L52,180 L48,180 Z M30,180 L70,180 L60,130 L40,130 Z M45,130 L55,130 L52,80 L48,80 Z M10,80 L90,80 L60,40 L40,40 Z M45,40 L55,40 L52,10 L48,10 Z M35,180 L65,180 L55,160 L45,160 Z M25,130 L75,130 L65,110 L35,110 Z M40,80 L60,80 L55,60 L45,60 Z M20,80 L30,80 L45,40 L40,40 Z M80,80 L70,80 L55,40 L60,40 Z" />
+      </svg>
+    </div>
+
+    <!-- 维多利亚煤油灯 (中景，中速) -->
+    <div class="object obj-lamp" data-speed="0.35">
+      <svg viewBox="0 0 100 200" fill="#131211">
+        <!-- 灯罩 -->
+        <path d="M30,80 L70,80 L85,150 L15,150 Z" />
+        <!-- 火焰 -->
+        <ellipse cx="50" cy="65" rx="10" ry="15" fill="#b89b72" opacity="0.6" filter="blur(2px)"/>
+        <!-- 底座 -->
+        <rect x="35" y="150" width="30" height="30" rx="3" />
+        <path d="M20,180 L80,180 L80,200 L20,200 Z" />
+      </svg>
+    </div>
+
+    <!-- 燃烧的蜡烛 (近景，快速) -->
+    <div class="object obj-candle" data-speed="0.6">
+      <svg viewBox="0 0 100 200" fill="#181614">
+        <path d="M40,80 L60,80 L60,180 L40,180 Z" />
+        <!-- 蜡滴 -->
+        <path d="M40,90 C38,95 40,105 42,105 C44,105 45,95 45,90 Z" />
+        <path d="M60,100 C62,110 59,120 57,120 C55,120 55,110 55,100 Z" />
+        <!-- 烛光 -->
+        <ellipse cx="50" cy="70" rx="8" ry="18" fill="#e5cda4" opacity="0.8" filter="blur(3px)"/>
+        <!-- 底座与流下的蜡 -->
+        <path d="M30,180 L70,180 L70,190 L30,190 Z" />
+      </svg>
+    </div>
+
+    <!-- 古典怀表 (近景) -->
+    <div class="object obj-watch" data-speed="0.8">
+      <svg viewBox="0 0 100 100" fill="#111111">
+        <circle cx="50" cy="50" r="45" />
+        <!-- 表冠 -->
+        <rect x="45" y="0" width="10" height="10" />
+        <!-- 指针 -->
+        <path d="M50,50 L50,20 M50,50 L70,50" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
   </div>
 
-  <!-- 第一页：巨大的维多利亚风居中排版 -->
-  <section class="hero-section">
-    <div class="title-container">
-      <div class="sub-title mono">EST. 1888 · LONDON</div>
-      
-      <h1 class="victorian-title">
-        <span class="line-small">The</span>
-        <!-- 这里专门针对 Blank 加血溅特效 -->
-        <span class="line-huge blood-splatter" data-text="Blank">Blank</span>
-        <span class="line-medium">Front Page</span>
-      </h1>
+  <!-- 内容层 -->
+  <div class="content-wrapper">
+    <section class="hero-section">
+      <div class="title-container">
+        <div class="sub-title mono">EST. 1888 · LONDON</div>
+        
+        <h1 class="victorian-title">
+          <span class="line-small">The</span>
+          <!-- 血溅特效 -->
+          <span class="line-huge blood-splatter" data-text="Blank">Blank</span>
+          <span class="line-medium">Front Page</span>
+        </h1>
 
-      <div class="vertical-line"></div>
-    </div>
-  </section>
+        <div class="vertical-line"></div>
+      </div>
+    </section>
 
-  <!-- 第二页：极简留白，透出背景图 -->
-  <section class="info-section">
-    <div class="content-block">
-      <h2 class="section-title">SEEKING PARTNERS</h2>
-      
-      <div class="roles-grid">
-        <div class="role-item">
-          <h3>UE5 / C++</h3>
-          <p>SYSTEM ARCHITECTURE</p>
+    <section class="info-section">
+      <div class="content-block">
+        <h2 class="section-title">SEEKING PARTNERS</h2>
+        <div class="roles-grid">
+          <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
+          <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
+          <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
         </div>
-        <div class="role-item">
-          <h3>3D / LIGHTING</h3>
-          <p>ENVIRONMENT ART</p>
-        </div>
-        <div class="role-item">
-          <h3>NARRATIVE</h3>
-          <p>STORY & MECHANICS</p>
+        <div class="action-area">
+          <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
         </div>
       </div>
-
-      <div class="action-area">
-        <a href="mailto:hi@gongshui.com" class="contact-btn mono">
-          [ INITIATE CONTACT ]
-        </a>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
   :global(body) {
-    background-color: #050505;
+    background-color: #060606;
     color: #e8e8e8;
     margin: 0; padding: 0;
     overflow-x: hidden;
@@ -66,36 +99,61 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .mono { font-family: 'Courier New', Courier, monospace; }
 
-  .fixed-bg {
+  /* 底层浓雾 */
+  .fog-bg {
     position: fixed;
     inset: 0;
     z-index: 0;
-    overflow: hidden;
-  }
-
-  .bg-image {
-    position: absolute;
-    top: -10%; left: -5%;
-    width: 110%; height: 120%;
-    /* 更换为纯正哥特/维多利亚建筑，无现代高楼 */
-    background-image: url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=2560&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center 30%;
-    filter: grayscale(100%) contrast(140%) brightness(0.15) sepia(20%);
-    transform-origin: center center;
-    will-change: transform;
-  }
-
-  .bg-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.1) 30%, rgba(5,5,5,0.8) 80%, #050505 100%);
+    background: radial-gradient(circle at 50% 30%, rgba(30, 25, 20, 0.6) 0%, #060606 70%);
     pointer-events: none;
   }
 
-  .hero-section {
+  /* 悬浮物件层：固定在屏幕上，监听滚动做位移动画 */
+  .objects-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .object {
+    position: absolute;
+    will-change: transform, opacity;
+    /* 初始铺满屏幕的散布位置 */
+  }
+
+  .obj-tower {
+    left: 10vw; top: 30vh;
+    width: clamp(100px, 15vw, 200px);
+    opacity: 0.15;
+  }
+  
+  .obj-lamp {
+    right: 15vw; top: 55vh;
+    width: clamp(80px, 12vw, 150px);
+    opacity: 0.3;
+  }
+
+  .obj-candle {
+    left: 25vw; top: 80vh;
+    width: clamp(50px, 8vw, 90px);
+    opacity: 0.5;
+  }
+
+  .obj-watch {
+    right: 30vw; top: 15vh;
+    width: clamp(40px, 6vw, 80px);
+    opacity: 0.2;
+  }
+
+  /* 内容层 */
+  .content-wrapper {
     position: relative;
     z-index: 2;
+  }
+
+  .hero-section {
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -116,7 +174,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin-bottom: 40px;
   }
 
-  /* ======= 核心字体与排版重构 ======= */
   .victorian-title {
     font-family: 'Playfair Display', serif;
     display: flex;
@@ -126,29 +183,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     line-height: 0.9;
   }
 
-  /* 第一行：优雅小字，带轻微倾斜 */
   .line-small {
     font-size: clamp(28px, 5vw, 56px);
     font-style: italic;
     font-weight: 400;
     color: #a0a0a0;
     transform: translateX(-15vw);
-    letter-spacing: 0.05em;
   }
 
-  /* 第二行：巨大但优雅，去掉了900的粗重感 */
-  .line-huge {
-    position: relative;
-    font-size: clamp(80px, 20vw, 240px);
-    font-style: italic;
-    font-weight: 400; /* 从900降为400，恢复优雅 */
-    color: #fff;
-    letter-spacing: -0.01em;
-    text-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    margin: -1vh 0;
-  }
-
-  /* 第三行：带点复古羊皮纸色的中等大小 */
   .line-medium {
     font-size: clamp(32px, 7vw, 80px);
     font-style: italic;
@@ -158,7 +200,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transform: translateX(10vw);
   }
 
-  /* ======= 血液拍打特效（修复版） ======= */
+  /* 第二行字与血溅特效 */
+  .line-huge {
+    position: relative;
+    font-size: clamp(80px, 20vw, 240px);
+    font-style: italic;
+    font-weight: 400;
+    color: #fff;
+    letter-spacing: -0.01em;
+    text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    margin: -1vh 0;
+  }
+
   .blood-splatter {
     position: relative;
     display: inline-block;
@@ -167,24 +220,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .blood-splatter::after {
     content: attr(data-text);
     position: absolute;
-    left: 0;
-    top: 0;
-    z-index: -1;
+    left: 0; top: 0;
+    z-index: -1; /* 放在文字层下方，透过文字显示 */
     color: transparent;
-    /* 用多层径向渐变模拟从右上角喷发的血迹 */
     background-image: 
       radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 25%, transparent 60%),
       radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 10%),
       radial-gradient(circle at 95% 40%, #6b0000 2%, transparent 6%),
-      radial-gradient(circle at 60% 20%, #9c0505 4%, transparent 12%),
-      radial-gradient(circle at 80% 50%, #4a0000 5%, transparent 15%);
+      radial-gradient(circle at 60% 20%, #9c0505 4%, transparent 12%);
     -webkit-background-clip: text;
     background-clip: text;
-    /* 初始隐藏，等待动画触发 */
     opacity: 0;
     transform: scale(0.8) rotate(2deg);
     transform-origin: top right;
-    /* 动画：0.6秒内快速砸上去 */
     animation: bloodSplat 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
   }
 
@@ -201,21 +249,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin-top: 40px;
   }
 
-  /* ======= 第二页（保留你喜欢的部分） ======= */
+  /* 第二页 */
   .info-section {
-    position: relative;
-    z-index: 2;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 100px 40px;
+    background: linear-gradient(180deg, transparent, #060606 20%); /* 加入渐变，不让背景显得突兀 */
   }
 
-  .content-block {
-    max-width: 1000px;
-    width: 100%;
-  }
+  .content-block { max-width: 1000px; width: 100%; }
 
   .section-title {
     font-family: 'Playfair Display', serif;
@@ -254,10 +298,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin: 0;
   }
 
-  .action-area {
-    text-align: center;
-    margin-top: 100px;
-  }
+  .action-area { text-align: center; margin-top: 100px; }
 
   .contact-btn {
     display: inline-block;
@@ -281,12 +322,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
-    const bgImage = document.getElementById('bg-image');
+    const objects = document.querySelectorAll('.object');
     
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
-      const scale = 1 + scrollY * 0.0005;
-      bgImage.style.transform = `scale(${scale})`;
+      
+      objects.forEach(obj => {
+        const speed = parseFloat(obj.getAttribute('data-speed'));
+        // 核心逻辑：往上滑动时，物件以不同速度向上浮
+        const yPos = -(scrollY * speed);
+        
+        // 核心逻辑：慢慢消失。当滑过 200px 后开始变透明，滑到 600px 时完全消失
+        let opacity = 1 - (scrollY / 600);
+        if (opacity < 0) opacity = 0;
+        
+        // 保留原本的初始透明度比例
+        const baseOpacity = obj.classList.contains('obj-tower') ? 0.15 : 
+                            obj.classList.contains('obj-lamp') ? 0.3 : 
+                            obj.classList.contains('obj-candle') ? 0.5 : 0.2;
+                            
+        obj.style.transform = `translateY(${yPos}px)`;
+        obj.style.opacity = opacity * baseOpacity;
+      });
     }, { passive: true });
   });
 </script>
