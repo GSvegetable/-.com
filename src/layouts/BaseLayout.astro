@@ -14,138 +14,145 @@ const { title = '宫水', description = '机密招募' } = Astro.props;
     <meta name="description" content={description} />
   </head>
   <body>
-    <!-- WebGL 背景画布 -->
     <canvas id="shader-canvas"></canvas>
-
     <div class="page-wrapper">
       <Header />
-      <main>
-        <slot />
-      </main>
+      <main><slot /></main>
       <Footer />
     </div>
-
-    <!-- 极客风：直接用 script 注入 Three.js 和 GLSL -->
     <script>
-      import * as THREE from 'https://esm.sh/three@0.160.0';
-
+      import * as THREE from 'three';
       const canvas = document.getElementById('shader-canvas');
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: false });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       const scene = new THREE.Scene();
       const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
       const uniforms = {
         uTime: { value: 0 },
         uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        uMouse: { value: new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2) }
       };
-
-      // 核心：GLSL 着色器
-      const vertexShader = `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = vec4(position, 1.0);
-        }
-      `;
-
+      // 核心：印刷抖动 + SDF 撕裂边缘
       const fragmentShader = `
+        precision highp float;
         uniform float uTime;
         uniform vec2 uResolution;
-        uniform vec2 uMouse;
         varying vec2 vUv;
 
-        // 2D 噪声函数
-        float hash(vec2 p) {
-          p = fract(p * vec2(123.34, 456.21));
-          p += dot(p, p + 45.32);
-          return fract(p.x * p.y);
+        // 3D Simplex Noise 基础函数 (为了更好的雾气形态)
+        vec3 mod289(vec3 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
+        vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
+        vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+        vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+        float snoise(vec3 v){
+          const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+          const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+          vec3 i = floor(v + dot(v, C.yyy));
+          vec3 x0 = v - i + dot(i, C.xxx);
+          vec3 g = step(x0.yzx, x0.xyz);
+          vec3 l = 1.0 - g;
+          vec3 i1 = min(g.xyz, l.zxy);
+          vec3 i2 = max(g.xyz, l.zxy);
+          vec3 x1 = x0 - i1 + C.xxx;
+          vec3 x2 = x0 - i2 + C.yyy;
+          vec3 x3 = x0 - D.yyy;
+          i = mod289(i);
+          vec4 p = permute(permute(permute(
+              i.z + vec4(0.0, i1.z, i2.z, 1.0))
+            + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+            + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+          float n_ = 0.142857142857;
+          vec3 ns = n_ * D.wyz - D.xzx;
+          vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+          vec4 x_ = floor(j * ns.z);
+          vec4 y_ = floor(j - 7.0 * x_);
+          vec4 x = x_ * ns.x + ns.yyyy;
+          vec4 y = y_ * ns.x + ns.yyyy;
+          vec4 h = 1.0 - abs(x) - abs(y);
+          vec4 b0 = vec4(x.xy, y.xy);
+          vec4 b1 = vec4(x.zw, y.zw);
+          vec4 s0 = floor(b0)*2.0 + 1.0;
+          vec4 s1 = floor(b1)*2.0 + 1.0;
+          vec4 sh = -step(h, vec4(0.0));
+          vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+          vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+          vec3 p0 = vec3(a0.xy, h.x);
+          vec3 p1 = vec3(a0.zw, h.y);
+          vec3 p2 = vec3(a1.xy, h.z);
+          vec3 p3 = vec3(a1.zw, h.w);
+          vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3, p3)));
+          p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+          vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+          m = m * m;
+          return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
         }
 
-        float noise(vec2 p) {
-          vec2 i = floor(p);
-          vec2 f = fract(p);
-          f = f * f * (3.0 - 2.0 * f);
-          float a = hash(i);
-          float b = hash(i + vec2(1.0, 0.0));
-          float c = hash(i + vec2(0.0, 1.0));
-          float d = hash(i + vec2(1.0, 1.0));
-          return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+        // 交错梯度噪声 (用于抖动阈值)
+        float ign(vec2 p) {
+          return fract(52.9829189 * fract(0.06711056 * p.x + 0.00583715 * p.y));
         }
 
-        // 分形布朗运动 (模拟雾气)
-        float fbm(vec2 p) {
-          float v = 0.0;
-          float a = 0.5;
-          mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
-          for (int i = 0; i < 5; i++) {
-            v += a * noise(p);
-            p = rot * p * 2.0;
-            a *= 0.5;
-          }
-          return v;
+        // 核心：三色量化 + 抖动
+        vec3 getDitherColor(float s, vec2 cell) {
+          // 将连续值 s (0..1) 映射到 0, 1, 2 三个层级
+          float lvl = floor(s * 2.0 + ign(cell));
+          if (lvl < 0.5) return vec3(0.04, 0.03, 0.03);      // 极暗墨色
+          else if (lvl < 1.5) return vec3(0.16, 0.13, 0.11); // 中间调
+          else return vec3(0.30, 0.26, 0.21);                // 高光纸张色
         }
 
         void main() {
-          // 修正宽高比
-          vec2 uv = gl_FragCoord.xy / uResolution.xy;
-          vec2 st = (gl_FragCoord.xy * 2.0 - uResolution.xy) / min(uResolution.x, uResolution.y);
+          vec2 st = gl_FragCoord.xy / uResolution.xy;
+          vec2 p = (st - 0.5) * vec2(uResolution.x / uResolution.y, 1.0) * 2.0;
 
-          // 1. 流动的浓雾
-          float fog = fbm(st * 2.5 + uTime * 0.05);
-          fog = smoothstep(0.2, 0.8, fog);
+          // 1. 流动的体积雾 (FBM 变形)
+          float t = uTime * 0.08;
+          float n1 = snoise(vec3(p * 1.5, t));
+          float n2 = snoise(vec3(p * 3.0 + n1, t * 1.5));
+          float fog = n2 * 0.5 + 0.5;
 
-          // 2. 指尖/鼠标处的煤气灯光晕
-          vec2 mousePos = (uMouse * 2.0 - uResolution.xy) / min(uResolution.x, uResolution.y);
-          float dist = distance(st, mousePos);
-          float light = smoothstep(0.8, 0.0, dist); // 光晕衰减
-          light = pow(light, 2.0); // 让边缘更锐利
+          // 2. 纸张的 SDF 撕裂边缘 (针对中央卡片区域)
+          // 用一个圆角矩形定义卡片，并用噪声扰动边缘
+          vec2 cardSize = vec2(0.65, 0.8); // 卡片半尺寸
+          vec2 q = abs(p) - cardSize;
+          float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);
+          
+          float edgeNoise = snoise(vec3(p * 8.0, t * 0.5)) * 0.04;
+          float cardMask = 1.0 - smoothstep(-0.01, 0.01 + edgeNoise, d);
 
-          // 3. 颜色混合
-          vec3 baseColor = vec3(0.03, 0.03, 0.03); // 极暗的煤灰
-          vec3 fogColor = vec3(0.12, 0.10, 0.08);  // 泛黄的雾
-          vec3 lightColor = vec3(0.8, 0.6, 0.3);   // 煤气灯的暖黄色
+          // 3. 组合背景与卡片
+          // 背景使用抖动，卡片内部保持相对干净但带噪点
+          vec3 bgColor = getDitherColor(fog, gl_FragCoord.xy / 4.0);
+          
+          // 卡片内部的基础色 (略亮的羊皮纸)
+          vec3 cardColor = vec3(0.22, 0.19, 0.16);
+          // 在卡片边缘处，根据距离产生一层暗角/污渍
+          float edgeStain = smoothstep(0.0, 0.15, d);
+          cardColor *= mix(0.5, 1.0, edgeStain);
 
-          vec3 color = mix(baseColor, fogColor, fog * 0.6);
-          color += lightColor * light * 0.4; // 光晕叠加
+          vec3 finalColor = mix(bgColor, cardColor, cardMask);
 
-          // 4. 胶片噪点 (真实质感的来源)
-          float grain = hash(uv + uTime * 0.1) * 0.1;
-          color += grain - 0.05;
+          // 4. 胶片颗粒
+          float grain = fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453);
+          finalColor += (grain - 0.5) * 0.06;
 
-          // 5. 边缘暗角
-          float vignette = length(uv - 0.5);
-          color *= smoothstep(1.0, 0.3, vignette);
+          // 5. 全屏暗角
+          float vignette = 1.0 - smoothstep(0.5, 1.2, length(p));
+          finalColor *= vignette;
 
-          gl_FragColor = vec4(color, 1.0);
+          gl_FragColor = vec4(finalColor, 1.0);
         }
       `;
-
-      const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
-      const geometry = new THREE.PlaneGeometry(2, 2);
-      const mesh = new THREE.Mesh(geometry, material);
+      const material = new THREE.ShaderMaterial({ fragmentShader, uniforms });
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
       scene.add(mesh);
 
-      // 事件监听
       window.addEventListener('resize', () => {
         renderer.setSize(window.innerWidth, window.innerHeight);
         uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
       });
 
-      window.addEventListener('mousemove', (e) => {
-        uniforms.uMouse.value.set(e.clientX, window.innerHeight - e.clientY);
-      });
-
-      window.addEventListener('touchmove', (e) => {
-        if (e.touches.length > 0) {
-          uniforms.uMouse.value.set(e.touches[0].clientX, window.innerHeight - e.touches[0].clientY);
-        }
-      }, { passive: true });
-
-      // 渲染循环
       const clock = new THREE.Clock();
       function animate() {
         requestAnimationFrame(animate);

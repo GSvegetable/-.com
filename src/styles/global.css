@@ -1,62 +1,40 @@
 :root {
-  --text: #e8e4d9;
-  --text-muted: #a39b8d;
-  --accent: #8a1c1c;
-  --gold: #c4a77d;
+  --ink: #0c0b0a;        /* 近乎黑色的墨 */
+  --paper: #c9bda8;      /* 做旧羊皮纸色 */
+  --paper-muted: #8a8070;
+  --gold: #b89b72;       /* 古铜金 */
+  --blood: #6b1212;      /* 干涸的血色 */
+  --line: #2e2620;
   --serif: "Georgia", "Songti SC", "Noto Serif SC", serif;
   --mono: "Courier New", Courier, monospace;
 }
-
 *, *::before, *::after { box-sizing: border-box; }
-
 body {
   margin: 0; padding: 0;
-  background-color: #050505; /* 极暗底色兜底 */
-  color: var(--text);
+  background-color: var(--ink);
+  color: var(--paper);
   font-family: var(--serif);
-  line-height: 1.8;
+  line-height: 1.7;
   min-height: 100vh;
   overflow-x: hidden;
 }
-
-/* WebGL 背景画布 */
 #shader-canvas {
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
-  opacity: 0.85; /* 让光晕和雾气稍微透一点 */
 }
-
-/* 页面主容器 */
 .page-wrapper {
   position: relative;
-  z-index: 1; /* 压在 canvas 之上 */
+  z-index: 1;
   min-height: 100vh;
-  background: radial-gradient(circle at center, transparent 30%, rgba(5,5,5,0.8) 100%);
+  background: radial-gradient(circle at 50% 30%, transparent 20%, rgba(12,11,10,0.7) 80%);
 }
-
-a { color: var(--gold); text-decoration: none; transition: all 0.3s; border-bottom: 1px dashed var(--gold); }
-a:hover { color: var(--accent); border-bottom: 1px solid var(--accent); }
-.container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+a { color: var(--gold); text-decoration: none; border-bottom: 1px dashed var(--gold); transition: all 0.3s; }
+a:hover { color: var(--blood); border-bottom-style: solid; }
+.container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
 .mono { font-family: var(--mono); }
-.text-accent { color: var(--accent); }
 .text-gold { color: var(--gold); }
-.text-muted { color: var(--text-muted); }
-
-.divider { display: flex; align-items: center; justify-content: center; margin: 60px 0; color: #333; }
-.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #333, transparent); }
-.divider svg { width: 24px; height: 24px; margin: 0 20px; fill: var(--gold); opacity: 0.4; }
-
-/* 玻璃/羊皮纸卡片质感 */
-.dossier {
-  background: rgba(20, 18, 15, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-left: 2px solid var(--accent);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
-  padding: 40px;
-  position: relative;
-}
+.text-blood { color: var(--blood); }
+.text-muted { color: var(--paper-muted); }
