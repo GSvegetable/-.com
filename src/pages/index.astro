@@ -1,67 +1,58 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
-
-const posts = (await getCollection('posts')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3);
-const fmt = (d: Date) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 ---
-<BaseLayout>
-  <section class="hero">
-    <div class="container">
-      <p class="eyebrow">宫水 · GONG SHUI</p>
-      <h1 class="hero-title serif">在水边，<br />慢慢写。</h1>
-      <p class="hero-sub">一些关于水、日常和缓慢的记录。不追热点，也不急着更新。</p>
-      <div class="hero-actions">
-        <a href="/notes" class="btn">读文章</a>
-        <a href="/about" class="btn btn-ghost">这是哪里</a>
+<BaseLayout title="寻人启事" description="寻找那些能看穿迷雾的人">
+  <main class="container" style="padding-top: 60px;">
+    
+    <div style="text-align: center; margin-bottom: 60px;">
+      <p class="mono text-accent" style="letter-spacing: 0.2em; font-size: 14px;">WANTED</p>
+      <h1 style="font-size: clamp(32px, 6vw, 48px); font-weight: normal; margin: 10px 0; letter-spacing: 0.1em;">致那些能看穿迷雾的人</h1>
+      <p class="text-muted" style="font-size: 16px;">《雾都疑云》独立游戏开发组 · 寻人启事</p>
+    </div>
+
+    <div style="font-size: 16px; line-height: 2; color: #d1cdc5;">
+      <p>这不是一份寻常的雇佣合同。</p>
+      <p>我目前正在用虚幻引擎5（UE5）重构一个1888年的伦敦。那里没有魔法，只有蔓延的浓雾、闪烁的煤气灯、未被揭开的凶案，以及一份份等着被写上真相的报纸。</p>
+      <p>玩家将在这里扮演“情报掮客”，游走于街头巷尾，拼凑线索，将新闻卖给报社换取生存的筹码。</p>
+      <p>我一个人在雾里摸索得有些久了。现在，我想找几个愿意一起进入这座城市的同伴。</p>
+    </div>
+
+    <div class="line"></div>
+
+    <h2 class="mono" style="font-size: 18px; color: var(--text-muted); margin-bottom: 30px;">
+      [ 招募卷宗 / DOSSIERS ]
+    </h2>
+
+    <div style="display: grid; gap: 20px;">
+      <div style="border: 1px solid var(--line); padding: 24px; background: var(--bg-card);">
+        <h3 style="margin: 0 0 10px; font-size: 20px; color: var(--accent);">⚙️ 机械工匠</h3>
+        <p class="mono" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">UE5 客户端 / 系统开发</p>
+        <p style="margin: 0;">你需要懂蓝图或者C++。我们要一起搭建让这座城市运转的底层规则——情报收集系统、报社字数结算系统、以及那些阴郁街头的底层逻辑。</p>
+      </div>
+
+      <div style="border: 1px solid var(--line); padding: 24px; background: var(--bg-card);">
+        <h3 style="margin: 0 0 10px; font-size: 20px; color: var(--accent);">🎨 光影画师</h3>
+        <p class="mono" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">3D 美术 / 场景地编</p>
+        <p style="margin: 0;">我们需要那种一眼看过去就湿冷、阴郁的伦敦街头。如果你擅长老旧建筑、复古材质、或者维多利亚时期的阴间打光，这里需要你。</p>
+      </div>
+
+      <div style="border: 1px solid var(--line); padding: 24px; background: var(--bg-card);">
+        <h3 style="margin: 0 0 10px; font-size: 20px; color: var(--accent);">✒️ 迷雾说书人</h3>
+        <p class="mono" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">剧情 / 系统策划</p>
+        <p style="margin: 0;">如果你能写出让人脊背发凉的连环案件，或者能设计出“让玩家通过拼凑线索写出一篇绝妙新闻”的机制，我们非常需要你。</p>
       </div>
     </div>
-    <div class="hero-ring" aria-hidden="true"></div>
-  </section>
 
-  <section class="latest container">
-    <div class="section-head">
-      <h2 class="serif">最近的流水</h2>
-      <a href="/notes" class="more">全部文章 →</a>
+    <div class="line"></div>
+
+    <div style="text-align: center; padding: 40px 0;">
+      <h2 style="font-size: 24px; margin-bottom: 20px;">如果你听懂了煤气灯下的暗号</h2>
+      <p class="text-muted" style="margin-bottom: 30px;">请留下你的密信。这里没有大厂的傲慢，只有一群想做好东西的疯子。</p>
+      <a href="mailto:hi@gongshui.com" style="display: inline-block; background: var(--accent); color: #fff; padding: 12px 36px; font-family: var(--mono); font-size: 16px; letter-spacing: 0.1em; border: 1px solid var(--accent); transition: background 0.2s;">
+        [ 发送接头邮件 ]
+      </a>
+      <p class="mono" style="font-size: 12px; color: var(--line); margin-top: 40px;">(请自行替换上方按钮里的邮箱或群链接)</p>
     </div>
-    <ul class="post-list">
-      {posts.map((post) => (
-        <li>
-          <a href={`/notes/${post.id}/`} class="post-item">
-            <time datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
-            <span class="post-title serif">{post.data.title}</span>
-            <span class="post-desc">{post.data.description}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
 
-  <section class="fragment container">
-    <p class="serif">「水没有形状，但它记得每一块石头。」</p>
-  </section>
+  </main>
 </BaseLayout>
-
-<style>
-  .hero { position: relative; overflow: hidden; padding: 96px 0 72px; }
-  .hero-ring { position: absolute; right: -140px; bottom: -180px; width: 420px; height: 420px; border-radius: 50%; border: 1px solid rgba(79, 125, 138, .18); box-shadow: 0 0 0 40px rgba(79, 125, 138, .05), 0 0 0 90px rgba(79, 125, 138, .03); pointer-events: none; }
-  .hero-title { margin: 0; font-size: clamp(40px, 8vw, 68px); font-weight: 500; line-height: 1.18; letter-spacing: .04em; color: var(--ink); }
-  .hero-sub { max-width: 420px; margin: 24px 0 0; font-size: 15px; line-height: 1.9; color: var(--ink-soft); }
-  .hero-actions { display: flex; gap: 12px; margin-top: 36px; }
-  .btn { display: inline-flex; align-items: center; height: 38px; padding: 0 18px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 13px; letter-spacing: .04em; text-decoration: none; transition: background .15s; }
-  .btn:hover { background: var(--water-deep); }
-  .btn-ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
-  .btn-ghost:hover { background: transparent; color: var(--ink); border-color: var(--ink-soft); }
-  .latest { padding: 24px 24px 0; }
-  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
-  .section-head h2 { margin: 0; font-size: 18px; font-weight: 500; letter-spacing: .04em; }
-  .more { font-size: 12.5px; color: var(--muted); text-decoration: none; transition: color .15s; }
-  .more:hover { color: var(--water-deep); }
-  .fragment { padding: 80px 24px 104px; text-align: center; }
-  .fragment p { margin: 0; font-size: 17px; line-height: 1.9; color: var(--muted); }
-  @media (max-width: 560px) {
-    .hero { padding: 64px 0 48px; }
-    .hero-ring { display: none; }
-    .fragment { padding: 56px 24px 72px; }
-  }
-</style>

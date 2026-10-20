@@ -4,22 +4,20 @@ import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
 const { title = '宫水', description = '一处在水边慢慢写的地方。' } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 ---
 <!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title === '宫水' ? title : `${title} · 宫水`}</title>
+    <title>{title} · 宫水</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={canonical} />
-    <link rel="alternate" type="application/rss+xml" title="宫水" href="/rss.xml" />
   </head>
   <body>
     <Header />
-    <main><slot /></main>
+    <main style="min-height: 80vh;">
+      <slot />
+    </main>
     <Footer />
   </body>
 </html>
