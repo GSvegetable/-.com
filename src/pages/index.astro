@@ -4,51 +4,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="The Blank Front Page">
   
-  <!-- 纯粹的浓雾与光影底层 -->
-  <div class="fog-bg"></div>
+  <!-- 真实的建筑背景层 -->
+  <div class="fixed-bg">
+    <div class="bg-image" id="bg-image"></div>
+    <!-- 核心：覆盖在背景上的动态浓雾遮罩 -->
+    <div class="fog-overlay" id="fog-overlay"></div>
+    <div class="vignette"></div>
+  </div>
 
-  <!-- 悬浮的年代物件层 -->
+  <!-- 悬浮的年代剪影 (保留，调低透明度) -->
   <div class="objects-layer" id="objects-layer">
-    <!-- 大本钟 (远景，慢速，大) -->
     <div class="object obj-bigben" data-speed="0.1">
-      <img src="https://www.pngarts.com/files/3/Big-Ben-PNG-Image-Background.png" alt="Big Ben" />
+      <svg viewBox="0 0 100 200" fill="#0a0a0a"><path d="M45,200 L55,200 L52,180 L48,180 Z M30,180 L70,180 L60,130 L40,130 Z M45,130 L55,130 L52,80 L48,80 Z M10,80 L90,80 L60,40 L40,40 Z M45,40 L55,40 L52,10 L48,10 Z M35,180 L65,180 L55,160 L45,160 Z M25,130 L75,130 L65,110 L35,110 Z M40,80 L60,80 L55,60 L45,60 Z M20,80 L30,80 L45,40 L40,40 Z M80,80 L70,80 L55,40 L60,40 Z" /></svg>
     </div>
-
-    <!-- 马车 (中景，中速) -->
-    <div class="object obj-carriage" data-speed="0.3">
-      <img src="https://clipart-library.com/images_k/horse-carriage-silhouette/horse-carriage-silhouette-22.png" alt="Carriage" />
-    </div>
-
-    <!-- 维多利亚女士 (中景) -->
-    <div class="object obj-lady" data-speed="0.35">
-      <img src="https://clipart-library.com/images_k/victorian-silhouette/victorian-silhouette-11.png" alt="Victorian Lady" />
-    </div>
-
-    <!-- 煤气灯 (近景，快速) -->
-    <div class="object obj-gaslight" data-speed="0.5">
-      <img src="https://publicdomainvectors.org/photos/gas-lamp-silhouette.png" alt="Gaslight" />
-    </div>
-
-    <!-- 怀表 (近景) -->
-    <div class="object obj-watch" data-speed="0.7">
-      <img src="https://clipart-library.com/images_k/pocket-watch-silhouette/pocket-watch-silhouette-25.png" alt="Pocket Watch" />
-    </div>
-
-    <!-- 羽毛笔 (极近景，最快) -->
-    <div class="object obj-quill" data-speed="0.9">
-      <img src="https://clipart-library.com/images_k/feather-pen-silhouette/feather-pen-silhouette-13.png" alt="Feather Quill" />
+    <div class="object obj-gaslight" data-speed="0.4">
+      <svg viewBox="0 0 100 200" fill="#0a0a0a"><path d="M30,80 L70,80 L85,150 L15,150 Z" /><rect x="35" y="150" width="30" height="30" rx="3" /><path d="M20,180 L80,180 L80,200 L20,200 Z" /></svg>
     </div>
   </div>
 
   <!-- 内容层 -->
   <div class="content-wrapper">
+    <!-- 第一页 -->
     <section class="hero-section">
-      <div class="title-container">
+      <div class="title-container" id="hero-title">
         <div class="sub-title mono">EST. 1888 · LONDON</div>
         
         <h1 class="victorian-title">
           <span class="line-small">The</span>
-          <!-- 血溅特效 -->
           <span class="line-huge blood-splatter" data-text="Blank">Blank</span>
           <span class="line-medium">Front Page</span>
         </h1>
@@ -57,8 +39,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </section>
 
-    <section class="info-section">
-      <div class="content-block">
+    <!-- 过渡区域：用来放置第二屏的引入感 -->
+    <div class="transition-spacer"></div>
+
+    <!-- 第二页 -->
+    <section class="info-section" id="info-section">
+      <div class="content-block" id="info-content">
         <h2 class="section-title">SEEKING PARTNERS</h2>
         <div class="roles-grid">
           <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
@@ -75,7 +61,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <style>
   :global(body) {
-    background-color: #060606;
+    background-color: #050505;
     color: #e8e8e8;
     margin: 0; padding: 0;
     overflow-x: hidden;
@@ -84,47 +70,53 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .mono { font-family: 'Courier New', Courier, monospace; }
 
-  .fog-bg {
+  /* ======= 真实的背景与复杂过渡 ======= */
+  .fixed-bg {
     position: fixed;
     inset: 0;
     z-index: 0;
-    background: radial-gradient(circle at 50% 30%, rgba(30, 25, 20, 0.6) 0%, #060606 70%);
-    pointer-events: none;
-  }
-
-  .objects-layer {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
     overflow: hidden;
   }
 
-  .object {
+  .bg-image {
     position: absolute;
-    will-change: transform, opacity;
+    top: -10%; left: -5%;
+    width: 110%; height: 120%;
+    /* 换回你之前认可的建筑背景图 */
+    background-image: url('https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2560&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center 20%;
+    filter: grayscale(100%) contrast(130%) brightness(0.25) sepia(20%);
+    transform-origin: center center;
+    will-change: transform;
   }
 
-  .object img {
-    width: 100%;
-    height: auto;
-    /* 将图片变成纯黑剪影，并做一点模糊模拟景深 */
-    filter: brightness(0) contrast(100%) blur(1px);
+  /* 核心：浓雾遮罩，用于吞噬第一屏，托起第二屏 */
+  .fog-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.8) 50%, #050505 100%);
+    pointer-events: none;
+    will-change: opacity;
   }
 
-  /* 精确布局：错落有致地分布在屏幕各处 */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 30%, transparent 20%, #050505 90%);
+    pointer-events: none;
+  }
+
+  /* 悬浮物 */
+  .objects-layer {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+  }
+  .object { position: absolute; will-change: transform, opacity; }
   .obj-bigben { left: 5vw; top: 15vh; width: clamp(80px, 12vw, 180px); opacity: 0.15; }
-  .obj-carriage { right: 10vw; top: 50vh; width: clamp(120px, 18vw, 250px); opacity: 0.2; }
-  .obj-lady { left: 20vw; top: 70vh; width: clamp(60px, 9vw, 120px); opacity: 0.25; }
-  .obj-gaslight { right: 25vw; top: 20vh; width: clamp(70px, 10vw, 140px); opacity: 0.4; }
-  .obj-watch { left: 40vw; top: 40vh; width: clamp(50px, 7vw, 90px); opacity: 0.5; }
-  .obj-quill { right: 15vw; top: 75vh; width: clamp(40px, 6vw, 80px); opacity: 0.6; }
+  .obj-gaslight { right: 15vw; top: 25vh; width: clamp(60px, 9vw, 120px); opacity: 0.2; }
 
   /* 内容层 */
-  .content-wrapper {
-    position: relative;
-    z-index: 2;
-  }
+  .content-wrapper { position: relative; z-index: 2; }
 
   .hero-section {
     min-height: 100vh;
@@ -138,181 +130,124 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex;
     flex-direction: column;
     align-items: center;
+    will-change: transform, opacity, filter;
   }
 
-  .sub-title {
-    font-size: 11px;
-    letter-spacing: 0.4em;
-    color: #888;
-    margin-bottom: 40px;
-  }
+  .sub-title { font-size: 11px; letter-spacing: 0.4em; color: #888; margin-bottom: 40px; }
 
   .victorian-title {
     font-family: 'Playfair Display', serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0;
-    line-height: 0.9;
+    display: flex; flex-direction: column; align-items: center;
+    margin: 0; line-height: 0.9;
   }
 
-  .line-small {
-    font-size: clamp(28px, 5vw, 56px);
-    font-style: italic;
-    font-weight: 400;
-    color: #a0a0a0;
-    transform: translateX(-15vw);
-  }
+  .line-small { font-size: clamp(28px, 5vw, 56px); font-style: italic; font-weight: 400; color: #a0a0a0; transform: translateX(-15vw); }
+  .line-medium { font-size: clamp(32px, 7vw, 80px); font-style: italic; font-weight: 400; color: #d1c5b4; letter-spacing: 0.08em; transform: translateX(10vw); }
+  .line-huge { position: relative; font-size: clamp(80px, 20vw, 240px); font-style: italic; font-weight: 400; color: #fff; letter-spacing: -0.01em; text-shadow: 0 10px 30px rgba(0,0,0,0.8); margin: -1vh 0; }
 
-  .line-medium {
-    font-size: clamp(32px, 7vw, 80px);
-    font-style: italic;
-    font-weight: 400;
-    color: #d1c5b4;
-    letter-spacing: 0.08em;
-    transform: translateX(10vw);
-  }
-
-  .line-huge {
-    position: relative;
-    font-size: clamp(80px, 20vw, 240px);
-    font-style: italic;
-    font-weight: 400;
-    color: #fff;
-    letter-spacing: -0.01em;
-    text-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    margin: -1vh 0;
-  }
-
-  .blood-splatter {
-    position: relative;
-    display: inline-block;
-  }
-
+  /* 血液特效 */
+  .blood-splatter { position: relative; display: inline-block; }
   .blood-splatter::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0; top: 0;
-    z-index: -1;
+    content: attr(data-text); position: absolute; left: 0; top: 0; z-index: -1;
     color: transparent;
     background-image: 
       radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 25%, transparent 60%),
       radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 10%),
-      radial-gradient(circle at 95% 40%, #6b0000 2%, transparent 6%),
-      radial-gradient(circle at 60% 20%, #9c0505 4%, transparent 12%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    opacity: 0;
-    transform: scale(0.8) rotate(2deg);
-    transform-origin: top right;
+      radial-gradient(circle at 95% 40%, #6b0000 2%, transparent 6%);
+    -webkit-background-clip: text; background-clip: text;
+    opacity: 0; transform: scale(0.8) rotate(2deg); transform-origin: top right;
     animation: bloodSplat 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
   }
-
   @keyframes bloodSplat {
     0% { opacity: 0; transform: scale(0.3) rotate(5deg); }
     60% { opacity: 1; transform: scale(1.05) rotate(-2deg); }
     100% { opacity: 1; transform: scale(1) rotate(0deg); }
   }
 
-  .vertical-line {
-    width: 1px;
-    height: 60px;
-    background: linear-gradient(180deg, #555, transparent);
-    margin-top: 40px;
-  }
+  .vertical-line { width: 1px; height: 60px; background: linear-gradient(180deg, #555, transparent); margin-top: 40px; }
 
+  /* 两屏之间的过渡占位 */
+  .transition-spacer { height: 40vh; }
+
+  /* 第二页：配合 JS 实现“雾中浮现” */
   .info-section {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 100px 40px;
-    background: linear-gradient(180deg, transparent, #060606 20%);
+    min-height: 80vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 40px 100px;
   }
 
-  .content-block { max-width: 1000px; width: 100%; }
+  .content-block {
+    max-width: 1000px; width: 100%;
+    will-change: transform, opacity;
+  }
 
   .section-title {
     font-family: 'Playfair Display', serif;
-    font-size: 14px;
-    letter-spacing: 0.3em;
-    font-weight: 400;
-    color: #888;
-    text-align: center;
-    margin-bottom: 80px;
+    font-size: 14px; letter-spacing: 0.3em; font-weight: 400;
+    color: #888; text-align: center; margin-bottom: 80px;
   }
 
-  .roles-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 60px;
-    text-align: center;
-  }
+  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
+  @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
 
-  @media (min-width: 768px) {
-    .roles-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-
-  .role-item h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    font-style: italic;
-    font-weight: 400;
-    margin: 0 0 10px;
-    color: #fff;
-  }
-
-  .role-item p {
-    font-size: 11px;
-    color: #777;
-    letter-spacing: 0.1em;
-    margin: 0;
-  }
-
+  .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
+  .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
   .action-area { text-align: center; margin-top: 100px; }
 
   .contact-btn {
-    display: inline-block;
-    font-size: 13px;
-    color: #fff;
-    text-decoration: none;
-    letter-spacing: 0.2em;
-    border: 1px solid #444;
-    padding: 20px 60px;
-    background: rgba(0,0,0,0.3);
-    backdrop-filter: blur(5px);
+    display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em;
+    border: 1px solid #444; padding: 20px 60px; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px);
     transition: all 0.4s ease;
   }
-
-  .contact-btn:hover {
-    background: #fff;
-    color: #000;
-    border-color: #fff;
-  }
+  .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
 </style>
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
+    const bgImage = document.getElementById('bg-image');
+    const heroTitle = document.getElementById('hero-title');
+    const infoContent = document.getElementById('info-content');
     const objects = document.querySelectorAll('.object');
     
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
       
+      // 1. 背景图：缓慢放大产生镜头推入感
+      const bgScale = 1 + scrollY * 0.0006;
+      bgImage.style.transform = `scale(${bgScale})`;
+
+      // 2. 第一屏文字：向上移动 + 模糊 + 消散
+      if (scrollY <= windowHeight) {
+        const progress = scrollY / windowHeight; // 0 到 1
+        heroTitle.style.transform = `translateY(${scrollY * 0.4}px)`;
+        heroTitle.style.opacity = 1 - progress;
+        // 关键：加入模糊效果，像在雾中失焦
+        heroTitle.style.filter = `blur(${progress * 10}px)`;
+      }
+
+      // 3. 第二屏内容：从下方“雾”中浮现
+      // 获取第二屏距离顶部的距离
+      const infoSectionTop = document.getElementById('info-section').offsetTop;
+      // 计算进入视口的高度
+      const distance = infoSectionTop - scrollY;
+      
+      if (distance < windowHeight && distance > 0) {
+        // 当它进入视口时，计算进度（0 到 1）
+        const progress = 1 - (distance / windowHeight);
+        infoContent.style.opacity = progress;
+        // 从下往上浮现
+        infoContent.style.transform = `translateY(${(1 - progress) * 80}px)`;
+      } else if (distance <= 0) {
+        infoContent.style.opacity = 1;
+        infoContent.style.transform = `translateY(0)`;
+      }
+
+      // 4. 悬浮物：视差向上
       objects.forEach(obj => {
         const speed = parseFloat(obj.getAttribute('data-speed'));
-        const yPos = -(scrollY * speed);
-        
-        let opacity = 1 - (scrollY / 600);
-        if (opacity < 0) opacity = 0;
-        
-        const baseOpacity = obj.classList.contains('obj-bigben') ? 0.15 : 
-                            obj.classList.contains('obj-carriage') ? 0.2 :
-                            obj.classList.contains('obj-lady') ? 0.25 :
-                            obj.classList.contains('obj-gaslight') ? 0.4 :
-                            obj.classList.contains('obj-watch') ? 0.5 : 0.6;
-                            
-        obj.style.transform = `translateY(${yPos}px)`;
-        obj.style.opacity = opacity * baseOpacity;
+        obj.style.transform = `translateY(${-(scrollY * speed)}px)`;
+        obj.style.opacity = Math.max(0, 0.2 - (scrollY / 1000));
       });
     }, { passive: true });
   });
