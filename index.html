@@ -13,27 +13,24 @@
 <body>
     <script>
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xfdfaf6);
+        scene.background = new THREE.Color(0xfdfaf6); // 暖白背景
         scene.fog = new THREE.FogExp2(0xfdfaf6, 0.006);
 
         const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(0, 0, 50);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        // 关闭抗锯齿以提升平板性能
+        const renderer = new THREE.WebGLRenderer({ antialias: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        // 彻底关闭阴影，减轻GPU负担
+        renderer.shadowMap.enabled = false;
         document.body.appendChild(renderer.domElement);
 
-        // 电影级光影：柔和的室内光
-        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-        const keyLight = new THREE.DirectionalLight(0xfff5e6, 1.0);
+        // 极简光影
+        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+        const keyLight = new THREE.DirectionalLight(0xffffff, 0.8);
         keyLight.position.set(-15, 25, 20);
-        keyLight.castShadow = true;
         scene.add(keyLight);
-        const fillLight = new THREE.DirectionalLight(0xaaccff, 0.4);
-        fillLight.position.set(15, -10, -10);
-        scene.add(fillLight);
 
         const ropeGroup = new THREE.Group();
         scene.add(ropeGroup);
@@ -43,20 +40,15 @@
         const strandRadius = 0.06;
         const braidRadius = 0.75;
 
-        // 四色丝线材质 (红、橘、蓝、白)
+        // 四色丝线材质
         const colors = [0xc41e3a, 0xd4691e, 0x2e5c8a, 0xf0ead6];
-        const materials = colors.map(c => new THREE.MeshPhysicalMaterial({
+        const materials = colors.map(c => new THREE.MeshPhongMaterial({
             color: c,
-            roughness: 0.45,
-            metalness: 0.0,
-            clearcoat: 0.5,
-            clearcoatRoughness: 0.35,
-            sheen: 0.8,
-            sheenColor: new THREE.Color(c).multiplyScalar(1.2),
-            sheenRoughness: 0.6
+            shininess: 80,      // 高光，模拟丝线光泽
+            specular: 0x333333  // 反光颜色
         }));
 
-        // 主轨迹：从右上角画面外抛入，在空中舒展后垂落
+        // 主轨迹
         const mainPoints = [
             new THREE.Vector3(50, 35, -30),
             new THREE.Vector3(30, 20, -5),
@@ -72,7 +64,7 @@
         // 生成32股编织线
         for (let i = 0; i < strands; i++) {
             const points = [];
-            const segments = 500;
+            const segments = 200; // 从500降到200，大幅减少计算量
 
             for (let j = 0; j <= segments; j++) {
                 const t = j / segments;
@@ -82,7 +74,6 @@
                 const normal = new THREE.Vector3(0, 1, 0).cross(tangent).normalize();
                 const binormal = new THREE.Vector3().crossVectors(tangent, normal).normalize();
 
-                // 32根线分为8组，每组4根缠绕，形成组纽的编织纹理
                 const groupIndex = Math.floor(i / 4);
                 const strandInGroup = i % 4;
                 const groupPhase = (groupIndex / 8) * Math.PI * 2;
@@ -96,10 +87,9 @@
             }
 
             const strandCurve = new THREE.CatmullRomCurve3(points);
-            const tubeGeo = new THREE.TubeGeometry(strandCurve, 500, strandRadius, 5, false);
+            // radialSegments 从 5 降到 3（三角形截面，肉眼几乎看不出）
+            const tubeGeo = new THREE.TubeGeometry(strandCurve, segments, strandRadius, 3, false);
             const mesh = new THREE.Mesh(tubeGeo, materials[i % 4]);
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
             ropeGroup.add(mesh);
         }
 
@@ -113,24 +103,18 @@
             requestAnimationFrame(animate);
             const time = clock.getElapsedTime();
 
-            // 前 3.5 秒：甩入 + 舒展
             const duration = 3.5;
             const t = Math.min(time / duration, 1);
-
-            // easeOutCubic：先快后慢，模拟抛出的惯性
             const easeOut = 1 - Math.pow(1 - t, 3);
 
-            // 位置：从画面外抛入
             ropeGroup.position.x = THREE.MathUtils.lerp(60, 0, easeOut);
             ropeGroup.position.y = THREE.MathUtils.lerp(40, 0, easeOut);
             ropeGroup.position.z = THREE.MathUtils.lerp(-40, 0, easeOut);
 
-            // 旋转：在飞行中逐渐“展开”
             ropeGroup.rotation.x = THREE.MathUtils.lerp(Math.PI/3, 0, easeOut);
             ropeGroup.rotation.y = THREE.MathUtils.lerp(-Math.PI/2, 0.15, easeOut);
             ropeGroup.rotation.z = THREE.MathUtils.lerp(Math.PI/6, 0, easeOut);
 
-            // 停下后的轻微浮动
             if (t >= 1) {
                 ropeGroup.rotation.y = 0.15 + Math.sin(time * 0.4) * 0.08;
                 ropeGroup.rotation.z = Math.sin(time * 0.6) * 0.04;
