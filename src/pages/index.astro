@@ -17,7 +17,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       
       <h1 class="victorian-title">
         <span class="line-small">The</span>
-        <span class="line-huge">Blank</span>
+        <!-- 这里专门针对 Blank 加血溅特效 -->
+        <span class="line-huge blood-splatter" data-text="Blank">Blank</span>
         <span class="line-medium">Front Page</span>
       </h1>
 
@@ -65,7 +66,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .mono { font-family: 'Courier New', Courier, monospace; }
 
-  /* 满屏背景层，固定在视口 */
   .fixed-bg {
     position: fixed;
     inset: 0;
@@ -77,23 +77,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     position: absolute;
     top: -10%; left: -5%;
     width: 110%; height: 120%;
-    background-image: url('https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2560&auto=format&fit=crop');
+    /* 更换为极其古典的维多利亚/哥特街区，无现代高楼 */
+    background-image: url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=2560&auto=format&fit=crop');
     background-size: cover;
-    background-position: center 20%;
-    filter: grayscale(100%) contrast(140%) brightness(0.2) sepia(30%);
+    background-position: center 30%;
+    filter: grayscale(100%) contrast(140%) brightness(0.15) sepia(20%);
     transform-origin: center center;
     will-change: transform;
   }
 
-  /* 渐变遮罩：保证上下滑动时文字清晰，同时不会有硬切线 */
   .bg-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(5,5,5,0.6) 0%, rgba(5,5,5,0.2) 30%, rgba(5,5,5,0.8) 80%, #050505 100%);
+    background: linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.1) 30%, rgba(5,5,5,0.8) 80%, #050505 100%);
     pointer-events: none;
   }
 
-  /* 页面内容层 */
   .hero-section {
     position: relative;
     z-index: 2;
@@ -117,7 +116,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin-bottom: 40px;
   }
 
-  /* 维多利亚风字体排版 */
   .victorian-title {
     font-family: 'Playfair Display', serif;
     display: flex;
@@ -127,34 +125,78 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     line-height: 0.9;
   }
 
-  /* 第一行：小巧倾斜 */
   .line-small {
     font-size: clamp(32px, 6vw, 64px);
     font-style: italic;
     font-weight: 400;
     color: #a0a0a0;
-    transform: translateX(-15vw); /* 错位一点 */
+    transform: translateX(-15vw);
   }
 
-  /* 第二行：巨大、粗体倾斜 */
+  .line-medium {
+    font-size: clamp(36px, 8vw, 90px);
+    font-style: italic;
+    font-weight: 700;
+    color: #d1c5b4;
+    letter-spacing: 0.05em;
+    transform: translateX(10vw);
+  }
+
+  /* ======= 核心：血液拍打特效 ======= */
   .line-huge {
+    position: relative;
     font-size: clamp(90px, 22vw, 280px);
     font-style: italic;
     font-weight: 900;
-    color: #fff;
+    color: #fff; /* 基础是纯白 */
     letter-spacing: -0.02em;
     text-shadow: 0 10px 30px rgba(0,0,0,0.8);
     margin: -1vh 0;
   }
 
-  /* 第三行：带点金色/灰白色的花体感 */
-  .line-medium {
-    font-size: clamp(36px, 8vw, 90px);
-    font-style: italic;
-    font-weight: 700;
-    color: #d1c5b4; /* 复古羊皮纸色 */
-    letter-spacing: 0.05em;
-    transform: translateX(10vw); /* 往右错位 */
+  /* 伪元素用来做血液 */
+  .blood-splatter {
+    position: relative;
+    display: inline-block;
+  }
+
+  .blood-splatter::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    color: transparent;
+    /* 用多重径向渐变模拟血液的不规则飞溅和液滴，从右上角 (90% 10%) 喷发 */
+    background-image: 
+      radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 20%, transparent 55%),
+      radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 8%),
+      radial-gradient(circle at 95% 40%, #6b0000 2%, transparent 5%),
+      radial-gradient(circle at 60% 20%, #9c0505 4%, transparent 10%),
+      radial-gradient(circle at 80% 50%, #4a0000 5%, transparent 12%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    /* 初始状态 */
+    opacity: 0;
+    transform: scale(0.8) rotate(2deg);
+    transform-origin: top right;
+    /* 动画：延迟0.5秒后，0.6秒内快速砸上去 */
+    animation: bloodSplat 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
+  }
+
+  @keyframes bloodSplat {
+    0% {
+      opacity: 0;
+      transform: scale(0.3) rotate(5deg);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.05) rotate(-2deg); /* 砸上去的物理惯性 */
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
   }
 
   .vertical-line {
@@ -164,7 +206,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin-top: 40px;
   }
 
-  /* 第二页信息区 */
+  /* 第二页 */
   .info-section {
     position: relative;
     z-index: 2;
@@ -248,7 +290,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
-      // 滚动时，背景图缓缓放大（scale），给极强的空间吸入感
       const scale = 1 + scrollY * 0.0005;
       bgImage.style.transform = `scale(${scale})`;
     }, { passive: true });
