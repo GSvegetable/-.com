@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const fmt = (d: Date) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+---
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="article container">
+    <header class="article-head">
+      <time datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
+      <h1 class="serif">{post.data.title}</h1>
+      <p class="article-desc">{post.data.description}</p>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    <footer class="article-foot">
+      <a href="/notes">← 回到文章列表</a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .article { padding: 72px 0 96px; }
+  .article-head { padding-bottom: 36px; margin-bottom: 40px; border-bottom: 1px solid var(--line); }
+  .article-head time { font-size: 12px; letter-spacing: .06em; color: var(--muted); }
+  .article-head h1 { margin: 14px 0 0; font-size: clamp(28px, 5vw, 38px); font-weight: 500; line-height: 1.35; letter-spacing: .03em; }
+  .article-desc { margin: 16px 0 0; font-size: 14px; color: var(--ink-soft); }
+  .prose { font-size: 16px; line-height: 1.95; color: var(--ink-soft); }
+  .prose :global(p) { margin: 0 0 1.4em; }
+  .prose :global(h2) { margin: 2.4em 0 .8em; font-family: var(--serif); font-size: 21px; font-weight: 600; color: var(--ink); letter-spacing: .02em; }
+  .prose :global(ul), .prose :global(ol) { margin: 0 0 1.4em; padding-left: 1.2em; }
+  .prose :global(li) { margin: .4em 0; }
+  .prose :global(blockquote) { margin: 1.6em 0; padding-left: 18px; border-left: 2px solid var(--water); font-family: var(--serif); color: var(--muted); }
+  .prose :global(a) { color: var(--water-deep); text-underline-offset: 3px; }
+  .prose :global(code) { padding: 2px 5px; border-radius: 3px; background: var(--paper-soft); font-size: .9em; }
+  .prose :global(pre) { padding: 16px; border-radius: 6px; background: var(--night); color: #d8dcdd; overflow-x: auto; }
+  .prose :global(pre code) { background: none; padding: 0; }
+  .article-foot { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13px; }
+  .article-foot a { color: var(--muted); text-decoration: none; transition: color .15s; }
+  .article-foot a:hover { color: var(--water-deep); }
+</style>

@@ -1,0 +1,63 @@
+---
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">
+          <span class="footer-mark" aria-hidden="true"></span>
+          <span>宫水</span>
+        </a>
+        <p>一处在水边慢慢写的地方。<br />不追热点，只留一些安静的字。</p>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <div class="nav-col">
+          <h4>这里</h4>
+          <ul>
+            <li><a href="/">首页</a></li>
+            <li><a href="/notes">文章</a></li>
+            <li><a href="/about">关于</a></li>
+            <li><a href="/now">现在</a></li>
+          </ul>
+        </div>
+        <div class="nav-col">
+          <h4>别处</h4>
+          <ul>
+            <li><a href="https://github.com/" target="_blank" rel="noreferrer noopener">GitHub</a></li>
+            <li><a href="mailto:hi@gongshui.com">写信</a></li>
+            <li><a href="/rss.xml">RSS</a></li>
+          </ul>
+        </div>
+        <div class="nav-col nav-col-note">
+          <h4>留白</h4>
+          <p>没有订阅弹窗，也没有 cookie 横幅。想说话，写信就好。</p>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© {year} 宫水</span>
+      <span class="footer-line" aria-hidden="true"></span>
+      <span>此间有水，也有留白</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer { margin-top: auto; background: var(--night); color: var(--night-text); }
+  .footer-container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+  .footer-main { display: grid; grid-template-columns: 1.1fr 2fr; gap: 64px; padding: 56px 0 44px; }
+  .footer-logo { display: inline-flex; align-items: center; gap: 9px; font-family: var(--serif); font-size: 16px; letter-spacing: .16em; color: #eef1f1; text-decoration: none; }
+  .footer-mark { width: 8px; height: 8px; border-radius: 50%; background: var(--water); box-shadow: 0 0 0 4px rgba(79, 125, 138, .18); }
+  .footer-brand p { margin: 16px 0 0; font-size: 13px; line-height: 1.9; color: var(--night-muted); }
+  .footer-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .nav-col h4 { margin: 0 0 14px; font-size: 11px; font-weight: 600; letter-spacing: .18em; color: var(--night-muted); }
+  .nav-col ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .nav-col a { position: relative; font-size: 13px; color: var(--night-text); text-decoration: none; opacity: .78; transition: opacity .15s; }
+  .nav-col a::after { content: ""; position: absolute; left: 0; bottom: -3px; width: 0; height: 1px; background: var(--water); transition: width .2s; }
+  .nav-col a:hover { opacity: 1; }
+  .nav-col a:hover::after { width: 100%; }
+  .nav-col-note p { max-width: 200px; margin: 0; font-family: var(--serif); font-size: 13px; line-height: 1.9; color: var(--night-muted); }
+  .footer-bottom { display: flex; align-items: center; gap: 14px; padding: 20px 0 30px; border-top: 1px solid rgba(255, 255, 255, .07); font-size: 12px; letter-spacing: .04em; color: var(--night-muted); }
+  .footer-line { flex: 0 0 28px; height: 1px; background: rgba(255, 255, 255, .14); }
+</style>
