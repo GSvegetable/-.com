@@ -2,306 +2,273 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="寻人启事" description="寻找那些能看穿迷雾的人">
+<BaseLayout title="雾都疑云" description="1888 伦敦独立游戏计划">
   
-  <!-- 动态视差背景层 -->
-  <div class="parallax-wrapper">
-    <!-- 远景：伦敦天际线 -->
-    <div class="parallax-layer layer-back" data-speed="0.1">
-      <svg viewBox="0 0 1000 300" preserveAspectRatio="xMidYMax slice" class="skyline-svg">
-        <path d="M0,300 L0,250 L30,250 L30,220 L40,220 L40,250 L80,250 L80,180 L90,180 L90,150 L100,150 L100,180 L110,180 L110,250 L150,250 L150,200 L160,200 L160,120 L180,120 L180,200 L200,200 L200,250 L250,250 L250,220 L260,220 L260,210 L270,210 L270,250 L320,250 L320,150 L330,150 L330,140 L340,140 L340,150 L350,150 L350,250 L400,250 L400,220 L420,220 L420,180 L440,180 L440,220 L460,220 L460,250 L500,250 L500,150 L510,150 L510,100 L520,100 L520,150 L530,150 L530,250 L580,250 L580,210 L590,210 L590,190 L600,190 L600,250 L650,250 L650,160 L660,160 L660,130 L670,130 L670,160 L680,160 L680,250 L730,250 L730,200 L740,200 L740,250 L800,250 L800,180 L810,180 L810,250 L850,250 L850,220 L860,220 L860,250 L920,250 L920,150 L930,150 L930,120 L940,120 L940,150 L950,150 L950,250 L1000,250 L1000,300 Z" fill="#0c0a09" />
-      </svg>
-    </div>
-
-    <!-- 中景：浓雾与近处建筑 -->
-    <div class="parallax-layer layer-mid" data-speed="0.3">
-      <svg viewBox="0 0 1000 300" preserveAspectRatio="xMidYMax slice" class="skyline-svg">
-        <path d="M0,300 L0,200 L50,200 L50,150 L70,150 L70,200 L120,200 L120,250 L200,250 L200,100 L220,100 L220,250 L280,250 L280,180 L300,180 L300,250 L350,250 L350,150 L370,150 L370,250 L450,250 L450,200 L500,200 L500,80 L520,80 L520,200 L600,200 L600,250 L680,250 L680,150 L700,150 L700,250 L750,250 L750,180 L800,180 L800,250 L900,250 L900,200 L950,200 L950,250 L1000,250 L1000,300 Z" fill="#12100e" opacity="0.8"/>
-      </svg>
-    </div>
-
-    <!-- 前景：路灯与马车剪影 -->
-    <div class="parallax-layer layer-front" data-speed="0.6">
-      <svg viewBox="0 0 1000 300" preserveAspectRatio="xMidYMax slice" class="skyline-svg">
-        <!-- 左侧路灯 -->
-        <path d="M100,300 L100,150 C100,140 110,140 110,150 L110,300 Z M90,150 C90,130 120,130 120,150 Z M105,140 L105,120 L108,120 L108,140 Z" fill="#050505"/>
-        <!-- 右侧马车轮廓 -->
-        <path d="M850,300 C850,260 860,240 890,240 C920,240 930,260 930,300 Z M870,240 C870,200 890,200 890,240 Z M900,240 C900,210 910,210 910,240 Z M880,300 L870,300 L870,280 L880,280 Z M910,300 L920,300 L920,280 L910,280 Z" fill="#050505" opacity="0.7"/>
-      </svg>
-    </div>
+  <!-- 极简视差背景层 (使用真实高精度建筑图) -->
+  <div class="parallax-bg">
+    <div class="bg-layer" id="bg-layer"></div>
+    <div class="vignette-overlay"></div>
   </div>
 
-  <!-- 内容区 -->
-  <div class="content-container">
-    <!-- 顶部大标题区 -->
-    <section class="container" style="padding-top: 120px; text-align: center; position: relative; z-index: 2;">
-      <div class="header-line">
-        <span class="mono text-muted">EST. 1888</span>
-        <!-- 维多利亚装饰线 -->
-        <svg width="40" height="12" viewBox="0 0 40 12" fill="none" stroke="var(--gold)" stroke-width="1">
-          <path d="M0,6 L15,6 M25,6 L40,6 M20,0 L20,12 M15,6 L20,2 L25,6 L20,10 Z" />
-        </svg>
-        <span class="mono text-muted">LONDON</span>
-      </div>
-
-      <p class="mono text-blood" style="letter-spacing: 0.4em; font-size: 12px; margin-bottom: 24px;">CONFIDENTIAL / WANTED</p>
+  <div class="content-wrapper">
+    <!-- 首屏：极致的字号反差与空间感 -->
+    <section class="hero-section">
+      <div class="mono meta-tag">EST. 1888 / LONDON</div>
       
-      <h1 class="main-title">
-        致那些能看穿<br><span class="text-gold">迷雾</span>的人
+      <h1 class="mega-title">
+        <span class="outline">THE</span>
+        <span class="solid">FOG</span>
       </h1>
       
-      <p class="mono text-muted" style="margin-top: 30px; font-size: 13px; letter-spacing: 0.1em;">
-        《雾都疑云》独立游戏开发组 · 悬赏招募
-      </p>
+      <div class="hero-bottom">
+        <h2 class="cn-title">雾都疑云</h2>
+        <p class="mono minimal-desc">
+          UE5 / INDIE GAME PROJECT<br>
+          SEEKING PARTNERS
+        </p>
+      </div>
     </section>
 
-    <!-- 中央核心卷宗（带撕纸效果） -->
-    <section class="container torn-dossier" style="margin-top: 60px; position: relative; z-index: 2;">
-      <div style="padding: 40px;">
-        <p style="margin-top: 0; color: var(--paper); font-size: 16px; font-style: italic; border-left: 2px solid var(--blood); padding-left: 16px;">
-          这不是一份寻常的雇佣合同。
-        </p>
-        <p style="color: #c2b8a6; font-size: 15px; line-height: 2; text-indent: 2em;">
-          我目前正在用虚幻引擎5（UE5）重构一个1888年的伦敦。那里没有魔法，只有蔓延的浓雾、闪烁的煤气灯、未被揭开的凶案，以及一份份等着被写上真相的报纸。
-        </p>
-        <p style="color: #c2b8a6; font-size: 15px; line-height: 2; text-indent: 2em;">
-          玩家将在这里扮演“情报掮客”，游走于街头巷尾，拼凑线索，将新闻卖给报社换取生存的筹码。我一个人在雾里摸索得太久了，现在，我想找几个愿意一起进入这座城市的同伴。
-        </p>
+    <!-- 下半部分：大面积留白与极简的招募信息 -->
+    <section class="info-section">
+      <div class="divider"></div>
+      
+      <div class="roles-grid">
+        <div class="role-item">
+          <span class="mono num">01</span>
+          <h3>系统开发</h3>
+          <p>UE5 / C++</p>
+        </div>
         
-        <div style="margin-top: 30px; font-family: var(--mono); font-size: 12px; color: var(--text-muted); display: flex; gap: 20px; border-top: 1px dashed var(--line); padding-top: 20px;">
-          <span>STATUS: PROTOTYPE</span>
-          <span>ENGINE: UE5</span>
+        <div class="role-item">
+          <span class="mono num">02</span>
+          <h3>场景地编</h3>
+          <p>MATERIAL / LIGHTING</p>
+        </div>
+        
+        <div class="role-item">
+          <span class="mono num">03</span>
+          <h3>剧情策划</h3>
+          <p>NARRATIVE / DESIGN</p>
         </div>
       </div>
-    </section>
 
-    <!-- 招募职位列表 -->
-    <section class="container" style="margin-top: 80px; position: relative; z-index: 2;">
-      <h2 class="mono text-gold" style="font-size: 14px; letter-spacing: 0.1em; margin-bottom: 30px; border-bottom: 1px solid var(--line); padding-bottom: 10px;">
-        [ DOSSIERS / 招募卷宗 ]
-      </h2>
-      
-      <div class="job-grid">
-        <!-- 岗位 1 -->
-        <div class="job-card">
-          <!-- 纯 SVG 齿轮图标 -->
-          <svg class="job-icon" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
-            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
-          </svg>
-          <div>
-            <h3>机械工匠</h3>
-            <p class="mono text-muted" style="font-size: 11px; margin: 4px 0 8px;">UE5 客户端 / 系统开发</p>
-            <p class="job-desc">懂蓝图或 C++。搭建情报收集、报社结算等底层逻辑，让这座雾都运转起来。</p>
-          </div>
-        </div>
-        <!-- 岗位 2 -->
-        <div class="job-card">
-          <!-- 纯 SVG 画笔图标 -->
-          <svg class="job-icon" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
-            <path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08" />
-            <path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z" />
-          </svg>
-          <div>
-            <h3>光影画师</h3>
-            <p class="mono text-muted" style="font-size: 11px; margin: 4px 0 8px;">3D 美术 / 场景地编</p>
-            <p class="job-desc">构建湿冷阴郁的伦敦街头，擅长老旧建筑材质与维多利亚时期的阴间打光。</p>
-          </div>
-        </div>
-        <!-- 岗位 3 -->
-        <div class="job-card">
-          <!-- 纯 SVG 羽毛笔图标 -->
-          <svg class="job-icon" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
-            <path d="M4 20c0-5 5-14 16-16 0 11-9 16-16 16z" />
-            <path d="M4 20l7-7" />
-          </svg>
-          <div>
-            <h3>迷雾说书人</h3>
-            <p class="mono text-muted" style="font-size: 11px; margin: 4px 0 8px;">剧情 / 系统策划</p>
-            <p class="job-desc">写出让人脊背发凉的连环案件，设计“拼凑线索写出绝妙新闻”的机制。</p>
-          </div>
-        </div>
-      </div>
-    </section>
+      <div class="divider" style="margin-top: 80px;"></div>
 
-    <!-- 底部印章与接头 -->
-    <section class="container" style="text-align: center; padding: 100px 0 120px; position: relative; z-index: 2;">
-      <!-- 逼真的火漆印章 -->
-      <div class="wax-seal">
-        <div class="wax-inner">密</div>
+      <!-- 极简底栏 -->
+      <div class="footer-action">
+        <a href="mailto:hi@gongshui.com" class="contact-link mono">
+          [ INITIATE CONTACT ]
+        </a>
+        <p class="mono text-muted" style="font-size: 10px; margin-top: 20px;">GONG SHUI STUDIO</p>
       </div>
-      
-      <h2 style="font-size: 22px; margin-bottom: 12px; color: var(--paper); font-weight: normal; letter-spacing: 0.05em;">如果你听懂了煤气灯下的暗号</h2>
-      <p class="text-muted" style="margin-bottom: 40px; font-size: 14px;">请留下你的密信。这里没有大厂的傲慢，只有一群想做好东西的疯子。</p>
-      
-      <a href="mailto:hi@gongshui.com" class="action-btn mono">
-        SEND TRANSMISSION
-      </a>
     </section>
   </div>
 </BaseLayout>
 
 <style>
+  /* 彻底重置，适配极简暗黑风 */
   :global(body) {
-    background-color: #0d0c0a;
-    background-image: 
-      radial-gradient(circle at 50% 0%, rgba(60, 45, 35, 0.4) 0%, transparent 60%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-    background-attachment: fixed;
+    background-color: #050505;
+    color: #e8e8e8;
     margin: 0;
+    padding: 0;
     overflow-x: hidden;
+    font-family: var(--serif);
+    -webkit-font-smoothing: antialiased;
   }
 
-  .parallax-wrapper {
+  /* 真实建筑视差背景 */
+  .parallax-bg {
     position: fixed;
     inset: 0;
     z-index: 0;
-    pointer-events: none;
     overflow: hidden;
-    display: flex;
-    align-items: flex-end;
   }
 
-  .parallax-layer {
+  .bg-layer {
     position: absolute;
-    bottom: -10vh;
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    align-items: flex-end;
+    top: -10%;
+    left: -5%;
+    width: 110%;
+    height: 120%;
+    /* 使用一张极高质量的真实伦敦老街/哥特建筑无版权图 */
+    background-image: url('https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2560&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center 20%;
+    /* 将图片处理成深沉的黑白灰/暗金调，强调建筑线条细节 */
+    filter: grayscale(100%) contrast(130%) brightness(0.25) sepia(20%);
+    transform-origin: center center;
     will-change: transform;
   }
 
-  .skyline-svg {
-    width: 100%;
-    height: auto;
-    min-height: 50vh;
+  .vignette-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 30%, transparent 20%, #050505 90%);
+    pointer-events: none;
   }
 
-  .layer-back { opacity: 0.3; filter: blur(2px); }
-  .layer-mid { opacity: 0.6; filter: blur(1px); }
-  .layer-front { opacity: 0.9; }
-
-  .content-container {
+  .content-wrapper {
     position: relative;
     z-index: 2;
   }
 
-  .header-line {
-    display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 40px;
-    opacity: 0.6;
-  }
+  .mono { font-family: var(--mono); }
+  .text-muted { color: #777; }
 
-  .main-title {
-    font-size: clamp(36px, 8vw, 64px);
-    font-weight: 400;
-    margin: 0;
-    line-height: 1.2;
-    letter-spacing: 0.05em;
-    color: #f0e9db;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.8);
-  }
-
-  .torn-dossier {
-    background: #141210;
-    clip-path: polygon(
-      0% 2%, 5% 0%, 15% 1%, 30% 0%, 45% 2%, 60% 0%, 75% 1%, 90% 0%, 100% 3%,
-      99% 15%, 100% 30%, 98% 45%, 100% 60%, 99% 75%, 100% 90%, 98% 100%,
-      90% 99%, 75% 100%, 60% 98%, 45% 100%, 30% 99%, 15% 100%, 5% 98%, 0% 100%,
-      1% 85%, 0% 70%, 2% 55%, 0% 40%, 1% 25%
-    );
-    border: 1px solid #2a221c;
-    box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 20px 40px rgba(0,0,0,0.8);
-  }
-
-  .job-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
+  /* 首屏排版 */
+  .hero-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px 40px 80px;
   }
 
   @media (min-width: 768px) {
-    .job-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .hero-section { padding: 80px 10vw; }
   }
 
-  .job-card {
-    display: flex; gap: 16px;
-    padding: 24px;
-    background: rgba(20, 18, 16, 0.7);
-    border: 1px solid #2a221c;
-    border-top: 2px solid var(--blood);
-    transition: transform 0.3s, background 0.3s;
+  .meta-tag {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: #888;
+    border-left: 1px solid #444;
+    padding-left: 12px;
   }
 
-  .job-card:hover {
-    transform: translateY(-4px);
-    background: rgba(30, 25, 20, 0.9);
+  /* 极致的字体反差：巨大的空心字与实心字 */
+  .mega-title {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: clamp(80px, 22vw, 280px);
+    line-height: 0.8;
+    margin: 40px 0;
+    display: flex;
+    flex-direction: column;
   }
 
-  .job-icon { width: 32px; height: 32px; flex-shrink: 0; opacity: 0.8; }
-  .job-card h3 { margin: 0; font-size: 18px; color: var(--gold); font-weight: 500; letter-spacing: 0.05em; }
-  .job-desc { margin: 0; font-size: 13px; color: #a39b8d; line-height: 1.6; }
-
-  .wax-seal {
-    width: 100px; height: 100px;
-    margin: 0 auto 40px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #9e2020 0%, #5c0b0b 50%, #2b0303 100%);
-    box-shadow: 
-      0 10px 20px rgba(0,0,0,0.8),
-      inset 0 4px 8px rgba(255,255,255,0.15),
-      inset 0 -8px 15px rgba(0,0,0,0.8);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    transform: rotate(-8deg);
+  .mega-title .outline {
+    color: transparent;
+    -webkit-text-stroke: 1px #333;
+    letter-spacing: -0.02em;
   }
 
-  .wax-inner {
-    width: 76px; height: 76px;
-    border-radius: 50%;
-    border: 2px dashed rgba(255,200,200,0.15);
-    display: flex; align-items: center; justify-content: center;
-    color: #e8a2a2;
-    font-family: var(--serif);
-    font-size: 24px;
-    font-weight: bold;
+  .mega-title .solid {
+    color: #e8e8e8;
+    font-style: italic;
+    margin-left: 20vw; /* 错位排版，增加空间感 */
+  }
+
+  .hero-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: auto;
+    border-bottom: 1px solid #222;
+    padding-bottom: 30px;
+  }
+
+  .cn-title {
+    font-size: clamp(24px, 4vw, 48px);
+    font-weight: 400;
+    letter-spacing: 0.5em;
+    margin: 0;
+  }
+
+  .minimal-desc {
+    font-size: 11px;
+    line-height: 1.8;
+    text-align: right;
+    color: #888;
+    margin: 0;
+  }
+
+  /* 信息区：大面积留白 */
+  .info-section {
+    background: #050505;
+    padding: 100px 40px;
+  }
+
+  @media (min-width: 768px) {
+    .info-section { padding: 150px 10vw; }
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, #333, transparent);
+    margin-bottom: 60px;
+  }
+
+  .roles-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+
+  @media (min-width: 768px) {
+    .roles-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .role-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .num {
+    font-size: 10px;
+    color: #555;
+  }
+
+  .role-item h3 {
+    font-size: 22px;
+    margin: 0;
+    font-weight: 400;
+    color: #fff;
+  }
+
+  .role-item p {
+    font-size: 11px;
+    color: #777;
+    margin: 0;
     letter-spacing: 0.1em;
-    text-shadow: 1px 2px 2px rgba(0,0,0,0.8);
   }
 
-  .action-btn {
+  /* 底部触发点 */
+  .footer-action {
+    text-align: center;
+    margin-top: 60px;
+  }
+
+  .contact-link {
     display: inline-block;
-    padding: 16px 48px;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    font-size: 13px;
-    letter-spacing: 0.2em;
+    font-size: 14px;
+    color: #fff;
     text-decoration: none;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s;
+    letter-spacing: 0.2em;
+    border: 1px solid #333;
+    padding: 20px 50px;
+    transition: all 0.4s ease;
   }
 
-  .action-btn:hover {
-    background: var(--gold);
+  .contact-link:hover {
+    background: #fff;
     color: #000;
-    box-shadow: 0 0 20px rgba(184, 155, 114, 0.4);
+    border-color: #fff;
   }
 </style>
 
 <script is:inline>
-  // 监听滚动，驱动背景 SVG 产生视差位移
+  // 监听滚动，实现背景视差与缩放
   document.addEventListener('DOMContentLoaded', () => {
-    const layers = document.querySelectorAll('.parallax-layer');
+    const bgLayer = document.getElementById('bg-layer');
     
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
-      
-      layers.forEach(layer => {
-        const speed = parseFloat(layer.getAttribute('data-speed'));
-        // 随着滚动，背景层按不同速度向上移动（模拟景深）
-        layer.style.transform = `translateY(${scrollY * speed}px)`;
-      });
+      // 让背景缓缓向上移动，同时带一点点视觉放大
+      bgLayer.style.transform = `translateY(${scrollY * 0.3}px) scale(${1 + scrollY * 0.0002})`;
     }, { passive: true });
   });
 </script>
