@@ -9,49 +9,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <!-- 悬浮的年代物件层 -->
   <div class="objects-layer" id="objects-layer">
-    <!-- 埃菲尔铁塔 (深景，慢速，大) -->
-    <div class="object obj-tower" data-speed="0.15">
-      <svg viewBox="0 0 100 200" fill="#1a1918">
-        <path d="M45,200 L55,200 L52,180 L48,180 Z M30,180 L70,180 L60,130 L40,130 Z M45,130 L55,130 L52,80 L48,80 Z M10,80 L90,80 L60,40 L40,40 Z M45,40 L55,40 L52,10 L48,10 Z M35,180 L65,180 L55,160 L45,160 Z M25,130 L75,130 L65,110 L35,110 Z M40,80 L60,80 L55,60 L45,60 Z M20,80 L30,80 L45,40 L40,40 Z M80,80 L70,80 L55,40 L60,40 Z" />
-      </svg>
+    <!-- 大本钟 (远景，慢速，大) -->
+    <div class="object obj-bigben" data-speed="0.1">
+      <img src="https://www.pngarts.com/files/3/Big-Ben-PNG-Image-Background.png" alt="Big Ben" />
     </div>
 
-    <!-- 维多利亚煤油灯 (中景，中速) -->
-    <div class="object obj-lamp" data-speed="0.35">
-      <svg viewBox="0 0 100 200" fill="#131211">
-        <!-- 灯罩 -->
-        <path d="M30,80 L70,80 L85,150 L15,150 Z" />
-        <!-- 火焰 -->
-        <ellipse cx="50" cy="65" rx="10" ry="15" fill="#b89b72" opacity="0.6" filter="blur(2px)"/>
-        <!-- 底座 -->
-        <rect x="35" y="150" width="30" height="30" rx="3" />
-        <path d="M20,180 L80,180 L80,200 L20,200 Z" />
-      </svg>
+    <!-- 马车 (中景，中速) -->
+    <div class="object obj-carriage" data-speed="0.3">
+      <img src="https://clipart-library.com/images_k/horse-carriage-silhouette/horse-carriage-silhouette-22.png" alt="Carriage" />
     </div>
 
-    <!-- 燃烧的蜡烛 (近景，快速) -->
-    <div class="object obj-candle" data-speed="0.6">
-      <svg viewBox="0 0 100 200" fill="#181614">
-        <path d="M40,80 L60,80 L60,180 L40,180 Z" />
-        <!-- 蜡滴 -->
-        <path d="M40,90 C38,95 40,105 42,105 C44,105 45,95 45,90 Z" />
-        <path d="M60,100 C62,110 59,120 57,120 C55,120 55,110 55,100 Z" />
-        <!-- 烛光 -->
-        <ellipse cx="50" cy="70" rx="8" ry="18" fill="#e5cda4" opacity="0.8" filter="blur(3px)"/>
-        <!-- 底座与流下的蜡 -->
-        <path d="M30,180 L70,180 L70,190 L30,190 Z" />
-      </svg>
+    <!-- 维多利亚女士 (中景) -->
+    <div class="object obj-lady" data-speed="0.35">
+      <img src="https://clipart-library.com/images_k/victorian-silhouette/victorian-silhouette-11.png" alt="Victorian Lady" />
     </div>
 
-    <!-- 古典怀表 (近景) -->
-    <div class="object obj-watch" data-speed="0.8">
-      <svg viewBox="0 0 100 100" fill="#111111">
-        <circle cx="50" cy="50" r="45" />
-        <!-- 表冠 -->
-        <rect x="45" y="0" width="10" height="10" />
-        <!-- 指针 -->
-        <path d="M50,50 L50,20 M50,50 L70,50" stroke="#333" stroke-width="3" stroke-linecap="round"/>
-      </svg>
+    <!-- 煤气灯 (近景，快速) -->
+    <div class="object obj-gaslight" data-speed="0.5">
+      <img src="https://publicdomainvectors.org/photos/gas-lamp-silhouette.png" alt="Gaslight" />
+    </div>
+
+    <!-- 怀表 (近景) -->
+    <div class="object obj-watch" data-speed="0.7">
+      <img src="https://clipart-library.com/images_k/pocket-watch-silhouette/pocket-watch-silhouette-25.png" alt="Pocket Watch" />
+    </div>
+
+    <!-- 羽毛笔 (极近景，最快) -->
+    <div class="object obj-quill" data-speed="0.9">
+      <img src="https://clipart-library.com/images_k/feather-pen-silhouette/feather-pen-silhouette-13.png" alt="Feather Quill" />
     </div>
   </div>
 
@@ -99,7 +84,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .mono { font-family: 'Courier New', Courier, monospace; }
 
-  /* 底层浓雾 */
   .fog-bg {
     position: fixed;
     inset: 0;
@@ -108,7 +92,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     pointer-events: none;
   }
 
-  /* 悬浮物件层：固定在屏幕上，监听滚动做位移动画 */
   .objects-layer {
     position: fixed;
     inset: 0;
@@ -120,32 +103,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .object {
     position: absolute;
     will-change: transform, opacity;
-    /* 初始铺满屏幕的散布位置 */
   }
 
-  .obj-tower {
-    left: 10vw; top: 30vh;
-    width: clamp(100px, 15vw, 200px);
-    opacity: 0.15;
-  }
-  
-  .obj-lamp {
-    right: 15vw; top: 55vh;
-    width: clamp(80px, 12vw, 150px);
-    opacity: 0.3;
+  .object img {
+    width: 100%;
+    height: auto;
+    /* 将图片变成纯黑剪影，并做一点模糊模拟景深 */
+    filter: brightness(0) contrast(100%) blur(1px);
   }
 
-  .obj-candle {
-    left: 25vw; top: 80vh;
-    width: clamp(50px, 8vw, 90px);
-    opacity: 0.5;
-  }
-
-  .obj-watch {
-    right: 30vw; top: 15vh;
-    width: clamp(40px, 6vw, 80px);
-    opacity: 0.2;
-  }
+  /* 精确布局：错落有致地分布在屏幕各处 */
+  .obj-bigben { left: 5vw; top: 15vh; width: clamp(80px, 12vw, 180px); opacity: 0.15; }
+  .obj-carriage { right: 10vw; top: 50vh; width: clamp(120px, 18vw, 250px); opacity: 0.2; }
+  .obj-lady { left: 20vw; top: 70vh; width: clamp(60px, 9vw, 120px); opacity: 0.25; }
+  .obj-gaslight { right: 25vw; top: 20vh; width: clamp(70px, 10vw, 140px); opacity: 0.4; }
+  .obj-watch { left: 40vw; top: 40vh; width: clamp(50px, 7vw, 90px); opacity: 0.5; }
+  .obj-quill { right: 15vw; top: 75vh; width: clamp(40px, 6vw, 80px); opacity: 0.6; }
 
   /* 内容层 */
   .content-wrapper {
@@ -200,7 +173,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transform: translateX(10vw);
   }
 
-  /* 第二行字与血溅特效 */
   .line-huge {
     position: relative;
     font-size: clamp(80px, 20vw, 240px);
@@ -221,7 +193,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     content: attr(data-text);
     position: absolute;
     left: 0; top: 0;
-    z-index: -1; /* 放在文字层下方，透过文字显示 */
+    z-index: -1;
     color: transparent;
     background-image: 
       radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 25%, transparent 60%),
@@ -249,14 +221,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin-top: 40px;
   }
 
-  /* 第二页 */
   .info-section {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 100px 40px;
-    background: linear-gradient(180deg, transparent, #060606 20%); /* 加入渐变，不让背景显得突兀 */
+    background: linear-gradient(180deg, transparent, #060606 20%);
   }
 
   .content-block { max-width: 1000px; width: 100%; }
@@ -329,17 +300,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       
       objects.forEach(obj => {
         const speed = parseFloat(obj.getAttribute('data-speed'));
-        // 核心逻辑：往上滑动时，物件以不同速度向上浮
         const yPos = -(scrollY * speed);
         
-        // 核心逻辑：慢慢消失。当滑过 200px 后开始变透明，滑到 600px 时完全消失
         let opacity = 1 - (scrollY / 600);
         if (opacity < 0) opacity = 0;
         
-        // 保留原本的初始透明度比例
-        const baseOpacity = obj.classList.contains('obj-tower') ? 0.15 : 
-                            obj.classList.contains('obj-lamp') ? 0.3 : 
-                            obj.classList.contains('obj-candle') ? 0.5 : 0.2;
+        const baseOpacity = obj.classList.contains('obj-bigben') ? 0.15 : 
+                            obj.classList.contains('obj-carriage') ? 0.2 :
+                            obj.classList.contains('obj-lady') ? 0.25 :
+                            obj.classList.contains('obj-gaslight') ? 0.4 :
+                            obj.classList.contains('obj-watch') ? 0.5 : 0.6;
                             
         obj.style.transform = `translateY(${yPos}px)`;
         obj.style.opacity = opacity * baseOpacity;
