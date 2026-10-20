@@ -2,258 +2,240 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="雾都疑云" description="1888 伦敦独立游戏计划">
+<BaseLayout title="The Blank Front Page">
   
-  <!-- 极简视差背景层 (使用真实高精度建筑图) -->
-  <div class="parallax-bg">
-    <div class="bg-layer" id="bg-layer"></div>
-    <div class="vignette-overlay"></div>
+  <!-- 满屏固定背景层 -->
+  <div class="fixed-bg">
+    <div class="bg-image" id="bg-image"></div>
+    <div class="bg-overlay"></div>
   </div>
 
-  <div class="content-wrapper">
-    <!-- 首屏：极致的字号反差与空间感 -->
-    <section class="hero-section">
-      <div class="mono meta-tag">EST. 1888 / LONDON</div>
+  <!-- 第一页：巨大的维多利亚风居中排版 -->
+  <section class="hero-section">
+    <div class="title-container">
+      <div class="sub-title mono">EST. 1888 · LONDON</div>
       
-      <h1 class="mega-title">
-        <span class="outline">THE</span>
-        <span class="solid">FOG</span>
+      <h1 class="victorian-title">
+        <span class="line-small">The</span>
+        <span class="line-huge">Blank</span>
+        <span class="line-medium">Front Page</span>
       </h1>
-      
-      <div class="hero-bottom">
-        <h2 class="cn-title">雾都疑云</h2>
-        <p class="mono minimal-desc">
-          UE5 / INDIE GAME PROJECT<br>
-          SEEKING PARTNERS
-        </p>
-      </div>
-    </section>
 
-    <!-- 下半部分：大面积留白与极简的招募信息 -->
-    <section class="info-section">
-      <div class="divider"></div>
+      <div class="vertical-line"></div>
+    </div>
+  </section>
+
+  <!-- 第二页：极简留白，透出背景图 -->
+  <section class="info-section">
+    <div class="content-block">
+      <h2 class="section-title">SEEKING PARTNERS</h2>
       
       <div class="roles-grid">
         <div class="role-item">
-          <span class="mono num">01</span>
-          <h3>系统开发</h3>
-          <p>UE5 / C++</p>
+          <h3>UE5 / C++</h3>
+          <p>SYSTEM ARCHITECTURE</p>
         </div>
-        
         <div class="role-item">
-          <span class="mono num">02</span>
-          <h3>场景地编</h3>
-          <p>MATERIAL / LIGHTING</p>
+          <h3>3D / LIGHTING</h3>
+          <p>ENVIRONMENT ART</p>
         </div>
-        
         <div class="role-item">
-          <span class="mono num">03</span>
-          <h3>剧情策划</h3>
-          <p>NARRATIVE / DESIGN</p>
+          <h3>NARRATIVE</h3>
+          <p>STORY & MECHANICS</p>
         </div>
       </div>
 
-      <div class="divider" style="margin-top: 80px;"></div>
-
-      <!-- 极简底栏 -->
-      <div class="footer-action">
-        <a href="mailto:hi@gongshui.com" class="contact-link mono">
+      <div class="action-area">
+        <a href="mailto:hi@gongshui.com" class="contact-btn mono">
           [ INITIATE CONTACT ]
         </a>
-        <p class="mono text-muted" style="font-size: 10px; margin-top: 20px;">GONG SHUI STUDIO</p>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  /* 彻底重置，适配极简暗黑风 */
   :global(body) {
     background-color: #050505;
     color: #e8e8e8;
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     overflow-x: hidden;
-    font-family: var(--serif);
     -webkit-font-smoothing: antialiased;
   }
 
-  /* 真实建筑视差背景 */
-  .parallax-bg {
+  .mono { font-family: 'Courier New', Courier, monospace; }
+
+  /* 满屏背景层，固定在视口 */
+  .fixed-bg {
     position: fixed;
     inset: 0;
     z-index: 0;
     overflow: hidden;
   }
 
-  .bg-layer {
+  .bg-image {
     position: absolute;
-    top: -10%;
-    left: -5%;
-    width: 110%;
-    height: 120%;
-    /* 使用一张极高质量的真实伦敦老街/哥特建筑无版权图 */
+    top: -10%; left: -5%;
+    width: 110%; height: 120%;
     background-image: url('https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2560&auto=format&fit=crop');
     background-size: cover;
     background-position: center 20%;
-    /* 将图片处理成深沉的黑白灰/暗金调，强调建筑线条细节 */
-    filter: grayscale(100%) contrast(130%) brightness(0.25) sepia(20%);
+    filter: grayscale(100%) contrast(140%) brightness(0.2) sepia(30%);
     transform-origin: center center;
     will-change: transform;
   }
 
-  .vignette-overlay {
+  /* 渐变遮罩：保证上下滑动时文字清晰，同时不会有硬切线 */
+  .bg-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 30%, transparent 20%, #050505 90%);
+    background: linear-gradient(180deg, rgba(5,5,5,0.6) 0%, rgba(5,5,5,0.2) 30%, rgba(5,5,5,0.8) 80%, #050505 100%);
     pointer-events: none;
   }
 
-  .content-wrapper {
+  /* 页面内容层 */
+  .hero-section {
     position: relative;
     z-index: 2;
-  }
-
-  .mono { font-family: var(--mono); }
-  .text-muted { color: #777; }
-
-  /* 首屏排版 */
-  .hero-section {
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 60px 40px 80px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
-  @media (min-width: 768px) {
-    .hero-section { padding: 80px 10vw; }
-  }
-
-  .meta-tag {
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    color: #888;
-    border-left: 1px solid #444;
-    padding-left: 12px;
-  }
-
-  /* 极致的字体反差：巨大的空心字与实心字 */
-  .mega-title {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: clamp(80px, 22vw, 280px);
-    line-height: 0.8;
-    margin: 40px 0;
+  .title-container {
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
 
-  .mega-title .outline {
-    color: transparent;
-    -webkit-text-stroke: 1px #333;
-    letter-spacing: -0.02em;
+  .sub-title {
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: #888;
+    margin-bottom: 40px;
   }
 
-  .mega-title .solid {
-    color: #e8e8e8;
+  /* 维多利亚风字体排版 */
+  .victorian-title {
+    font-family: 'Playfair Display', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    line-height: 0.9;
+  }
+
+  /* 第一行：小巧倾斜 */
+  .line-small {
+    font-size: clamp(32px, 6vw, 64px);
     font-style: italic;
-    margin-left: 20vw; /* 错位排版，增加空间感 */
-  }
-
-  .hero-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: auto;
-    border-bottom: 1px solid #222;
-    padding-bottom: 30px;
-  }
-
-  .cn-title {
-    font-size: clamp(24px, 4vw, 48px);
     font-weight: 400;
-    letter-spacing: 0.5em;
-    margin: 0;
+    color: #a0a0a0;
+    transform: translateX(-15vw); /* 错位一点 */
   }
 
-  .minimal-desc {
-    font-size: 11px;
-    line-height: 1.8;
-    text-align: right;
-    color: #888;
-    margin: 0;
+  /* 第二行：巨大、粗体倾斜 */
+  .line-huge {
+    font-size: clamp(90px, 22vw, 280px);
+    font-style: italic;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.02em;
+    text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    margin: -1vh 0;
   }
 
-  /* 信息区：大面积留白 */
+  /* 第三行：带点金色/灰白色的花体感 */
+  .line-medium {
+    font-size: clamp(36px, 8vw, 90px);
+    font-style: italic;
+    font-weight: 700;
+    color: #d1c5b4; /* 复古羊皮纸色 */
+    letter-spacing: 0.05em;
+    transform: translateX(10vw); /* 往右错位 */
+  }
+
+  .vertical-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(180deg, #555, transparent);
+    margin-top: 40px;
+  }
+
+  /* 第二页信息区 */
   .info-section {
-    background: #050505;
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 100px 40px;
   }
 
-  @media (min-width: 768px) {
-    .info-section { padding: 150px 10vw; }
+  .content-block {
+    max-width: 1000px;
+    width: 100%;
   }
 
-  .divider {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, #333, transparent);
-    margin-bottom: 60px;
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    font-weight: 400;
+    color: #888;
+    text-align: center;
+    margin-bottom: 80px;
   }
 
   .roles-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 60px;
+    text-align: center;
   }
 
   @media (min-width: 768px) {
     .roles-grid { grid-template-columns: repeat(3, 1fr); }
   }
 
-  .role-item {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .num {
-    font-size: 10px;
-    color: #555;
-  }
-
   .role-item h3 {
-    font-size: 22px;
-    margin: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-style: italic;
     font-weight: 400;
+    margin: 0 0 10px;
     color: #fff;
   }
 
   .role-item p {
     font-size: 11px;
     color: #777;
-    margin: 0;
     letter-spacing: 0.1em;
+    margin: 0;
   }
 
-  /* 底部触发点 */
-  .footer-action {
+  .action-area {
     text-align: center;
-    margin-top: 60px;
+    margin-top: 100px;
   }
 
-  .contact-link {
+  .contact-btn {
     display: inline-block;
-    font-size: 14px;
+    font-size: 13px;
     color: #fff;
     text-decoration: none;
     letter-spacing: 0.2em;
-    border: 1px solid #333;
-    padding: 20px 50px;
+    border: 1px solid #444;
+    padding: 20px 60px;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(5px);
     transition: all 0.4s ease;
   }
 
-  .contact-link:hover {
+  .contact-btn:hover {
     background: #fff;
     color: #000;
     border-color: #fff;
@@ -261,14 +243,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </style>
 
 <script is:inline>
-  // 监听滚动，实现背景视差与缩放
   document.addEventListener('DOMContentLoaded', () => {
-    const bgLayer = document.getElementById('bg-layer');
+    const bgImage = document.getElementById('bg-image');
     
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
-      // 让背景缓缓向上移动，同时带一点点视觉放大
-      bgLayer.style.transform = `translateY(${scrollY * 0.3}px) scale(${1 + scrollY * 0.0002})`;
+      // 滚动时，背景图缓缓放大（scale），给极强的空间吸入感
+      const scale = 1 + scrollY * 0.0005;
+      bgImage.style.transform = `scale(${scale})`;
     }, { passive: true });
   });
 </script>
