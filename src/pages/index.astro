@@ -77,7 +77,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     position: absolute;
     top: -10%; left: -5%;
     width: 110%; height: 120%;
-    /* 更换为极其古典的维多利亚/哥特街区，无现代高楼 */
+    /* 更换为纯正哥特/维多利亚建筑，无现代高楼 */
     background-image: url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=2560&auto=format&fit=crop');
     background-size: cover;
     background-position: center 30%;
@@ -116,6 +116,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin-bottom: 40px;
   }
 
+  /* ======= 核心字体与排版重构 ======= */
   .victorian-title {
     font-family: 'Playfair Display', serif;
     display: flex;
@@ -125,36 +126,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     line-height: 0.9;
   }
 
+  /* 第一行：优雅小字，带轻微倾斜 */
   .line-small {
-    font-size: clamp(32px, 6vw, 64px);
+    font-size: clamp(28px, 5vw, 56px);
     font-style: italic;
     font-weight: 400;
     color: #a0a0a0;
     transform: translateX(-15vw);
-  }
-
-  .line-medium {
-    font-size: clamp(36px, 8vw, 90px);
-    font-style: italic;
-    font-weight: 700;
-    color: #d1c5b4;
     letter-spacing: 0.05em;
-    transform: translateX(10vw);
   }
 
-  /* ======= 核心：血液拍打特效 ======= */
+  /* 第二行：巨大但优雅，去掉了900的粗重感 */
   .line-huge {
     position: relative;
-    font-size: clamp(90px, 22vw, 280px);
+    font-size: clamp(80px, 20vw, 240px);
     font-style: italic;
-    font-weight: 900;
-    color: #fff; /* 基础是纯白 */
-    letter-spacing: -0.02em;
+    font-weight: 400; /* 从900降为400，恢复优雅 */
+    color: #fff;
+    letter-spacing: -0.01em;
     text-shadow: 0 10px 30px rgba(0,0,0,0.8);
     margin: -1vh 0;
   }
 
-  /* 伪元素用来做血液 */
+  /* 第三行：带点复古羊皮纸色的中等大小 */
+  .line-medium {
+    font-size: clamp(32px, 7vw, 80px);
+    font-style: italic;
+    font-weight: 400;
+    color: #d1c5b4;
+    letter-spacing: 0.08em;
+    transform: translateX(10vw);
+  }
+
+  /* ======= 血液拍打特效（修复版） ======= */
   .blood-splatter {
     position: relative;
     display: inline-block;
@@ -167,36 +171,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     top: 0;
     z-index: -1;
     color: transparent;
-    /* 用多重径向渐变模拟血液的不规则飞溅和液滴，从右上角 (90% 10%) 喷发 */
+    /* 用多层径向渐变模拟从右上角喷发的血迹 */
     background-image: 
-      radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 20%, transparent 55%),
-      radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 8%),
-      radial-gradient(circle at 95% 40%, #6b0000 2%, transparent 5%),
-      radial-gradient(circle at 60% 20%, #9c0505 4%, transparent 10%),
-      radial-gradient(circle at 80% 50%, #4a0000 5%, transparent 12%);
+      radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 25%, transparent 60%),
+      radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 10%),
+      radial-gradient(circle at 95% 40%, #6b0000 2%, transparent 6%),
+      radial-gradient(circle at 60% 20%, #9c0505 4%, transparent 12%),
+      radial-gradient(circle at 80% 50%, #4a0000 5%, transparent 15%);
     -webkit-background-clip: text;
     background-clip: text;
-    /* 初始状态 */
+    /* 初始隐藏，等待动画触发 */
     opacity: 0;
     transform: scale(0.8) rotate(2deg);
     transform-origin: top right;
-    /* 动画：延迟0.5秒后，0.6秒内快速砸上去 */
+    /* 动画：0.6秒内快速砸上去 */
     animation: bloodSplat 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
   }
 
   @keyframes bloodSplat {
-    0% {
-      opacity: 0;
-      transform: scale(0.3) rotate(5deg);
-    }
-    60% {
-      opacity: 1;
-      transform: scale(1.05) rotate(-2deg); /* 砸上去的物理惯性 */
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1) rotate(0deg);
-    }
+    0% { opacity: 0; transform: scale(0.3) rotate(5deg); }
+    60% { opacity: 1; transform: scale(1.05) rotate(-2deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
   }
 
   .vertical-line {
@@ -206,7 +201,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     margin-top: 40px;
   }
 
-  /* 第二页 */
+  /* ======= 第二页（保留你喜欢的部分） ======= */
   .info-section {
     position: relative;
     z-index: 2;
