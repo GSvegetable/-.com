@@ -2,92 +2,87 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout title="寻人启事" description="寻找那些能看穿迷雾的人">
-  
-  <!-- 顶部主视觉，加入煤气灯晕影 -->
-  <section class="container gaslight" style="padding-top: 80px; text-align: center;">
-    <p class="mono text-accent" style="letter-spacing: 0.4em; font-size: 13px; margin-bottom: 20px;">WANTED FOR HIRE</p>
+  <section class="container" style="padding-top: 100px; text-align: center;">
+    <p class="mono text-accent" style="letter-spacing: 0.4em; font-size: 13px; margin-bottom: 24px;">CONFIDENTIAL / WANTED</p>
     
-    <h1 style="font-size: clamp(36px, 8vw, 64px); font-weight: normal; margin: 0; line-height: 1.2; letter-spacing: 0.05em; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">
-      致那些能看穿<br><span class="text-gold" style="font-style: italic;">迷雾</span>的人
+    <h1 style="font-size: clamp(40px, 7vw, 72px); font-weight: 400; margin: 0; line-height: 1.1; letter-spacing: 0.05em; text-shadow: 0 4px 20px rgba(0,0,0,0.9);">
+      致那些能看穿<br><span class="text-gold" style="font-style: italic; font-family: var(--serif);">迷雾</span>的人
     </h1>
     
-    <p class="mono text-muted" style="margin-top: 24px; font-size: 14px;">
+    <p class="mono text-muted" style="margin-top: 30px; font-size: 13px; letter-spacing: 0.1em;">
       《雾都疑云》独立游戏开发组 · 悬赏招募
     </p>
   </section>
 
-  <!-- 维多利亚花纹分割线 -->
   <div class="container divider">
     <svg viewBox="0 0 24 24"><path d="M12 2L15 9H22L16 14L18 21L12 16L6 21L8 14L2 9H9L12 2Z"/></svg>
   </div>
 
   <section class="container" style="display: grid; gap: 40px; align-items: start;">
     
-    <!-- 左侧卷宗引言 -->
-    <div class="dossier" style="font-size: 15px; line-height: 2;">
-      <p style="margin-top: 0; text-indent: 2em;">这不是一份寻常的雇佣合同。</p>
-      <p style="text-indent: 2em;">我目前正在用虚幻引擎5（UE5）重构一个1888年的伦敦。那里没有魔法，只有蔓延的浓雾、闪烁的煤气灯、未被揭开的凶案，以及一份份等着被写上真相的报纸。</p>
-      <p style="text-indent: 2em;">玩家将在这里扮演“情报掮客”，游走于街头巷尾，拼凑线索，将新闻卖给报社换取生存的筹码。</p>
-      <p style="text-indent: 2em;">我一个人在雾里摸索得有些久了。现在，我想找几个愿意一起进入这座城市的同伴。</p>
+    <!-- 左侧卷宗，取消死板的边框，用光影代替 -->
+    <div class="dossier" style="font-size: 15px; line-height: 2; letter-spacing: 0.05em;">
+      <p style="margin-top: 0; text-indent: 2em; color: #dcd3c6;">这不是一份寻常的雇佣合同。</p>
+      <p style="text-indent: 2em; color: #dcd3c6;">我目前正在用虚幻引擎5（UE5）重构一个1888年的伦敦。那里没有魔法，只有蔓延的浓雾、闪烁的煤气灯、未被揭开的凶案，以及一份份等着被写上真相的报纸。</p>
+      <p style="text-indent: 2em; color: #dcd3c6;">玩家将在这里扮演“情报掮客”，游走于街头巷尾，拼凑线索，将新闻卖给报社换取生存的筹码。</p>
+      <p style="text-indent: 2em; color: #dcd3c6;">我一个人在雾里摸索得有些久了。现在，我想找几个愿意一起进入这座城市的同伴。</p>
       
-      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--line); font-family: var(--mono); font-size: 12px; color: var(--text-muted);">
-        <p>当前项目状态：初期原型搭建</p>
-        <p>引擎：Unreal Engine 5</p>
-        <p>发行目标：PC / Steam</p>
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); font-family: var(--mono); font-size: 12px; color: var(--text-muted);">
+        <p style="margin: 4px 0;">STATUS: 初期原型搭建</p>
+        <p style="margin: 4px 0;">ENGINE: Unreal Engine 5</p>
+        <p style="margin: 4px 0;">TARGET: PC / Steam</p>
       </div>
     </div>
 
     <!-- 右侧招募卷宗 -->
     <div>
-      <h2 class="mono" style="font-size: 16px; color: var(--gold); margin-bottom: 20px; border-bottom: 1px solid var(--line); padding-bottom: 10px;">
+      <h2 class="mono" style="font-size: 14px; color: var(--gold); margin-bottom: 24px; letter-spacing: 0.1em;">
         [ DOSSIERS / 招募卷宗 ]
       </h2>
 
-      <div style="display: grid; gap: 20px;">
+      <div style="display: grid; gap: 24px;">
         <!-- 岗位 1 -->
-        <div style="border-left: 2px solid var(--accent); padding-left: 20px;">
-          <h3 style="margin: 0 0 5px; font-size: 20px;">⚙️ 机械工匠</h3>
+        <div style="padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.1);">
+          <h3 style="margin: 0 0 6px; font-size: 20px; font-weight: 500;">⚙️ 机械工匠</h3>
           <p class="mono text-muted" style="font-size: 11px; margin-top: 0; letter-spacing: 0.05em;">UE5 客户端 / 系统开发</p>
-          <p style="margin: 10px 0 0; font-size: 14px; color: #b0a89e;">懂蓝图或 C++。搭建城市底层规则——情报收集系统、报社字数结算系统、以及阴郁街头的交互逻辑。</p>
+          <p style="margin: 10px 0 0; font-size: 14px; color: #a39b8d; line-height: 1.7;">懂蓝图或 C++。搭建城市底层规则——情报收集系统、报社字数结算系统、以及阴郁街头的交互逻辑。</p>
         </div>
         <!-- 岗位 2 -->
-        <div style="border-left: 2px solid var(--accent); padding-left: 20px;">
-          <h3 style="margin: 0 0 5px; font-size: 20px;">🎨 光影画师</h3>
+        <div style="padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.1);">
+          <h3 style="margin: 0 0 6px; font-size: 20px; font-weight: 500;">🎨 光影画师</h3>
           <p class="mono text-muted" style="font-size: 11px; margin-top: 0; letter-spacing: 0.05em;">3D 美术 / 场景地编</p>
-          <p style="margin: 10px 0 0; font-size: 14px; color: #b0a89e;">需要构建湿冷、阴郁的伦敦街头。擅长老旧建筑、复古材质、维多利亚时期打光与氛围营造。</p>
+          <p style="margin: 10px 0 0; font-size: 14px; color: #a39b8d; line-height: 1.7;">需要构建湿冷、阴郁的伦敦街头。擅长老旧建筑、复古材质、维多利亚时期打光与氛围营造。</p>
         </div>
         <!-- 岗位 3 -->
-        <div style="border-left: 2px solid var(--accent); padding-left: 20px;">
-          <h3 style="margin: 0 0 5px; font-size: 20px;">✒️ 迷雾说书人</h3>
+        <div style="padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.1);">
+          <h3 style="margin: 0 0 6px; font-size: 20px; font-weight: 500;">✒️ 迷雾说书人</h3>
           <p class="mono text-muted" style="font-size: 11px; margin-top: 0; letter-spacing: 0.05em;">剧情 / 系统策划</p>
-          <p style="margin: 10px 0 0; font-size: 14px; color: #b0a89e;">能写出让人脊背发凉的连环案件，设计“拼凑线索写出绝妙新闻”的机制。</p>
+          <p style="margin: 10px 0 0; font-size: 14px; color: #a39b8d; line-height: 1.7;">能写出让人脊背发凉的连环案件，设计“拼凑线索写出绝妙新闻”的机制。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 维多利亚花纹分割线 -->
   <div class="container divider">
     <svg viewBox="0 0 24 24"><path d="M12 2L15 9H22L16 14L18 21L12 16L6 21L8 14L2 9H9L12 2Z"/></svg>
   </div>
 
   <!-- 底部接头区 -->
-  <section class="container" style="text-align: center; padding: 40px 0 80px; position: relative;">
+  <section class="container" style="text-align: center; padding: 20px 0 100px; position: relative;">
     
-    <!-- 纯CSS手搓的“火漆印章” -->
-    <div style="width: 100px; height: 100px; margin: 0 auto 30px; background: radial-gradient(circle, #b02626 0%, #6b1212 80%, #3a0606 100%); border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.2), inset 0 -5px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; border: 1px solid #4a0808; transform: rotate(-10deg);">
-      <div style="border: 2px dashed rgba(255,255,255,0.2); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-family: var(--serif); color: #e5baba; font-weight: bold; font-size: 18px; letter-spacing: 0.1em; text-shadow: 1px 1px 0px rgba(0,0,0,0.5);">
+    <!-- 纯CSS火漆印章 -->
+    <div style="width: 110px; height: 110px; margin: 0 auto 40px; background: radial-gradient(circle, #8a1c1c 0%, #4a0808 80%, #1a0202 100%); border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.1), inset 0 -8px 15px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; border: 1px solid #2a0404; transform: rotate(-12deg);">
+      <div style="border: 2px dashed rgba(255,255,255,0.15); border-radius: 50%; width: 85px; height: 85px; display: flex; align-items: center; justify-content: center; font-family: var(--serif); color: #c48a8a; font-weight: bold; font-size: 22px; letter-spacing: 0.1em; text-shadow: 1px 1px 0px rgba(0,0,0,0.8);">
         密
       </div>
     </div>
 
-    <h2 style="font-size: 24px; margin-bottom: 10px;">如果你听懂了煤气灯下的暗号</h2>
-    <p class="text-muted" style="margin-bottom: 30px; font-size: 15px;">请留下你的密信。这里没有大厂的傲慢，只有一群想做好东西的疯子。</p>
+    <h2 style="font-size: 24px; margin-bottom: 12px; font-weight: 400; letter-spacing: 0.05em;">如果你听懂了煤气灯下的暗号</h2>
+    <p class="text-muted" style="margin-bottom: 40px; font-size: 14px; letter-spacing: 0.05em;">请留下你的密信。这里没有大厂的傲慢，只有一群想做好东西的疯子。</p>
     
-    <a href="mailto:hi@gongshui.com" style="display: inline-block; background: transparent; color: var(--gold); padding: 14px 40px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.2em; border: 1px solid var(--gold); position: relative; overflow: hidden; transition: all 0.3s;" onmouseover="this.style.background='var(--gold)'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='var(--gold)';">
-      [ 发送接头邮件 ]
+    <a href="mailto:hi@gongshui.com" style="display: inline-block; background: transparent; color: var(--gold); padding: 16px 48px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.2em; border: 1px solid var(--gold); position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 20px rgba(196, 167, 125, 0.1);" onmouseover="this.style.background='var(--gold)'; this.style.color='#000'; this.style.boxShadow='0 0 30px rgba(196, 167, 125, 0.4)';" onmouseout="this.style.background='transparent'; this.style.color='var(--gold)'; this.style.boxShadow='0 0 20px rgba(196, 167, 125, 0.1)';">
+      [ SEND TRANSMISSION ]
     </a>
-    <p class="mono" style="font-size: 12px; color: var(--line); margin-top: 30px; letter-spacing: 0.1em;">(修改邮箱请联系站长)</p>
   </section>
 
 </BaseLayout>

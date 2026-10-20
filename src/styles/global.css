@@ -1,11 +1,8 @@
 :root {
-  --bg: #0a0908;
-  --paper: #1c1916;
-  --text: #dcd3c6;
-  --text-muted: #8a7e71;
-  --accent: #8a1c1c; /* 暗血色 */
-  --gold: #b89b72; /* 暗金色 */
-  --line: #2e2620;
+  --text: #e8e4d9;
+  --text-muted: #a39b8d;
+  --accent: #8a1c1c;
+  --gold: #c4a77d;
   --serif: "Georgia", "Songti SC", "Noto Serif SC", serif;
   --mono: "Courier New", Courier, monospace;
 }
@@ -14,56 +11,52 @@
 
 body {
   margin: 0; padding: 0;
-  background-color: var(--bg);
-  /* 用纯CSS画一个做旧纸张的噪点背景和暗角 */
-  background-image: 
-    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  background-color: #050505; /* 极暗底色兜底 */
   color: var(--text);
   font-family: var(--serif);
   line-height: 1.8;
   min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* WebGL 背景画布 */
+#shader-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.85; /* 让光晕和雾气稍微透一点 */
+}
+
+/* 页面主容器 */
+.page-wrapper {
+  position: relative;
+  z-index: 1; /* 压在 canvas 之上 */
+  min-height: 100vh;
+  background: radial-gradient(circle at center, transparent 30%, rgba(5,5,5,0.8) 100%);
 }
 
 a { color: var(--gold); text-decoration: none; transition: all 0.3s; border-bottom: 1px dashed var(--gold); }
 a:hover { color: var(--accent); border-bottom: 1px solid var(--accent); }
-
-.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
-
+.container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
 .mono { font-family: var(--mono); }
 .text-accent { color: var(--accent); }
 .text-gold { color: var(--gold); }
 .text-muted { color: var(--text-muted); }
 
-/* 维多利亚风格分割线 */
-.divider {
-  display: flex; align-items: center; justify-content: center;
-  margin: 50px 0; color: var(--line);
-}
-.divider::before, .divider::after {
-  content: ""; flex: 1; height: 1px; background: var(--line);
-}
-.divider svg {
-  width: 24px; height: 24px; margin: 0 15px; fill: var(--gold); opacity: 0.6;
-}
+.divider { display: flex; align-items: center; justify-content: center; margin: 60px 0; color: #333; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #333, transparent); }
+.divider svg { width: 24px; height: 24px; margin: 0 20px; fill: var(--gold); opacity: 0.4; }
 
-/* 煤气灯光晕 */
-.gaslight {
-  position: relative;
-}
-.gaslight::before {
-  content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(184, 155, 114, 0.08) 0%, transparent 70%);
-  border-radius: 50%; pointer-events: none; z-index: -1;
-}
-
-/* 羊皮纸卷宗 */
+/* 玻璃/羊皮纸卡片质感 */
 .dossier {
-  background: linear-gradient(135deg, var(--paper) 0%, #141210 100%);
-  border: 1px solid var(--line);
-  border-top: 4px solid #000;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.5);
+  background: rgba(20, 18, 15, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 2px solid var(--accent);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
   padding: 40px;
   position: relative;
 }
