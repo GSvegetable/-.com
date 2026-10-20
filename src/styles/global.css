@@ -1,28 +1,69 @@
 :root {
-  --bg: #12100e;
-  --bg-card: #1a1816;
-  --text: #e8e4d9;
-  --text-muted: #8e8a82;
-  --accent: #8b2a2a;
-  --accent-hover: #a63535;
-  --line: #33302b;
-  --serif: "Songti SC", "Noto Serif SC", "Georgia", serif;
+  --bg: #0a0908;
+  --paper: #1c1916;
+  --text: #dcd3c6;
+  --text-muted: #8a7e71;
+  --accent: #8a1c1c; /* 暗血色 */
+  --gold: #b89b72; /* 暗金色 */
+  --line: #2e2620;
+  --serif: "Georgia", "Songti SC", "Noto Serif SC", serif;
   --mono: "Courier New", Courier, monospace;
 }
+
 *, *::before, *::after { box-sizing: border-box; }
+
 body {
   margin: 0; padding: 0;
   background-color: var(--bg);
-  background-image: radial-gradient(circle at 50% 0%, #1f1c18 0%, #12100e 70%);
+  /* 用纯CSS画一个做旧纸张的噪点背景和暗角 */
+  background-image: 
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
   color: var(--text);
   font-family: var(--serif);
   line-height: 1.8;
   min-height: 100vh;
 }
-a { color: var(--text); text-decoration: none; transition: color 0.2s; }
-a:hover { color: var(--accent); }
-.container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+
+a { color: var(--gold); text-decoration: none; transition: all 0.3s; border-bottom: 1px dashed var(--gold); }
+a:hover { color: var(--accent); border-bottom: 1px solid var(--accent); }
+
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
 .mono { font-family: var(--mono); }
 .text-accent { color: var(--accent); }
+.text-gold { color: var(--gold); }
 .text-muted { color: var(--text-muted); }
-.line { height: 1px; background: var(--line); margin: 40px 0; }
+
+/* 维多利亚风格分割线 */
+.divider {
+  display: flex; align-items: center; justify-content: center;
+  margin: 50px 0; color: var(--line);
+}
+.divider::before, .divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--line);
+}
+.divider svg {
+  width: 24px; height: 24px; margin: 0 15px; fill: var(--gold); opacity: 0.6;
+}
+
+/* 煤气灯光晕 */
+.gaslight {
+  position: relative;
+}
+.gaslight::before {
+  content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(184, 155, 114, 0.08) 0%, transparent 70%);
+  border-radius: 50%; pointer-events: none; z-index: -1;
+}
+
+/* 羊皮纸卷宗 */
+.dossier {
+  background: linear-gradient(135deg, var(--paper) 0%, #141210 100%);
+  border: 1px solid var(--line);
+  border-top: 4px solid #000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.5);
+  padding: 40px;
+  position: relative;
+}
