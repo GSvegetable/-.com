@@ -22,7 +22,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <!-- 第一页：3D 极限拉伸翻折 -->
   <section class="hero-section" id="hero-section">
-    <!-- 核心：透视容器，将灭点死锁在顶部 -->
     <div class="perspective-wrap">
       <div class="newspaper-masthead" id="hero-masthead">
         
@@ -53,23 +52,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
 
-        <!-- 用于掩盖拉伸后丑化文字的暗黑吞噬遮罩 -->
+        <!-- 暗黑吞噬遮罩 -->
         <div class="fade-mask" id="fade-mask"></div>
       </div>
     </div>
   </section>
 
-  <!-- 第二页：黑色招募层 -->
-  <section class="info-section" id="info-section">
-    <div class="content-block">
-      <h2 class="section-title">SEEKING PARTNERS</h2>
-      <div class="roles-grid">
-        <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
-        <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
-        <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
-      </div>
-      <div class="action-area">
-        <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
+  <!-- 第二页：带有 3D 顶轴透视的包裹层 -->
+  <section class="info-wrapper">
+    <div class="info-section" id="info-section">
+      <div class="content-block">
+        <h2 class="section-title">SEEKING PARTNERS</h2>
+        <div class="roles-grid">
+          <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
+          <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
+          <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
+        </div>
+        <div class="action-area">
+          <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
+        </div>
       </div>
     </div>
   </section>
@@ -118,7 +119,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .perspective-wrap {
     perspective: 1200px;
-    /* 灭点锁死在顶部，保证翻折时顶部不会往下掉 */
     perspective-origin: 50% 0%; 
     width: 100%;
     max-width: 900px;
@@ -131,14 +131,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     position: relative;
     width: 100%;
     display: flex; flex-direction: column;
-    /* 底部为轴心 */
     transform-origin: center bottom; 
     transform: translateY(-4vh) rotateX(0deg) scaleY(1);
-    will-change: transform;
+    will-change: transform, opacity;
     pointer-events: auto;
   }
 
-  /* 吞噬遮罩 */
   .fade-mask {
     position: absolute;
     inset: -30% 0 0 0;
@@ -178,19 +176,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  /* ======= 第二页 ======= */
-  .info-section { 
+  /* ======= 第二页：顶轴翻盖 ======= */
+  .info-wrapper {
     position: relative;
     z-index: 20;
+    /* 给第二页开启 3D 透视 */
+    perspective: 1500px; 
+    background: transparent;
+  }
+
+  .info-section { 
     min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
     border-radius: 40px 40px 0 0;
     box-shadow: 0 -20px 60px rgba(0,0,0,0.9), inset 0 2px 0 rgba(255,255,255,0.05);
-    transform: scale(0.95);
+    
+    /* 初始状态：以顶部为轴，向后仰 85 度 */
     transform-origin: center top;
-    will-change: transform;
+    transform: rotateX(-85deg);
+    opacity: 0; 
+    
+    will-change: transform, opacity;
+    backface-visibility: hidden;
   }
   
   .content-block { max-width: 1000px; width: 100%; }
@@ -207,7 +216,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
-    .info-section { border-radius: 30px 30px 0 0; }
+    .info-section { border-radius: 30px 30px 0 0; padding: 80px 20px; }
     .perspective-wrap { perspective: 900px; padding: 0 20px; }
   }
 </style>
@@ -216,7 +225,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   document.addEventListener('DOMContentLoaded', () => {
     const bgImages = document.querySelectorAll('.bg-image');
     const heroMasthead = document.getElementById('hero-masthead');
-    const infoSection = document.querySelector('.info-section');
+    const infoSection = document.getElementById('info-section');
     const fadeMask = document.getElementById('fade-mask');
     
     let currentIndex = 0;
@@ -236,41 +245,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
           
-          // 滚动进度 0 到 1
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // 1. 设定一个极限角度，比如 82 度（不要到 90 度，否则数学上无穷大）
+          // ======= 1. 第一页：动态拉伸与翻折 =======
           const rotateX = progress * 82; 
-          
-          // 2. 实时计算！将角度转为弧度
           const rad = rotateX * Math.PI / 180;
-          
-          // 3. 核心物理补偿：根据余弦定理，实时求出刚好填满屏幕的拉伸倍率
-          // 1 / cos(θ) 保证了不管翻折到多少度，视觉高度永远顶满
           const stretchY = 1 / Math.cos(rad);
-
-          // 4. 由于透视的景深感，顶部还需要一点微小的纵向补偿推力
-          // 这里用平方函数做一个平滑的补偿（防止前期拉过猛）
           const translateY = Math.pow(progress, 2) * 12; 
 
-          // 应用精准的数学变换组合
           heroMasthead.style.transform = `
             translate3d(0, calc(-4vh + ${translateY}vh), 0) 
             rotateX(${rotateX}deg) 
             scaleY(${stretchY})
           `;
 
-          // 5. 当拉伸到后半段（角度大于 45 度左右），文字会变得像面条
-          // 用暗黑遮罩渐渐吞掉上面的部分，保留视觉冲击力但不至于难看
+          // 透明度衰减减半，不要消失得太快（从 1.2 降到 0.6）
+          heroMasthead.style.opacity = Math.max(0, 1 - (progress * 0.6));
+
+          // 暗黑吞噬遮罩照常生效
           const maskProgress = Math.max(0, (progress - 0.4) * 2); 
           fadeMask.style.opacity = maskProgress;
 
-          // 纸张整体稍微淡出
-          heroMasthead.style.opacity = Math.max(0, 1 - (progress * 1.2));
-
-          // 第二页：随着拉伸同步浮现
-          const infoScale = 0.95 + (progress * 0.05);
-          infoSection.style.transform = `scale(${infoScale})`;
+          // ======= 2. 第二页：顶轴翻盖 =======
+          // 我们让第二页在进度 0.2 之后才开始翻开，0.2 之前它保持隐藏
+          const infoProgress = Math.max(0, (progress - 0.2) / 0.8); 
+          
+          // 从 -85度 翻转到 0度
+          const infoRotateX = -85 + (infoProgress * 85);
+          
+          infoSection.style.transform = `rotateX(${infoRotateX}deg)`;
+          // 透明度随着翻下快速变实
+          infoSection.style.opacity = Math.min(1, infoProgress * 2);
 
           ticking = false;
         });
