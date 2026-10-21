@@ -58,8 +58,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 第二页：带有 3D 顶轴透视的包裹层 -->
+  <!-- 第二页：带有超强物理惯性的翻盖 -->
   <section class="info-wrapper">
+    <!-- 增加了这层，专门用来做交界的圆润模糊线 -->
+    <div class="blur-edge" id="blur-edge"></div>
+    
     <div class="info-section" id="info-section">
       <div class="content-block">
         <h2 class="section-title">SEEKING PARTNERS</h2>
@@ -176,13 +179,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  /* ======= 第二页：顶轴翻盖 ======= */
+  /* ======= 第二页 ======= */
   .info-wrapper {
     position: relative;
     z-index: 20;
-    /* 给第二页开启 3D 透视 */
     perspective: 1500px; 
     background: transparent;
+  }
+
+  /* 专门的过渡模糊线，用模糊和发光代替生硬线条 */
+  .blur-edge {
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: #050505;
+    border-radius: 50% 50% 0 0 / 20px 20px 0 0; /* 圆润的弧线 */
+    filter: blur(4px);
+    z-index: 21;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .info-section { 
@@ -190,15 +207,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
-    border-radius: 40px 40px 0 0;
-    box-shadow: 0 -20px 60px rgba(0,0,0,0.9), inset 0 2px 0 rgba(255,255,255,0.05);
+    /* 顶部超大圆角 */
+    border-radius: 60px 60px 0 0; 
+    /* 去掉生硬边框，改用极深的阴影，让边界和第一页自然融合 */
+    box-shadow: 0 -40px 80px rgba(0,0,0,0.9);
     
-    /* 初始状态：以顶部为轴，向后仰 85 度 */
+    /* 初始状态：夸张地向前倾斜 110 度（几乎倒向用户） */
     transform-origin: center top;
-    transform: rotateX(-85deg);
+    transform: rotateX(-110deg);
     opacity: 0; 
     
-    will-change: transform, opacity;
+    will-change: transform, opacity, border-radius;
     backface-visibility: hidden;
   }
   
@@ -216,7 +235,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
-    .info-section { border-radius: 30px 30px 0 0; padding: 80px 20px; }
+    .info-section { border-radius: 40px 40px 0 0; padding: 80px 20px; }
     .perspective-wrap { perspective: 900px; padding: 0 20px; }
   }
 </style>
@@ -227,6 +246,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const heroMasthead = document.getElementById('hero-masthead');
     const infoSection = document.getElementById('info-section');
     const fadeMask = document.getElementById('fade-mask');
+    const blurEdge = document.getElementById('blur-edge');
     
     let currentIndex = 0;
     setInterval(() => {
@@ -247,7 +267,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // ======= 1. 第一页：动态拉伸与翻折 =======
+          // ======= 第一页：动态拉伸与翻折 =======
           const rotateX = progress * 82; 
           const rad = rotateX * Math.PI / 180;
           const stretchY = 1 / Math.cos(rad);
@@ -259,23 +279,53 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             scaleY(${stretchY})
           `;
 
-          // 透明度衰减减半，不要消失得太快（从 1.2 降到 0.6）
           heroMasthead.style.opacity = Math.max(0, 1 - (progress * 0.6));
+          fadeMask.style.opacity = Math.max(0, (progress - 0.4) * 2);
 
-          // 暗黑吞噬遮罩照常生效
-          const maskProgress = Math.max(0, (progress - 0.4) * 2); 
-          fadeMask.style.opacity = maskProgress;
+          // ======= 第二页：先倾 -> 瞬间砸下 =======
+          let infoProgress = Math.max(0, (progress - 0.2) / 0.8); 
+          
+          let infoRotateX = 0;
+          let currentRadius = 40; // 初始圆角
 
-          // ======= 2. 第二页：顶轴翻盖 =======
-          // 我们让第二页在进度 0.2 之后才开始翻开，0.2 之前它保持隐藏
-          const infoProgress = Math.max(0, (progress - 0.2) / 0.8); 
+          if (infoProgress < 0.7) {
+            // 阶段1：慢速往前倾 (从 -110度 到 -30度)
+            const p = infoProgress / 0.7;
+            // 这里用极缓的曲线让它慢慢倒向你
+            infoRotateX = -110 + (Math.pow(p, 2) * 80);
+            // 倾斜的时候圆角变大，产生柔性拉扯感
+            currentRadius = 40 + (p * 30);
+          } else if (infoProgress < 0.85) {
+            // 阶段2：瞬间站直（从 -30度 砸到 0度）
+            const p = (infoProgress - 0.7) / 0.15;
+            // 模拟重力加速度极速砸下
+            const easeOut = 1 - Math.pow(1 - p, 3); 
+            infoRotateX = -30 + (easeOut * 30);
+            // 砸下瞬间，交界处圆角极度夸张，形成那道拉扯线
+            currentRadius = 70 - (easeOut * 30);
+          } else {
+            // 阶段3：彻底站直，保留微小的物理回弹
+            const p = (infoProgress - 0.85) / 0.15;
+            infoRotateX = 0;
+            // 回弹时圆角微缩
+            currentRadius = 40 + (Math.sin(p * Math.PI) * 10);
+          }
           
-          // 从 -85度 翻转到 0度
-          const infoRotateX = -85 + (infoProgress * 85);
-          
+          // 应用计算出来的状态
           infoSection.style.transform = `rotateX(${infoRotateX}deg)`;
-          // 透明度随着翻下快速变实
-          infoSection.style.opacity = Math.min(1, infoProgress * 2);
+          infoSection.style.borderRadius = `${currentRadius}px ${currentRadius}px 0 0`;
+          
+          // 透明度突变，确保它是“砸”出来的
+          infoSection.style.opacity = Math.min(1, infoProgress * 3);
+
+          // 动态控制那根模糊过渡线
+          if (infoProgress > 0.6 && infoProgress < 1) {
+            blurEdge.style.opacity = 1;
+            // 把线往上提一点，让它出现在交界处上方
+            blurEdge.style.top = '-15px';
+          } else {
+            blurEdge.style.opacity = 0;
+          }
 
           ticking = false;
         });
