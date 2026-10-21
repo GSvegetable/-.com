@@ -4,131 +4,141 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="The Blank Front Page">
   
-  <!-- Canvas 物理闪电层 -->
-  <canvas id="lightning-canvas"></canvas>
+  <!-- 彻底锁死滚动的容器，100% 消灭滚动条 -->
+  <div class="scroll-lock" id="scroll-lock">
+    <div class="scroll-content" id="scroll-content">
+      
+      <!-- 雷暴环境光遮罩 -->
+      <div class="lightning-flash" id="lightning-flash"></div>
+      <canvas id="lightning-canvas"></canvas>
 
-  <!-- 环境光突变遮罩 -->
-  <div class="lightning-overlay" id="lightning-overlay"></div>
-
-  <!-- 自动轮播背景层 -->
-  <div class="fixed-bg" id="bg-container">
-    <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg4.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
-    
-    <div class="fog-overlay"></div>
-    <div class="vignette"></div>
-  </div>
-
-  <div class="content-wrapper">
-    <section class="hero-section">
-      <div class="title-container" id="hero-title">
-        <div class="sub-title mono">EST. 1888 · LONDON</div>
-        
-        <h1 class="victorian-title">
-          <span class="line-small">The</span>
-          <span class="line-huge blood-splatter" data-text="Blank">Blank</span>
-          <span class="line-medium">Front Page</span>
-        </h1>
-        <div class="vertical-line"></div>
+      <!-- 电影级背景层 -->
+      <div class="fixed-bg" id="bg-container">
+        <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
+        <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
+        <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
+        <div class="bg-image" style="background-image: url('/bg4.jpg')"></div>
+        <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
+        <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
+        <div class="fog-overlay"></div>
+        <div class="vignette"></div>
       </div>
-    </section>
 
-    <div class="transition-spacer"></div>
+      <div class="content-wrapper">
+        <section class="hero-section">
+          <div class="title-container" id="hero-title">
+            <div class="sub-title mono">EST. 1888 · LONDON</div>
+            <h1 class="victorian-title">
+              <span class="line-small">The</span>
+              <span class="line-huge blood-splatter" data-text="Blank">Blank</span>
+              <span class="line-medium">Front Page</span>
+            </h1>
+            <div class="vertical-line"></div>
+          </div>
+        </section>
 
-    <section class="info-section" id="info-section">
-      <div class="content-block" id="info-content">
-        <h2 class="section-title">SEEKING PARTNERS</h2>
-        <div class="roles-grid">
-          <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
-          <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
-          <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
-        </div>
-        <div class="action-area">
-          <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
-        </div>
+        <div class="transition-spacer"></div>
+
+        <section class="info-section" id="info-section">
+          <div class="content-block" id="info-content">
+            <h2 class="section-title">SEEKING PARTNERS</h2>
+            <div class="roles-grid">
+              <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
+              <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
+              <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
+            </div>
+            <div class="action-area">
+              <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
   </div>
 </BaseLayout>
 
 <style>
-  /* 全局隐藏滚动条 */
-  :global(::-webkit-scrollbar) { display: none; }
+  /* 全局锁定，绝对没有滚动条 */
   :global(body) {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    background-color: #050505;
-    color: #e8e8e8;
     margin: 0; padding: 0;
-    overflow-x: hidden;
+    overflow: hidden; /* 锁死原生滚动条 */
+    background-color: #030303;
+    color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
   }
-
   .mono { font-family: 'Courier New', Courier, monospace; }
 
-  /* Canvas 层 */
+  /* 模拟滚动的容器 */
+  .scroll-lock {
+    position: fixed; inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* 强行隐藏任何可能出现的滚动条 */
+    scrollbar-width: none; 
+    -ms-overflow-style: none;
+  }
+  .scroll-lock::-webkit-scrollbar { display: none; }
+  .scroll-content { position: relative; }
+
+  /* ======= 雷暴高频闪光层 ======= */
+  .lightning-flash {
+    position: fixed; inset: 0;
+    background: #dbe4ff; /* 幽蓝冷白 */
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    mix-blend-mode: screen;
+  }
   #lightning-canvas {
     position: fixed; inset: 0;
     width: 100%; height: 100%;
-    z-index: 10;
     pointer-events: none;
+    z-index: 9;
     mix-blend-mode: screen;
   }
 
-  /* 环境光突变遮罩 */
-  .lightning-overlay {
-    position: fixed; inset: 0;
-    background: #fff;
-    opacity: 0;
-    z-index: 9;
-    pointer-events: none;
-    transition: opacity 0.1s;
-  }
-
+  /* ======= 背景层：电影级镜头推拉 ======= */
   .fixed-bg {
-    position: fixed; inset: 0; z-index: 0; overflow: hidden;
-    transition: filter 0.15s ease-out;
+    position: fixed; inset: 0; z-index: 0;
+    overflow: hidden;
   }
-  
-  /* 闪电击中时，背景图瞬间提亮 */
-  .fixed-bg.flash { filter: brightness(2.5) contrast(1.5); }
-
   .bg-image {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
     background-size: cover; background-position: center;
-    filter: grayscale(80%) contrast(120%) brightness(0.3);
+    filter: grayscale(80%) contrast(130%) brightness(0.25);
     opacity: 0;
-    transition: opacity 2.5s ease-in-out;
+    /* 核心：过渡时不仅有透明度，还有缩放和模糊（景深对焦） */
+    transform: scale(1.1);
+    transition: opacity 2s ease-in-out, transform 3s ease-out, filter 2s ease-in-out;
+    will-change: opacity, transform, filter;
   }
-  .bg-image.active { opacity: 1; }
+  /* 当前激活的图片：清晰、原位 */
+  .bg-image.active {
+    opacity: 1;
+    transform: scale(1);
+    filter: grayscale(80%) contrast(130%) brightness(0.35);
+    z-index: 1;
+  }
 
   .fog-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(5,5,5,0.1) 0%, rgba(5,5,5,0.7) 50%, #050505 100%);
-    pointer-events: none;
+    background: linear-gradient(180deg, rgba(3,3,3,0.2) 0%, rgba(3,3,3,0.8) 60%, #030303 100%);
+    pointer-events: none; z-index: 2;
   }
-
   .vignette {
     position: absolute; inset: 0;
-    background: radial-gradient(circle at 50% 30%, transparent 20%, #050505 90%);
-    pointer-events: none;
+    background: radial-gradient(circle at 50% 30%, transparent 20%, #030303 90%);
+    pointer-events: none; z-index: 3;
   }
 
-  .content-wrapper { position: relative; z-index: 5; }
+  .content-wrapper { position: relative; z-index: 4; }
 
+  /* 排版样式保持不变 */
   .hero-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
-
   .title-container { display: flex; flex-direction: column; align-items: center; will-change: transform, opacity, filter; }
-
   .sub-title { font-size: 11px; letter-spacing: 0.4em; color: #888; margin-bottom: 40px; }
-
   .victorian-title { font-family: 'Playfair Display', serif; display: flex; flex-direction: column; align-items: center; margin: 0; line-height: 0.9; }
-
   .line-small { font-size: clamp(28px, 5vw, 56px); font-style: italic; font-weight: 400; color: #a0a0a0; transform: translateX(-15vw); }
   .line-medium { font-size: clamp(32px, 7vw, 80px); font-style: italic; font-weight: 400; color: #d1c5b4; letter-spacing: 0.08em; transform: translateX(10vw); }
   .line-huge { position: relative; font-size: clamp(80px, 20vw, 240px); font-style: italic; font-weight: 400; color: #fff; letter-spacing: -0.01em; text-shadow: 0 10px 30px rgba(0,0,0,0.8); margin: -1vh 0; }
@@ -139,8 +149,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     color: transparent;
     background-image: 
       radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 25%, transparent 60%),
-      radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 10%),
-      radial-gradient(circle at 95% 40%, #6b0000 2%, transparent 6%);
+      radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 10%);
     -webkit-background-clip: text; background-clip: text;
     opacity: 0; transform: scale(0.8) rotate(2deg); transform-origin: top right;
     animation: bloodSplat 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
@@ -152,40 +161,51 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .vertical-line { width: 1px; height: 60px; background: linear-gradient(180deg, #555, transparent); margin-top: 40px; }
-
   .transition-spacer { height: 40vh; }
-
   .info-section { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 40px 40px 100px; }
   .content-block { max-width: 1000px; width: 100%; will-change: transform, opacity; }
-
   .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 80px; }
   .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
   @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
-
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
   .action-area { text-align: center; margin-top: 100px; }
-
   .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); transition: all 0.4s ease; }
   .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
 </style>
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
-    // ======= 1. 自动轮播背景 =======
+    const scrollLock = document.getElementById('scroll-lock');
+
+    // ======= 1. 背景：电影级推拉交替 =======
     const bgs = document.querySelectorAll('.bg-image');
     let currentIndex = 0;
+    
     setInterval(() => {
-      bgs[currentIndex].classList.remove('active');
+      const oldBg = bgs[currentIndex];
+      oldBg.classList.remove('active');
+      oldBg.style.zIndex = '0'; // 沉到底下
+      
       currentIndex = (currentIndex + 1) % bgs.length;
-      bgs[currentIndex].classList.add('active');
+      const newBg = bgs[currentIndex];
+      newBg.style.zIndex = '1'; // 浮到上面
+      
+      // 强行重置一下位置，让新图从 1.1 倍缩放到 1.0
+      newBg.style.transition = 'none';
+      newBg.style.transform = 'scale(1.1)';
+      
+      // 触发重绘，再应用过渡
+      void newBg.offsetWidth; 
+      
+      newBg.style.transition = 'opacity 2s ease-in-out, transform 3s ease-out, filter 2s ease-in-out';
+      newBg.classList.add('active');
     }, 5000);
 
-    // ======= 2. Canvas 分形物理雷电 =======
+    // ======= 2. 高端雷暴物理引擎 =======
     const canvas = document.getElementById('lightning-canvas');
     const ctx = canvas.getContext('2d');
-    const overlay = document.getElementById('lightning-overlay');
-    const bgContainer = document.getElementById('bg-container');
+    const flash = document.getElementById('lightning-flash');
     let w, h;
 
     function resize() {
@@ -195,122 +215,89 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     window.addEventListener('resize', resize);
     resize();
 
-    // 分形闪电路径生成器
-    function generateLightning(x1, y1, x2, y2, depth = 0, maxDepth = 4) {
-      if (depth >= maxDepth || Math.hypot(x2 - x1, y2 - y1) < 10) {
-        return [{x: x2, y: y2}];
-      }
-      // 沿线段垂直方向加入随机偏移，形成自然的锯齿
+    // 画一条带多级辉光的分形闪电
+    function drawBolt(x1, y1, x2, y2, depth, maxDepth, width, opacity) {
+      if (depth >= maxDepth || Math.hypot(x2 - x1, y2 - y1) < 10) return;
+      
       const midX = (x1 + x2) / 2;
       const midY = (y1 + y2) / 2;
-      const offset = (Math.random() - 0.5) * 80; 
+      // 随着深度增加，偏移量减小，锯齿变细
+      const offset = (Math.random() - 0.5) * (100 / (depth + 1)); 
       const angle = Math.atan2(y2 - y1, x2 - x1);
       const perpAngle = angle + Math.PI / 2;
-      const newX = midX + Math.cos(perpAngle) * offset;
-      const newY = midY + Math.sin(perpAngle) * offset;
+      const nX = midX + Math.cos(perpAngle) * offset;
+      const nY = midY + Math.sin(perpAngle) * offset;
 
-      const left = generateLightning(x1, y1, newX, newY, depth + 1, maxDepth);
-      const right = generateLightning(newX, newY, x2, y2, depth + 1, maxDepth);
-      return [...left, ...right];
-    }
-
-    function drawLightning(points, opacity, width) {
-      if (points.length < 2) return;
       ctx.beginPath();
-      ctx.moveTo(points[0].x, points[0].y);
-      for (let i = 1; i < points.length; i++) {
-        ctx.lineTo(points[i].x, points[i].y);
-      }
-      ctx.strokeStyle = `rgba(200, 220, 255, ${opacity})`;
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(nX, nY);
+      ctx.lineTo(x2, y2);
+      
+      // 核心：纯白高光 + 幽蓝泛光
+      ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
       ctx.lineWidth = width;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      // 添加辉光
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = `rgba(150, 180, 255, ${opacity * 0.8})`;
-      ctx.stroke();
-      ctx.shadowBlur = 0; // 重置
-    }
-
-    function strike() {
-      // 清理上一帧
-      ctx.clearRect(0, 0, w, h);
-
-      // 随机决定闪电的起点和终点（从屏幕上方劈到中间偏下）
-      const startX = w * 0.2 + Math.random() * w * 0.6;
-      const startY = -50;
-      const endX = startX + (Math.random() - 0.5) * 400;
-      const endY = h * 0.5 + Math.random() * h * 0.3;
-
-      // 生成主干
-      const mainPath = [{x: startX, y: startY}, ...generateLightning(startX, startY, endX, endY, 0, 4)];
       
-      // 生成一些分叉
-      const branches = [];
-      for (let i = 0; i < 3; i++) {
-        const branchStartIdx = Math.floor(Math.random() * (mainPath.length - 2));
-        const branchStart = mainPath[branchStartIdx];
-        const branchEnd = {
-          x: branchStart.x + (Math.random() - 0.5) * 200,
-          y: branchStart.y + Math.random() * 150 + 50
-        };
-        branches.push(generateLightning(branchStart.x, branchStart.y, branchEnd.x, branchEnd.y, 0, 2));
+      // 叠加幽蓝环境光
+      ctx.shadowBlur = width * 4;
+      ctx.shadowColor = `rgba(150, 200, 255, ${opacity})`;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // 主干分叉
+      if (depth < 2 && Math.random() > 0.5) {
+        // 向右或左生出分叉，逐渐变细变暗
+        const branchX = nX + (Math.random() - 0.5) * 150;
+        const branchY = nY + Math.random() * 100 + 50;
+        drawBolt(nX, nY, branchX, branchY, depth + 1, maxDepth, width * 0.5, opacity * 0.7);
       }
 
-      // 环境光闪烁
-      overlay.style.opacity = '0.8';
-      bgContainer.classList.add('flash');
-
-      // 绘制闪电（主干与分支）
-      drawLightning(mainPath, 1, 3);
-      branches.forEach(b => drawLightning(b, 0.8, 1.5));
-
-      // 毫秒级脉冲闪烁（2-3次）
-      let flashCount = 0;
-      const flashInterval = setInterval(() => {
-        flashCount++;
-        ctx.clearRect(0, 0, w, h);
-        if (flashCount % 2 === 0) {
-          drawLightning(mainPath, 0.6, 2);
-          branches.forEach(b => drawLightning(b, 0.4, 1));
-          overlay.style.opacity = '0.4';
-        } else {
-          drawLightning(mainPath, 1, 3);
-          branches.forEach(b => drawLightning(b, 0.8, 1.5));
-          overlay.style.opacity = '0.8';
-        }
-
-        if (flashCount >= 4) {
-          clearInterval(flashInterval);
-          // 余晖衰减
-          setTimeout(() => {
-            ctx.clearRect(0, 0, w, h);
-            overlay.style.opacity = '0';
-            bgContainer.classList.remove('flash');
-          }, 150);
-        }
-      }, 80);
+      drawBolt(x1, y1, nX, nY, depth + 1, maxDepth, width * 0.8, opacity);
+      drawBolt(nX, nY, x2, y2, depth + 1, maxDepth, width * 0.8, opacity);
     }
 
-    function scheduleNextStrike() {
-      // 随机在 6 到 12 秒之间触发下一次闪电
-      const nextTime = Math.random() * 6000 + 6000;
-      setTimeout(() => {
-        strike();
-        scheduleNextStrike();
-      }, nextTime);
+    function triggerLightning() {
+      ctx.clearRect(0, 0, w, h);
+      
+      const startX = w * 0.2 + Math.random() * w * 0.6;
+      const endX = startX + (Math.random() - 0.5) * 300;
+      
+      // 瞬间环境过曝
+      flash.style.transition = 'none';
+      flash.style.opacity = '0.8';
+      
+      // 画闪电主干
+      drawBolt(startX, -50, endX, h * 0.7, 0, 4, 4, 1);
+
+      // 高频衰减脉冲（真实雷暴的闪烁感）
+      let pulse = 0;
+      const pulseInterval = setInterval(() => {
+        pulse++;
+        flash.style.opacity = pulse === 1 ? '0.2' : (pulse === 2 ? '0.6' : '0.1');
+        
+        if (pulse >= 3) {
+          clearInterval(pulseInterval);
+          // 余晖淡出
+          flash.style.transition = 'opacity 0.8s ease-out';
+          flash.style.opacity = '0';
+          ctx.clearRect(0, 0, w, h);
+        }
+      }, 60);
+
+      // 随机下次触发时间 8~15秒
+      setTimeout(triggerLightning, Math.random() * 7000 + 8000);
     }
 
-    // 启动
-    setTimeout(scheduleNextStrike, 2000);
+    setTimeout(triggerLightning, 2000);
 
-    // ======= 3. 滚动文字动画 =======
+    // ======= 3. 滚动文字动画（适配锁死的滚动容器） =======
     const heroTitle = document.getElementById('hero-title');
     const infoContent = document.getElementById('info-content');
     const infoSection = document.getElementById('info-section');
     
-    window.addEventListener('scroll', () => {
-      const scrollY = window.scrollY;
+    scrollLock.addEventListener('scroll', () => {
+      const scrollY = scrollLock.scrollTop;
 
       if (scrollY <= window.innerHeight) {
         const heroProg = scrollY / window.innerHeight;
