@@ -20,11 +20,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="vignette"></div>
   </div>
 
-  <!-- 第一页 -->
+  <!-- 第一页：信纸（使用 sticky 钉在视口中实现 3D 景深后退） -->
   <section class="hero-section" id="hero-section">
     <div class="newspaper-masthead" id="hero-masthead">
       
-      <!-- 顶部三行（恢复简洁下划线） -->
       <div class="masthead-top mono">
         <span>VOL. I</span>
         <span>LONDON GAZETTE</span>
@@ -54,7 +53,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 第二页 -->
+  <!-- 第二页：黑色高级卡片，从下向上盖住第一页 -->
   <section class="info-section" id="info-section">
     <div class="content-block">
       <h2 class="section-title">SEEKING PARTNERS</h2>
@@ -115,11 +114,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     width: 100%; max-width: 900px;
     display: flex; flex-direction: column;
     transform: translateY(-4vh);
+    /* GPU 加速，极致顺滑 */
     will-change: transform, opacity;
     pointer-events: auto;
   }
 
-  /* 顶部三行 */
   .masthead-top {
     display: flex; justify-content: space-between;
     border-bottom: 1px solid rgba(255,255,255,0.15);
@@ -150,7 +149,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  /* ======= 第二页 ======= */
+  /* ======= 第二页：高级 3D 卡片 ======= */
   .info-section { 
     position: relative;
     z-index: 20;
@@ -158,8 +157,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
-    box-shadow: 0 -20px 50px rgba(0,0,0,0.8), 0 -2px 10px rgba(255,255,255,0.03) inset;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    
+    /* 顶级质感：顶部大圆角 + 极深的外阴影 + 细微的内高光 */
+    border-radius: 40px 40px 0 0;
+    box-shadow: 
+      0 -20px 60px rgba(0,0,0,0.9), 
+      inset 0 2px 0 rgba(255,255,255,0.05);
+      
+    /* 为了让卡片从底下升上来时更具物理感 */
+    transform: translateY(30px);
+    will-change: transform;
   }
   
   .content-block { max-width: 1000px; width: 100%; }
@@ -177,6 +184,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
     .newspaper-masthead { transform: translateY(-2vh); }
+    .info-section { border-radius: 30px 30px 0 0; }
   }
 </style>
 
@@ -184,6 +192,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   document.addEventListener('DOMContentLoaded', () => {
     const bgImages = document.querySelectorAll('.bg-image');
     const heroMasthead = document.getElementById('hero-masthead');
+    const infoSection = document.querySelector('.info-section');
     
     let currentIndex = 0;
     setInterval(() => {
@@ -202,12 +211,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
           
+          // 滚动进度 0 到 1 (以一屏高度为界)
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
-          const scale = 1 - (progress * 0.05);
-          const translateY = -(progress * 10);
+          
+          // 第一页：像退向深处的立体卡片 (缩小并轻微向下移动)
+          const scale = 1 - (progress * 0.15); // 缩放到 85%
+          const translateY = progress * 50; // 轻微下坠，形成被覆盖的景深
           
           heroMasthead.style.transform = `translate3d(0, calc(-4vh + ${translateY}px), 0) scale(${scale})`;
-          heroMasthead.style.opacity = Math.max(0.2, 1 - progress * 0.8);
+          heroMasthead.style.opacity = Math.max(0, 1 - progress * 1.5); // 加速淡出，避免杂乱
+
+          // 第二页：上来时的阻尼复位
+          if (progress > 0.5) {
+            // 进度过半后，卡片贴合屏幕，消除位移偏差
+            infoSection.style.transform = `translateY(0)`;
+          } else {
+            infoSection.style.transform = `translateY(30px)`;
+          }
 
           ticking = false;
         });
