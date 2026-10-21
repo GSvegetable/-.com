@@ -8,11 +8,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet">
 
-  <!-- 自定义双重短进度条 -->
-  <div class="custom-progress-track">
-    <div class="custom-progress-fill" id="progress-bar"></div>
-  </div>
-
   <!-- 背景层 -->
   <div class="fixed-bg" id="bg-container">
     <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
@@ -36,7 +31,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <span>LONDON GAZETTE</span>
           <span>EST. 1888</span>
         </div>
-        <!-- 手动镜像倒影 -->
+        <!-- 手动镜像倒影，死咬住底部 -->
         <div class="masthead-reflect mono" aria-hidden="true">
           <span>VOL. I</span>
           <span>LONDON GAZETTE</span>
@@ -98,27 +93,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   .mono { font-family: 'Courier Prime', monospace; }
 
-  /* ======= 自定义双重短进度条 ======= */
-  .custom-progress-track {
-    position: fixed;
-    right: 50px; /* 往里面靠了 */
-    top: 50%;
-    transform: translateY(-50%);
-    width: 2px;
-    height: 80px; /* 更短了 */
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.15); /* 外面的空心框 */
-    z-index: 100;
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .custom-progress-fill {
-    width: 100%;
-    height: 0%;
-    background: #ffffff; /* 里面变成纯白色 */
-    transition: height 0.1s ease-out;
-  }
-
   /* 背景固定 */
   .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
   .bg-image {
@@ -156,30 +130,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   /* ======= 倒影容器 ======= */
   .masthead-top-wrapper {
     position: relative;
-    margin-bottom: 30px; /* 调整下方文字的间距 */
+    margin-bottom: 30px; 
   }
 
+  /* 移除原文字的底边距和边框，保证贴合 */
   .masthead-top {
     display: flex; justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    padding: 0 0 10px 0;
+    padding: 0;
     font-size: 10px; letter-spacing: 0.3em; color: #888;
+    line-height: 1;
   }
 
-  /* 手动绝对定位的倒影，紧贴 + 偏移 + 更明显 */
+  /* 绝对贴合 + 负边距强拉 */
   .masthead-reflect {
     position: absolute;
     top: 100%;
-    left: 2px; /* 微小的偏移感 */
+    left: 1px; 
     width: 100%;
     display: flex; justify-content: space-between;
-    padding: 2px 0 0 0; /* 紧紧贴着字 */
+    margin-top: -2px; /* 强拉紧贴 */
     font-size: 10px; letter-spacing: 0.3em; color: #aaa;
+    line-height: 1;
     transform: scaleY(-1); /* 翻转 */
-    opacity: 0.65; /* 更明显了 */
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+    opacity: 0.7; 
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%);
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%);
     pointer-events: none;
+    filter: blur(0.3px); /* 增强物理倒影感 */
   }
 
   .letter-body { 
@@ -231,7 +208,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
     .newspaper-masthead { transform: translateY(-2vh); }
-    .custom-progress-track { right: 30px; }
   }
 </style>
 
@@ -239,7 +215,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   document.addEventListener('DOMContentLoaded', () => {
     const bgImages = document.querySelectorAll('.bg-image');
     const heroMasthead = document.getElementById('hero-masthead');
-    const progressBar = document.getElementById('progress-bar');
     
     let currentIndex = 0;
     setInterval(() => {
@@ -257,7 +232,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         window.requestAnimationFrame(() => {
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
-          const totalHeight = document.documentElement.scrollHeight - windowHeight;
           
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
           const scale = 1 - (progress * 0.05);
@@ -265,11 +239,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           
           heroMasthead.style.transform = `translate3d(0, calc(-4vh + ${translateY}px), 0) scale(${scale})`;
           heroMasthead.style.opacity = Math.max(0.2, 1 - progress * 0.8);
-
-          if (totalHeight > 0) {
-            const scrollPercent = (scrollY / totalHeight) * 100;
-            progressBar.style.height = `${scrollPercent}%`;
-          }
 
           ticking = false;
         });
