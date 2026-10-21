@@ -24,19 +24,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="hero-section" id="hero-section">
     <div class="newspaper-masthead" id="hero-masthead">
       
-      <!-- 顶部三行 + 倾斜拉长的倒影 -->
-      <div class="masthead-top-wrapper">
-        <div class="masthead-top mono">
-          <span>VOL. I</span>
-          <span>LONDON GAZETTE</span>
-          <span>EST. 1888</span>
-        </div>
-        <!-- 3D 物理倒影 -->
-        <div class="masthead-reflect mono" aria-hidden="true">
-          <span>VOL. I</span>
-          <span>LONDON GAZETTE</span>
-          <span>EST. 1888</span>
-        </div>
+      <!-- 顶部三行（恢复简洁下划线） -->
+      <div class="masthead-top mono">
+        <span>VOL. I</span>
+        <span>LONDON GAZETTE</span>
+        <span>EST. 1888</span>
       </div>
 
       <div class="letter-body">
@@ -127,39 +119,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     pointer-events: auto;
   }
 
-  /* ======= 倒影容器 ======= */
-  .masthead-top-wrapper {
-    position: relative;
-    margin-bottom: 50px; /* 留出倒影倾斜的空间 */
-    perspective: 300px; /* 开启 3D 透视 */
-  }
-
+  /* 顶部三行 */
   .masthead-top {
     display: flex; justify-content: space-between;
-    padding: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    padding: 0 0 12px 0;
     font-size: 10px; letter-spacing: 0.3em; color: #888;
-    line-height: 1;
-  }
-
-  /* 倾斜、拉长、渐隐的物理倒影 */
-  .masthead-reflect {
-    position: absolute;
-    top: 100%;
-    left: 1px; 
-    width: 100%;
-    display: flex; justify-content: space-between;
-    font-size: 10px; letter-spacing: 0.3em; color: #888;
-    line-height: 1;
-    
-    transform-origin: top center;
-    /* 核心：先翻转，再拉长 1.5 倍，然后向后倒 45度 产生透视 */
-    transform: scaleY(-1.5) rotateX(-45deg); 
-    
-    /* 渐隐：靠近上方清晰，越远（往下）越透明 */
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
-    
-    pointer-events: none;
+    margin-bottom: 30px;
   }
 
   .letter-body { 
@@ -211,8 +177,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
     .newspaper-masthead { transform: translateY(-2vh); }
-    .masthead-top-wrapper { perspective: 150px; }
-    .masthead-reflect { transform: scaleY(-1.2) rotateX(-30deg); }
   }
 </style>
 
