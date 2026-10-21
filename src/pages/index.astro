@@ -9,7 +9,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet">
 
   <!-- 背景层 -->
-  <div class="fixed-bg" id="bg-container">
+  <div class="fixed-bg">
     <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
@@ -20,10 +20,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="vignette"></div>
   </div>
 
-  <!-- 第一页：保持不变 -->
-  <section class="hero-section" id="hero-section">
+  <!-- 第一页 -->
+  <section class="hero-section">
     <div class="perspective-wrap">
-      <div class="newspaper-masthead" id="hero-masthead">
+      <div class="newspaper-masthead">
         <div class="masthead-top mono">
           <span>VOL. I</span>
           <span>LONDON GAZETTE</span>
@@ -47,31 +47,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <p class="signature">Gong Shui.</p>
           </div>
         </div>
-        <div class="fade-mask" id="fade-mask"></div>
       </div>
     </div>
   </section>
 
   <div class="scroll-spacer"></div>
 
-  <!-- 第二页：柔性上滑与转折 -->
-  <div class="info-wrapper">
-    <!-- 边缘模糊遮罩，盖在接缝处吃掉硬线 -->
-    <div class="fold-blur" id="fold-blur"></div>
-    
-    <section class="info-section" id="info-section">
-      <div class="content-block">
-        <h2 class="section-title">SEEKING PARTNERS</h2>
-        <div class="roles-grid">
-          <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
-          <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
-          <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
-        </div>
-        <div class="action-area">
-          <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
-        </div>
-      </div>
-    </section>
+  <!-- 占位第二页，无动画 -->
+  <div style="height: 100vh; background: #050505; position: relative; z-index: 20;"></div>
+
+  <!-- 滚筒红线区域 -->
+  <div class="red-line top-line"></div>
+  <div class="red-line bottom-line"></div>
+  <div class="roller-area">
+    <div class="roller-text mono">ROLLER AREA / 滚筒区域</div>
   </div>
 
 </BaseLayout>
@@ -84,7 +73,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
-  :global(::-webkit-scrollbar) { display: none; width: 0 !important; }
+  :global(::-webkit-scrollbar) { display: none; }
   .mono { font-family: 'Courier Prime', monospace; }
 
   /* 背景固定 */
@@ -99,7 +88,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .fog-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,3,3,0.1) 0%, rgba(3,3,3,0.85) 60%, #030303 100%); pointer-events: none; z-index: 2; }
   .vignette { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, transparent 10%, #030303 90%); pointer-events: none; z-index: 3; }
 
-  /* ======= 第一页 ======= */
+  /* 第一页 */
   .hero-section { 
     position: sticky; top: 0; height: 100vh;
     display: flex; align-items: center; justify-content: center; 
@@ -111,14 +100,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   .newspaper-masthead {
     position: relative; width: 100%; display: flex; flex-direction: column;
-    transform-origin: center bottom; 
-    transform: translateY(-4vh) rotateX(0deg) scaleY(1);
     will-change: transform, opacity; pointer-events: auto;
-  }
-  .fade-mask {
-    position: absolute; inset: -30% 0 0 0;
-    background: linear-gradient(to bottom, #030303 0%, transparent 50%);
-    opacity: 0; pointer-events: none; z-index: 5;
   }
 
   .masthead-top { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 0 0 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #888; margin-bottom: 30px; }
@@ -133,145 +115,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  /* 提供滚动空间 */
   .scroll-spacer { height: 200vh; }
 
-  /* ======= 第二页 ======= */
-  .info-wrapper {
-    position: fixed; inset: 0; z-index: 20;
-    pointer-events: none; overflow: hidden;
-    /* 开启很浅的透视，只为让边缘有微翘感，不翻转 */
-    perspective: 2000px;
+  /* ======= 红线与滚筒区域 ======= */
+  .red-line {
+    position: fixed;
+    left: 0; width: 100%;
+    height: 2px;
+    background: #ff0000;
+    z-index: 9999;
   }
+  .top-line { top: 55vh; } /* 假设滚筒上沿在 55vh */
+  .bottom-line { top: 85vh; } /* 假设滚筒下沿在 85vh，宽度占 30vh (约1/3) */
 
-  /* 吃死硬线的重度模糊遮罩 */
-  .fold-blur {
-    position: absolute;
-    top: 0; left: -10%; width: 120%; height: 60px;
-    background: #050505;
-    filter: blur(15px);
-    z-index: 21;
-    opacity: 0;
+  .roller-area {
+    position: fixed;
+    left: 0; width: 100%;
+    top: 55vh; height: 30vh;
+    background: rgba(255, 0, 0, 0.1); /* 红色半透明底色，显示区域 */
+    z-index: 9998;
+    display: flex; align-items: center; justify-content: center;
     pointer-events: none;
   }
-
-  .info-section { 
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 100px 40px;
-    background-color: #050505;
-    
-    /* 初始：在屏幕下方，头部平贴，下半部分前倾 */
-    transform-origin: center top;
-    transform: translateY(100%) rotateX(-35deg);
-    will-change: transform, border-radius;
-    pointer-events: auto;
-    z-index: 3;
-    box-shadow: inset 0 100px 100px -50px rgba(0,0,0,0.9); /* 顶部阴影，模拟卷纸 */
-  }
-  
-  .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 5; }
-  .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 60px; }
-  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
-  @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
-  .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
-  .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
-  .action-area { text-align: center; margin-top: 80px; }
-  .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(20,20,20,0.8); transition: background 0.4s ease, border-color 0.4s ease; }
-  .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
-
-  @media (max-width: 600px) {
-    .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
-    .content-group { max-width: 100%; }
-    .salutation { font-size: 36px; }
-    .info-section { padding: 80px 20px; }
-    .perspective-wrap { perspective: 900px; padding: 0 20px; }
+  .roller-text {
+    color: #ff0000;
+    font-size: 24px;
+    letter-spacing: 0.2em;
+    opacity: 0.5;
   }
 </style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const bgImages = document.querySelectorAll('.bg-image');
-    const heroMasthead = document.getElementById('hero-masthead');
-    const infoSection = document.getElementById('info-section');
-    const fadeMask = document.getElementById('fade-mask');
-    const foldBlur = document.getElementById('fold-blur');
-    
-    let currentIndex = 0;
-    setInterval(() => {
-      bgImages[currentIndex].classList.remove('active');
-      bgImages[currentIndex].style.zIndex = '0';
-      currentIndex = (currentIndex + 1) % bgImages.length;
-      const newBg = bgImages[currentIndex];
-      newBg.style.zIndex = '1';
-      newBg.classList.add('active');
-    }, 5000);
-
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          const windowHeight = window.innerHeight;
-          
-          const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
-
-          // ======= 第一页 =======
-          const rotateX = progress * 82; 
-          const rad = rotateX * Math.PI / 180;
-          const stretchY = 1 / Math.cos(rad);
-          const translateY = Math.pow(progress, 2) * 12; 
-
-          heroMasthead.style.transform = `
-            translate3d(0, calc(-4vh + ${translateY}vh), 0) 
-            rotateX(${rotateX}deg) 
-            scaleY(${stretchY})
-          `;
-          heroMasthead.style.opacity = Math.max(0, 1 - (progress * 0.6));
-          fadeMask.style.opacity = Math.max(0, (progress - 0.4) * 2);
-
-          // ======= 第二页：自下而上推 + 中间转折 =======
-          if (progress > 0.1) {
-            const p = Math.min(1, (progress - 0.1) / 0.8);
-            
-            // 基础位移：从 100% 推到 0
-            let ty = 100 - (p * 100);
-            let rx = -35; // 默认前倾 35 度
-            let borderR = 80;
-            let blurOpacity = 0;
-
-            // 转折点逻辑：进度 0.6 之后
-            if (p > 0.6) {
-              const turnP = (p - 0.6) / 0.4; // 0 -> 1
-              // 瞬间砸平：角度从 -35 极速归零
-              rx = -35 + (35 * Math.pow(turnP, 3)); 
-              // 圆角变小，绷紧
-              borderR = 80 - (turnP * 40);
-              // 砸平的瞬间，模糊线出现并吃掉接缝
-              blurOpacity = Math.sin(turnP * Math.PI) * 0.8;
-            } else {
-              // 转折前，一直保持前倾，慢慢滑动
-              rx = -35 - (p * 5); // 轻微增加倾斜感
-            }
-
-            // 为了让顶部贴合，位移稍微做一点非线性补偿
-            if (p > 0.8) {
-              ty = ty * 0.5; 
-            }
-
-            infoSection.style.transform = `translateY(${ty}%) rotateX(${rx}deg)`;
-            infoSection.style.borderRadius = `${borderR}px ${borderR}px 0 0`;
-            
-            // 控制接缝处的模糊层
-            foldBlur.style.opacity = blurOpacity;
-            foldBlur.style.top = `${ty}vh`; 
-          }
-
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-  });
-</script>
