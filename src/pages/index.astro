@@ -4,8 +4,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="The Blank Front Page">
   
+  <!-- Canvas 物理闪电层 -->
+  <canvas id="lightning-canvas"></canvas>
+
+  <!-- 环境光突变遮罩 -->
+  <div class="lightning-overlay" id="lightning-overlay"></div>
+
   <!-- 自动轮播背景层 -->
-  <div class="fixed-bg">
+  <div class="fixed-bg" id="bg-container">
     <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
@@ -13,9 +19,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
     
-    <!-- 闪电光照遮罩层 -->
-    <div class="lightning-flash" id="lightning-flash"></div>
-
     <div class="fog-overlay"></div>
     <div class="vignette"></div>
   </div>
@@ -53,7 +56,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
+  /* 全局隐藏滚动条 */
+  :global(::-webkit-scrollbar) { display: none; }
   :global(body) {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
     background-color: #050505;
     color: #e8e8e8;
     margin: 0; padding: 0;
@@ -63,57 +70,56 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .mono { font-family: 'Courier New', Courier, monospace; }
 
-  .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+  /* Canvas 层 */
+  #lightning-canvas {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
 
-  /* 背景图：加入平滑的淡入淡出过渡 */
+  /* 环境光突变遮罩 */
+  .lightning-overlay {
+    position: fixed; inset: 0;
+    background: #fff;
+    opacity: 0;
+    z-index: 9;
+    pointer-events: none;
+    transition: opacity 0.1s;
+  }
+
+  .fixed-bg {
+    position: fixed; inset: 0; z-index: 0; overflow: hidden;
+    transition: filter 0.15s ease-out;
+  }
+  
+  /* 闪电击中时，背景图瞬间提亮 */
+  .fixed-bg.flash { filter: brightness(2.5) contrast(1.5); }
+
   .bg-image {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
     background-size: cover; background-position: center;
     filter: grayscale(80%) contrast(120%) brightness(0.3);
     opacity: 0;
-    transition: opacity 2.5s ease-in-out; /* 2.5秒高级慢速渐变 */
+    transition: opacity 2.5s ease-in-out;
   }
   .bg-image.active { opacity: 1; }
-
-  /* ======= 雷霆特效 ======= */
-  .lightning-flash {
-    position: absolute; inset: 0;
-    background: radial-gradient(circle at 50% 20%, rgba(220, 230, 255, 0.8) 0%, rgba(180, 200, 255, 0.2) 40%, transparent 70%);
-    opacity: 0;
-    pointer-events: none;
-    mix-blend-mode: screen; /* 滤色模式照亮底层 */
-    z-index: 1;
-  }
-
-  /* 闪电闪烁动画：瞬间亮起 -> 骤暗 -> 二次爆闪 -> 彻底暗下 */
-  @keyframes lightningStrike {
-    0% { opacity: 0; }
-    10% { opacity: 1; }
-    20% { opacity: 0.1; }
-    30% { opacity: 0.9; }
-    50% { opacity: 0.2; }
-    60% { opacity: 0.6; }
-    100% { opacity: 0; }
-  }
-
-  .lightning-flash.strike {
-    animation: lightningStrike 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
-  }
 
   .fog-overlay {
     position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(5,5,5,0.1) 0%, rgba(5,5,5,0.7) 50%, #050505 100%);
-    pointer-events: none; z-index: 2;
+    pointer-events: none;
   }
 
   .vignette {
     position: absolute; inset: 0;
     background: radial-gradient(circle at 50% 30%, transparent 20%, #050505 90%);
-    pointer-events: none; z-index: 3;
+    pointer-events: none;
   }
 
-  .content-wrapper { position: relative; z-index: 4; }
+  .content-wrapper { position: relative; z-index: 5; }
 
   .hero-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
 
@@ -166,43 +172,139 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
-    // ======= 1. 自动轮播背景 (每5秒切换一张) =======
+    // ======= 1. 自动轮播背景 =======
     const bgs = document.querySelectorAll('.bg-image');
     let currentIndex = 0;
-
     setInterval(() => {
       bgs[currentIndex].classList.remove('active');
       currentIndex = (currentIndex + 1) % bgs.length;
       bgs[currentIndex].classList.add('active');
     }, 5000);
 
-    // ======= 2. 随机打雷闪电特效 =======
-    const lightning = document.getElementById('lightning-flash');
-    
-    function triggerLightning() {
-      // 如果已经有 strike 类说明正在闪，就跳过
-      if (lightning.classList.contains('strike')) return;
-      
-      // 随机闪电的位置 (偏左或偏右，增加随机感)
-      const posX = Math.random() * 60 + 20; // 20% - 80%
-      lightning.style.background = `radial-gradient(circle at ${posX}% 20%, rgba(220, 230, 255, 0.8) 0%, rgba(180, 200, 255, 0.2) 40%, transparent 70%)`;
-      
-      lightning.classList.add('strike');
-      
-      // 动画结束后移除类名，以便下次触发
-      setTimeout(() => {
-        lightning.classList.remove('strike');
-      }, 800);
+    // ======= 2. Canvas 分形物理雷电 =======
+    const canvas = document.getElementById('lightning-canvas');
+    const ctx = canvas.getContext('2d');
+    const overlay = document.getElementById('lightning-overlay');
+    const bgContainer = document.getElementById('bg-container');
+    let w, h;
 
-      // 随机安排下一次打雷 (7秒到15秒之间)
-      const nextStrike = Math.random() * 8000 + 7000;
-      setTimeout(triggerLightning, nextStrike);
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // 分形闪电路径生成器
+    function generateLightning(x1, y1, x2, y2, depth = 0, maxDepth = 4) {
+      if (depth >= maxDepth || Math.hypot(x2 - x1, y2 - y1) < 10) {
+        return [{x: x2, y: y2}];
+      }
+      // 沿线段垂直方向加入随机偏移，形成自然的锯齿
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2;
+      const offset = (Math.random() - 0.5) * 80; 
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const perpAngle = angle + Math.PI / 2;
+      const newX = midX + Math.cos(perpAngle) * offset;
+      const newY = midY + Math.sin(perpAngle) * offset;
+
+      const left = generateLightning(x1, y1, newX, newY, depth + 1, maxDepth);
+      const right = generateLightning(newX, newY, x2, y2, depth + 1, maxDepth);
+      return [...left, ...right];
     }
 
-    // 启动第一道雷（延迟2秒触发）
-    setTimeout(triggerLightning, 2000);
+    function drawLightning(points, opacity, width) {
+      if (points.length < 2) return;
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+      }
+      ctx.strokeStyle = `rgba(200, 220, 255, ${opacity})`;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      // 添加辉光
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = `rgba(150, 180, 255, ${opacity * 0.8})`;
+      ctx.stroke();
+      ctx.shadowBlur = 0; // 重置
+    }
 
-    // ======= 3. 滚动文字动画（保留原有的） =======
+    function strike() {
+      // 清理上一帧
+      ctx.clearRect(0, 0, w, h);
+
+      // 随机决定闪电的起点和终点（从屏幕上方劈到中间偏下）
+      const startX = w * 0.2 + Math.random() * w * 0.6;
+      const startY = -50;
+      const endX = startX + (Math.random() - 0.5) * 400;
+      const endY = h * 0.5 + Math.random() * h * 0.3;
+
+      // 生成主干
+      const mainPath = [{x: startX, y: startY}, ...generateLightning(startX, startY, endX, endY, 0, 4)];
+      
+      // 生成一些分叉
+      const branches = [];
+      for (let i = 0; i < 3; i++) {
+        const branchStartIdx = Math.floor(Math.random() * (mainPath.length - 2));
+        const branchStart = mainPath[branchStartIdx];
+        const branchEnd = {
+          x: branchStart.x + (Math.random() - 0.5) * 200,
+          y: branchStart.y + Math.random() * 150 + 50
+        };
+        branches.push(generateLightning(branchStart.x, branchStart.y, branchEnd.x, branchEnd.y, 0, 2));
+      }
+
+      // 环境光闪烁
+      overlay.style.opacity = '0.8';
+      bgContainer.classList.add('flash');
+
+      // 绘制闪电（主干与分支）
+      drawLightning(mainPath, 1, 3);
+      branches.forEach(b => drawLightning(b, 0.8, 1.5));
+
+      // 毫秒级脉冲闪烁（2-3次）
+      let flashCount = 0;
+      const flashInterval = setInterval(() => {
+        flashCount++;
+        ctx.clearRect(0, 0, w, h);
+        if (flashCount % 2 === 0) {
+          drawLightning(mainPath, 0.6, 2);
+          branches.forEach(b => drawLightning(b, 0.4, 1));
+          overlay.style.opacity = '0.4';
+        } else {
+          drawLightning(mainPath, 1, 3);
+          branches.forEach(b => drawLightning(b, 0.8, 1.5));
+          overlay.style.opacity = '0.8';
+        }
+
+        if (flashCount >= 4) {
+          clearInterval(flashInterval);
+          // 余晖衰减
+          setTimeout(() => {
+            ctx.clearRect(0, 0, w, h);
+            overlay.style.opacity = '0';
+            bgContainer.classList.remove('flash');
+          }, 150);
+        }
+      }, 80);
+    }
+
+    function scheduleNextStrike() {
+      // 随机在 6 到 12 秒之间触发下一次闪电
+      const nextTime = Math.random() * 6000 + 6000;
+      setTimeout(() => {
+        strike();
+        scheduleNextStrike();
+      }, nextTime);
+    }
+
+    // 启动
+    setTimeout(scheduleNextStrike, 2000);
+
+    // ======= 3. 滚动文字动画 =======
     const heroTitle = document.getElementById('hero-title');
     const infoContent = document.getElementById('info-content');
     const infoSection = document.getElementById('info-section');
@@ -210,7 +312,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
 
-      // 第一屏文字淡出与模糊
       if (scrollY <= window.innerHeight) {
         const heroProg = scrollY / window.innerHeight;
         heroTitle.style.transform = `translateY(${scrollY * 0.4}px)`;
@@ -218,7 +319,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         heroTitle.style.filter = `blur(${heroProg * 10}px)`;
       }
 
-      // 第二屏文字浮现
       const distance = infoSection.offsetTop - scrollY;
       if (distance < window.innerHeight && distance > 0) {
         const infoProg = 1 - (distance / window.innerHeight);
