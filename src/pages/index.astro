@@ -51,16 +51,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
+  <!-- 缩短滚动距离，滑一屏就到第二页 -->
   <div class="scroll-spacer"></div>
 
-  <!-- 占位第二页，无动画 -->
-  <div style="height: 100vh; background: #050505; position: relative; z-index: 20;"></div>
+  <!-- 第二页：带有完整内容和占位固定 -->
+  <div class="info-wrapper" style="position: fixed; inset: 0; z-index: 20; pointer-events: none;">
+    <section class="info-section" style="pointer-events: auto;">
+      <div class="content-block">
+        <h2 class="section-title">SEEKING PARTNERS</h2>
+        <div class="roles-grid">
+          <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
+          <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
+          <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
+        </div>
+        <div class="action-area">
+          <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
+        </div>
+      </div>
+    </section>
+  </div>
 
-  <!-- 滚筒红线区域 -->
+  <!-- 滚筒红线区域 (位置已调整) -->
   <div class="red-line top-line"></div>
   <div class="red-line bottom-line"></div>
   <div class="roller-area">
-    <div class="roller-text mono">ROLLER AREA / 滚筒区域</div>
+    <div class="roller-text mono">ROLLER AREA</div>
   </div>
 
 </BaseLayout>
@@ -115,7 +130,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  .scroll-spacer { height: 200vh; }
+  /* 滑动距离缩短到 100vh */
+  .scroll-spacer { height: 100vh; }
+
+  /* 第二页本体，先固定露出，不加动画 */
+  .info-section { 
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 100px 40px;
+    background-color: #050505;
+    z-index: 3;
+  }
+  
+  .content-block { max-width: 1000px; width: 100%; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 60px; }
+  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
+  @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
+  .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
+  .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
+  .action-area { text-align: center; margin-top: 80px; }
+  .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(20,20,20,0.8); transition: background 0.4s ease, border-color 0.4s ease; }
+  .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
 
   /* ======= 红线与滚筒区域 ======= */
   .red-line {
@@ -125,14 +161,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background: #ff0000;
     z-index: 9999;
   }
-  .top-line { top: 55vh; } /* 假设滚筒上沿在 55vh */
-  .bottom-line { top: 85vh; } /* 假设滚筒下沿在 85vh，宽度占 30vh (约1/3) */
+  
+  /* 上沿在 52vh，下沿在 85vh。总高度 33vh (1/3)，整体偏下 */
+  .top-line { top: 52vh; } 
+  .bottom-line { top: 85vh; } 
 
   .roller-area {
     position: fixed;
     left: 0; width: 100%;
-    top: 55vh; height: 30vh;
-    background: rgba(255, 0, 0, 0.1); /* 红色半透明底色，显示区域 */
+    top: 52vh; height: 33vh;
+    background: rgba(255, 0, 0, 0.1);
     z-index: 9998;
     display: flex; align-items: center; justify-content: center;
     pointer-events: none;
@@ -142,5 +180,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: 24px;
     letter-spacing: 0.2em;
     opacity: 0.5;
+  }
+
+  @media (max-width: 600px) {
+    .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
+    .content-group { max-width: 100%; }
+    .salutation { font-size: 36px; }
+    .info-section { padding: 80px 20px; }
+    .perspective-wrap { perspective: 900px; padding: 0 20px; }
   }
 </style>
