@@ -20,7 +20,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="vignette"></div>
   </div>
 
-  <!-- 第一页：3D 极限拉伸翻折 -->
+  <!-- 第一页：3D 拉伸翻折 -->
   <section class="hero-section" id="hero-section">
     <div class="perspective-wrap">
       <div class="newspaper-masthead" id="hero-masthead">
@@ -52,18 +52,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
 
-        <!-- 暗黑吞噬遮罩 -->
         <div class="fade-mask" id="fade-mask"></div>
       </div>
     </div>
   </section>
 
-  <!-- 第二页：带有超强物理惯性的翻盖 -->
-  <section class="info-wrapper">
-    <!-- 增加了这层，专门用来做交界的圆润模糊线 -->
-    <div class="blur-edge" id="blur-edge"></div>
+  <!-- 留出滚动的空间 -->
+  <div class="scroll-spacer"></div>
+
+  <!-- 第二页：固定在视口中的推拉层 -->
+  <div class="info-wrapper">
+    <!-- 砸平瞬间出现的边缘模糊虚化层 -->
+    <div class="edge-blur" id="edge-blur"></div>
     
-    <div class="info-section" id="info-section">
+    <section class="info-section" id="info-section">
       <div class="content-block">
         <h2 class="section-title">SEEKING PARTNERS</h2>
         <div class="roles-grid">
@@ -75,8 +77,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
 </BaseLayout>
 
@@ -123,17 +125,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .perspective-wrap {
     perspective: 1200px;
     perspective-origin: 50% 0%; 
-    width: 100%;
-    max-width: 900px;
-    padding: 0 40px;
-    display: flex;
-    justify-content: center;
+    width: 100%; max-width: 900px;
+    padding: 0 40px; display: flex; justify-content: center;
   }
 
   .newspaper-masthead {
-    position: relative;
-    width: 100%;
-    display: flex; flex-direction: column;
+    position: relative; width: 100%; display: flex; flex-direction: column;
     transform-origin: center bottom; 
     transform: translateY(-4vh) rotateX(0deg) scaleY(1);
     will-change: transform, opacity;
@@ -141,84 +138,71 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .fade-mask {
-    position: absolute;
-    inset: -30% 0 0 0;
+    position: absolute; inset: -30% 0 0 0;
     background: linear-gradient(to bottom, #030303 0%, transparent 50%);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 5;
+    opacity: 0; pointer-events: none; z-index: 5;
   }
 
-  .masthead-top {
-    display: flex; justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    padding: 0 0 12px 0;
-    font-size: 10px; letter-spacing: 0.3em; color: #888;
-    margin-bottom: 30px;
-  }
-
-  .letter-body { 
-    padding: 20px 0; 
-    display: flex; flex-direction: column; 
-    position: relative; 
-    border-left: 1px solid rgba(255,255,255,0.1); 
-    padding-left: 30px; 
-    margin-left: 10px; 
-    margin-top: 10px; 
-  }
-  
+  .masthead-top { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 0 0 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #888; margin-bottom: 30px; }
+  .letter-body { padding: 20px 0; display: flex; flex-direction: column; position: relative; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; margin-left: 10px; margin-top: 10px; }
   .header-group { margin-bottom: 24px; }
   .salutation { font-family: 'Pinyon Script', cursive; font-size: clamp(40px, 5vw, 60px); color: #f4eee0; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
-  
   .content-group { max-width: 80%; }
   .greeting { font-family: 'Pinyon Script', cursive; font-size: 32px; color: #d1c5b4; margin: 0 0 16px 0; }
   .body-text { font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.8; color: #a39b8d; margin: 0 0 16px 0; text-align: justify; }
   .highlight { color: #d4af37; font-weight: 700; font-style: italic; }
-  
   .signature-group { margin-top: 20px; }
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  /* ======= 第二页 ======= */
+  /* 提供滚动的物理空间 */
+  .scroll-spacer { height: 200vh; }
+
+  /* ======= 第二页：固定舞台，独立推拉 ======= */
   .info-wrapper {
-    position: relative;
+    position: fixed;
+    inset: 0;
     z-index: 20;
-    perspective: 1500px; 
-    background: transparent;
+    display: flex;
+    align-items: flex-end; /* 靠底对齐，方便自下而上推 */
+    perspective: 1200px;
+    perspective-origin: 50% 100%; /* 透视点在底部 */
+    pointer-events: none;
+    overflow: hidden;
   }
 
-  /* 专门的过渡模糊线，用模糊和发光代替生硬线条 */
-  .blur-edge {
+  /* 砸平瞬间的边缘虚化线 */
+  .edge-blur {
     position: absolute;
-    top: -10px;
-    left: 0;
-    width: 100%;
-    height: 30px;
+    top: 0; left: -5%;
+    width: 110%; height: 60px;
     background: #050505;
-    border-radius: 50% 50% 0 0 / 20px 20px 0 0; /* 圆润的弧线 */
-    filter: blur(4px);
-    z-index: 21;
+    border-radius: 50%;
+    filter: blur(15px);
     opacity: 0;
+    z-index: 2;
     pointer-events: none;
   }
 
   .info-section { 
-    min-height: 100vh;
+    position: relative;
+    width: 100%;
+    height: 100vh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
-    /* 顶部超大圆角 */
+    
+    /* 顶部大圆角，提供柔和的过渡 */
     border-radius: 60px 60px 0 0; 
-    /* 去掉生硬边框，改用极深的阴影，让边界和第一页自然融合 */
-    box-shadow: 0 -40px 80px rgba(0,0,0,0.9);
+    box-shadow: 0 -20px 50px rgba(0,0,0,0.8), inset 0 2px 0 rgba(255,255,255,0.05);
     
-    /* 初始状态：夸张地向前倾斜 110 度（几乎倒向用户） */
+    /* 初始状态：在视口下方，向前倾 -50 度 */
     transform-origin: center top;
-    transform: rotateX(-110deg);
-    opacity: 0; 
+    transform: translateY(100%) rotateX(-50deg);
     
-    will-change: transform, opacity, border-radius;
-    backface-visibility: hidden;
+    will-change: transform;
+    pointer-events: auto;
+    z-index: 3;
   }
   
   .content-block { max-width: 1000px; width: 100%; }
@@ -246,7 +230,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const heroMasthead = document.getElementById('hero-masthead');
     const infoSection = document.getElementById('info-section');
     const fadeMask = document.getElementById('fade-mask');
-    const blurEdge = document.getElementById('blur-edge');
+    const edgeBlur = document.getElementById('edge-blur');
     
     let currentIndex = 0;
     setInterval(() => {
@@ -265,9 +249,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
           
+          // 总滚动进度：0 到 1
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // ======= 第一页：动态拉伸与翻折 =======
+          // ======= 1. 第一页：动态拉伸与翻折 =======
           const rotateX = progress * 82; 
           const rad = rotateX * Math.PI / 180;
           const stretchY = 1 / Math.cos(rad);
@@ -278,54 +263,44 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             rotateX(${rotateX}deg) 
             scaleY(${stretchY})
           `;
-
           heroMasthead.style.opacity = Math.max(0, 1 - (progress * 0.6));
           fadeMask.style.opacity = Math.max(0, (progress - 0.4) * 2);
 
-          // ======= 第二页：先倾 -> 瞬间砸下 =======
-          let infoProgress = Math.max(0, (progress - 0.2) / 0.8); 
-          
-          let infoRotateX = 0;
-          let currentRadius = 40; // 初始圆角
+          // ======= 2. 第二页：自下而上滑入 -> 瞬间砸平 =======
+          let ty = 100;
+          let rx = -50;
+          let blurOpacity = 0;
 
-          if (infoProgress < 0.7) {
-            // 阶段1：慢速往前倾 (从 -110度 到 -30度)
-            const p = infoProgress / 0.7;
-            // 这里用极缓的曲线让它慢慢倒向你
-            infoRotateX = -110 + (Math.pow(p, 2) * 80);
-            // 倾斜的时候圆角变大，产生柔性拉扯感
-            currentRadius = 40 + (p * 30);
-          } else if (infoProgress < 0.85) {
-            // 阶段2：瞬间站直（从 -30度 砸到 0度）
-            const p = (infoProgress - 0.7) / 0.15;
-            // 模拟重力加速度极速砸下
-            const easeOut = 1 - Math.pow(1 - p, 3); 
-            infoRotateX = -30 + (easeOut * 30);
-            // 砸下瞬间，交界处圆角极度夸张，形成那道拉扯线
-            currentRadius = 70 - (easeOut * 30);
-          } else {
-            // 阶段3：彻底站直，保留微小的物理回弹
-            const p = (infoProgress - 0.85) / 0.15;
-            infoRotateX = 0;
-            // 回弹时圆角微缩
-            currentRadius = 40 + (Math.sin(p * Math.PI) * 10);
+          if (progress > 0.1) {
+            if (progress <= 0.6) {
+              // 阶段1：从底部滑上来 (进度 0.1 -> 0.6)
+              const p = (progress - 0.1) / 0.5;
+              // 滑动速度：平滑推入
+              ty = 100 - (p * 60); // 滑到离底部 40vh 的位置
+              rx = -50 + (p * 10); // 倾角从 -50 变到 -40
+            } else if (progress <= 0.85) {
+              // 阶段2：转折点，瞬间砸平 (进度 0.6 -> 0.85)
+              const p = (progress - 0.6) / 0.25;
+              const ease = 1 - Math.pow(1 - p, 5); // 极速砸下的重力加速度
+              ty = 40 - (p * 40); // 剩余 40vh 瞬间贴底
+              rx = -40 + (40 * ease); // 角度瞬间归零
+              
+              // 砸平的一瞬间，出现边缘模糊过度线
+              blurOpacity = Math.sin(p * Math.PI); 
+            } else {
+              // 阶段3：完全贴合
+              ty = 0;
+              rx = 0;
+            }
           }
-          
-          // 应用计算出来的状态
-          infoSection.style.transform = `rotateX(${infoRotateX}deg)`;
-          infoSection.style.borderRadius = `${currentRadius}px ${currentRadius}px 0 0`;
-          
-          // 透明度突变，确保它是“砸”出来的
-          infoSection.style.opacity = Math.min(1, infoProgress * 3);
 
-          // 动态控制那根模糊过渡线
-          if (infoProgress > 0.6 && infoProgress < 1) {
-            blurEdge.style.opacity = 1;
-            // 把线往上提一点，让它出现在交界处上方
-            blurEdge.style.top = '-15px';
-          } else {
-            blurEdge.style.opacity = 0;
-          }
+          // 应用第二页的物理状态
+          infoSection.style.transform = `translateY(${ty}vh) rotateX(${rx}deg)`;
+          
+          // 动态控制模糊线，使其出现在交界处
+          edgeBlur.style.opacity = blurOpacity;
+          // 随着面板上升，动态定位这条模糊线的位置
+          edgeBlur.style.top = `calc(${ty}vh - 20px)`;
 
           ticking = false;
         });
