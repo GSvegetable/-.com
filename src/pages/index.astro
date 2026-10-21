@@ -206,7 +206,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const fadeMask = document.getElementById('fade-mask');
     const progressIndicator = document.getElementById('progress-indicator');
     
-    // 强制加载完成后再显示，防止页面初始渲染时跳变
     heroStage.classList.add('loaded');
 
     let currentIndex = 0;
@@ -219,23 +218,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       newBg.classList.add('active');
     }, 5000);
 
-    const getWindowHeight = () => window.innerHeight;
-
     let ticking = false;
     window.addEventListener('scroll', () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const scrollY = window.scrollY;
-          const windowHeight = getWindowHeight();
+          const windowHeight = window.innerHeight;
           
-          const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
+          // 1. 计算全局真实滚动进度 (0 到 1)
+          const totalScrollable = document.documentElement.scrollHeight - windowHeight;
+          const globalProgress = Math.min(1, Math.max(0, scrollY / totalScrollable));
+          
+          // 更新右上角数值，现在只有滑到底部才会是 100%
+          progressIndicator.textContent = Math.round(globalProgress * 100) + '%';
 
-          progressIndicator.textContent = Math.round(progress * 100) + '%';
+          // 2. 计算第一页专属的动画进度 (限制在滑动第一屏的范围内)
+          const heroProgress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          const rotateX = progress * 70; 
+          const rotateX = heroProgress * 70; 
           const rad = rotateX * Math.PI / 180;
           const stretchY = (1 / Math.cos(rad)) * 1.05; 
-          const translateY = Math.pow(progress, 2) * 8; 
+          const translateY = Math.pow(heroProgress, 2) * 8; 
 
           heroStage.style.transform = `
             translate3d(0, ${-4 + translateY}vh, 0) 
@@ -243,8 +246,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             scaleY(${stretchY})
           `;
           
-          heroStage.style.opacity = Math.max(0, 1 - (progress * 0.5));
-          fadeMask.style.opacity = Math.max(0, (progress - 0.3) * 1.5);
+          heroStage.style.opacity = Math.max(0, 1 - (heroProgress * 0.5));
+          fadeMask.style.opacity = Math.max(0, (heroProgress - 0.3) * 1.5);
 
           ticking = false;
         });
