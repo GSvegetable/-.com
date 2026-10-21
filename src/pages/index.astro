@@ -117,8 +117,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .perspective-wrap {
-    perspective: 1000px;
-    /* 关键改变：把灭点定在屏幕最上方，这样向后倒的时候上面不会露底 */
+    perspective: 1200px;
+    /* 灭点锁死在顶部，保证翻折时顶部不会往下掉 */
     perspective-origin: 50% 0%; 
     width: 100%;
     max-width: 900px;
@@ -131,18 +131,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     position: relative;
     width: 100%;
     display: flex; flex-direction: column;
-    /* 以底部为轴心向后翻折 */
+    /* 底部为轴心 */
     transform-origin: center bottom; 
     transform: translateY(-4vh) rotateX(0deg) scaleY(1);
     will-change: transform;
     pointer-events: auto;
   }
 
-  /* 暗黑吞噬遮罩，让拉长部分的文字融入黑暗 */
+  /* 吞噬遮罩 */
   .fade-mask {
     position: absolute;
-    inset: -20% 0 0 0;
-    background: linear-gradient(to bottom, #030303 0%, transparent 40%);
+    inset: -30% 0 0 0;
+    background: linear-gradient(to bottom, #030303 0%, transparent 50%);
     opacity: 0;
     pointer-events: none;
     z-index: 5;
@@ -208,7 +208,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
     .info-section { border-radius: 30px 30px 0 0; }
-    .perspective-wrap { perspective: 800px; padding: 0 20px; }
+    .perspective-wrap { perspective: 900px; padding: 0 20px; }
   }
 </style>
 
@@ -239,29 +239,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           // 滚动进度 0 到 1
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // 1. 向后翻折角度：最高翻到 85 度，几乎平躺
-          const rotateX = progress * 85; 
-
-          // 2. 极端的纵向拉伸（模拟顶点投影）
-          // 为了让顶端死死贴住天花板，我们需要极大的拉伸比例
-          const stretchY = 1 + (progress * 1.8); 
+          // 1. 设定一个极限角度，比如 82 度（不要到 90 度，否则数学上无穷大）
+          const rotateX = progress * 82; 
           
-          // 3. 强制向上位移，配合拉伸
-          // 因为透视点在顶部，翻折会让底端疯狂向中间缩，顶端不变。
-          // 我们通过 translateY 向上顶，确保没有一丝缝隙。
-          const translateY = progress * 15; 
+          // 2. 实时计算！将角度转为弧度
+          const rad = rotateX * Math.PI / 180;
+          
+          // 3. 核心物理补偿：根据余弦定理，实时求出刚好填满屏幕的拉伸倍率
+          // 1 / cos(θ) 保证了不管翻折到多少度，视觉高度永远顶满
+          const stretchY = 1 / Math.cos(rad);
 
+          // 4. 由于透视的景深感，顶部还需要一点微小的纵向补偿推力
+          // 这里用平方函数做一个平滑的补偿（防止前期拉过猛）
+          const translateY = Math.pow(progress, 2) * 12; 
+
+          // 应用精准的数学变换组合
           heroMasthead.style.transform = `
             translate3d(0, calc(-4vh + ${translateY}vh), 0) 
             rotateX(${rotateX}deg) 
             scaleY(${stretchY})
           `;
 
-          // 4. 当拉长到一定程度时，顶部的文字会变得像面条，用暗黑遮罩把顶部的文字吞掉
-          fadeMask.style.opacity = Math.max(0, progress * 2 - 0.5);
+          // 5. 当拉伸到后半段（角度大于 45 度左右），文字会变得像面条
+          // 用暗黑遮罩渐渐吞掉上面的部分，保留视觉冲击力但不至于难看
+          const maskProgress = Math.max(0, (progress - 0.4) * 2); 
+          fadeMask.style.opacity = maskProgress;
 
           // 纸张整体稍微淡出
-          heroMasthead.style.opacity = Math.max(0, 1 - (progress * 1.3));
+          heroMasthead.style.opacity = Math.max(0, 1 - (progress * 1.2));
 
           // 第二页：随着拉伸同步浮现
           const infoScale = 0.95 + (progress * 0.05);
