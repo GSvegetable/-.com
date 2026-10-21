@@ -4,15 +4,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="The Blank Front Page">
   
-  <!-- 彻底锁死滚动的容器，100% 消灭滚动条 -->
+  <!-- 彻底锁死滚动条的容器 -->
   <div class="scroll-lock" id="scroll-lock">
     <div class="scroll-content" id="scroll-content">
       
-      <!-- 雷暴环境光遮罩 -->
-      <div class="lightning-flash" id="lightning-flash"></div>
-      <canvas id="lightning-canvas"></canvas>
+      <!-- WebGL 渲染层 -->
+      <canvas id="webgl-canvas"></canvas>
+      
+      <!-- 高频白光过曝遮罩 -->
+      <div class="flash-overlay" id="flash-overlay"></div>
 
-      <!-- 电影级背景层 -->
+      <!-- 自动轮播背景层 -->
       <div class="fixed-bg" id="bg-container">
         <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
         <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
@@ -58,67 +60,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
-  /* 全局锁定，绝对没有滚动条 */
   :global(body) {
     margin: 0; padding: 0;
-    overflow: hidden; /* 锁死原生滚动条 */
+    overflow: hidden;
     background-color: #030303;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
   }
   .mono { font-family: 'Courier New', Courier, monospace; }
 
-  /* 模拟滚动的容器 */
   .scroll-lock {
     position: fixed; inset: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    /* 强行隐藏任何可能出现的滚动条 */
-    scrollbar-width: none; 
-    -ms-overflow-style: none;
+    overflow-y: auto; overflow-x: hidden;
+    scrollbar-width: none; -ms-overflow-style: none;
   }
   .scroll-lock::-webkit-scrollbar { display: none; }
   .scroll-content { position: relative; }
 
-  /* ======= 雷暴高频闪光层 ======= */
-  .lightning-flash {
+  /* WebGL 画布层 */
+  #webgl-canvas {
     position: fixed; inset: 0;
-    background: #dbe4ff; /* 幽蓝冷白 */
-    opacity: 0;
+    width: 100%; height: 100%;
     pointer-events: none;
     z-index: 10;
     mix-blend-mode: screen;
   }
-  #lightning-canvas {
+
+  .flash-overlay {
     position: fixed; inset: 0;
-    width: 100%; height: 100%;
+    background: #fff;
+    opacity: 0;
     pointer-events: none;
     z-index: 9;
-    mix-blend-mode: screen;
   }
 
-  /* ======= 背景层：电影级镜头推拉 ======= */
-  .fixed-bg {
-    position: fixed; inset: 0; z-index: 0;
-    overflow: hidden;
-  }
+  /* 背景层（推拉过渡） */
+  .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
   .bg-image {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
     background-size: cover; background-position: center;
     filter: grayscale(80%) contrast(130%) brightness(0.25);
     opacity: 0;
-    /* 核心：过渡时不仅有透明度，还有缩放和模糊（景深对焦） */
     transform: scale(1.1);
     transition: opacity 2s ease-in-out, transform 3s ease-out, filter 2s ease-in-out;
-    will-change: opacity, transform, filter;
+    will-change: opacity, transform;
   }
-  /* 当前激活的图片：清晰、原位 */
   .bg-image.active {
-    opacity: 1;
-    transform: scale(1);
-    filter: grayscale(80%) contrast(130%) brightness(0.35);
-    z-index: 1;
+    opacity: 1; transform: scale(1);
+    filter: grayscale(80%) contrast(130%) brightness(0.35); z-index: 1;
   }
 
   .fog-overlay {
@@ -133,8 +123,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .content-wrapper { position: relative; z-index: 4; }
-
-  /* 排版样式保持不变 */
   .hero-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
   .title-container { display: flex; flex-direction: column; align-items: center; will-change: transform, opacity, filter; }
   .sub-title { font-size: 11px; letter-spacing: 0.4em; color: #888; margin-bottom: 40px; }
@@ -174,138 +162,184 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
 </style>
 
-<script is:inline>
+<script>
+  import * as THREE from 'three';
+  import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+  import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
   document.addEventListener('DOMContentLoaded', () => {
     const scrollLock = document.getElementById('scroll-lock');
+    const flashOverlay = document.getElementById('flash-overlay');
 
-    // ======= 1. 背景：电影级推拉交替 =======
+    // ======= 1. 背景轮播 =======
     const bgs = document.querySelectorAll('.bg-image');
     let currentIndex = 0;
-    
     setInterval(() => {
-      const oldBg = bgs[currentIndex];
-      oldBg.classList.remove('active');
-      oldBg.style.zIndex = '0'; // 沉到底下
-      
+      bgs[currentIndex].classList.remove('active');
+      bgs[currentIndex].style.zIndex = '0';
       currentIndex = (currentIndex + 1) % bgs.length;
       const newBg = bgs[currentIndex];
-      newBg.style.zIndex = '1'; // 浮到上面
-      
-      // 强行重置一下位置，让新图从 1.1 倍缩放到 1.0
+      newBg.style.zIndex = '1';
       newBg.style.transition = 'none';
       newBg.style.transform = 'scale(1.1)';
-      
-      // 触发重绘，再应用过渡
       void newBg.offsetWidth; 
-      
       newBg.style.transition = 'opacity 2s ease-in-out, transform 3s ease-out, filter 2s ease-in-out';
       newBg.classList.add('active');
     }, 5000);
 
-    // ======= 2. 高端雷暴物理引擎 =======
-    const canvas = document.getElementById('lightning-canvas');
-    const ctx = canvas.getContext('2d');
-    const flash = document.getElementById('lightning-flash');
-    let w, h;
+    // ======= 2. Three.js WebGL 渲染引擎 =======
+    const canvas = document.getElementById('webgl-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    
+    const scene = new THREE.Scene();
+    // 透视相机，用于产生物理景深和镜头震颤
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 10;
 
-    function resize() {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
+    // 后期处理：耀眼的泛光 (Bloom)
+    const renderScene = new RenderPass(scene, camera);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      1.5,  // 强度
+      0.4,  // 半径
+      0.85  // 阈值
+    );
+    bloomPass.threshold = 0.1; // 降低阈值，让闪电带起强烈的溢光
+    bloomPass.strength = 0;    // 初始不亮，闪电劈下时激活
+    bloomPass.radius = 0.8;
 
-    // 画一条带多级辉光的分形闪电
-    function drawBolt(x1, y1, x2, y2, depth, maxDepth, width, opacity) {
-      if (depth >= maxDepth || Math.hypot(x2 - x1, y2 - y1) < 10) return;
+    const composer = new EffectComposer(renderer);
+    composer.addPass(renderScene);
+    composer.addPass(bloomPass);
+
+    // ======= 3. 生成有厚度的分形闪电几何体 =======
+    let lightningMesh = null;
+    let lineMaterial = new THREE.LineBasicMaterial({ color: 0xeeeeff, transparent: true, opacity: 0 });
+
+    function createLightning() {
+      if (lightningMesh) scene.remove(lightningMesh);
+
+      const points = [];
+      const startX = (Math.random() - 0.5) * 15; // 屏幕上方随机起点
       
-      const midX = (x1 + x2) / 2;
-      const midY = (y1 + y2) / 2;
-      // 随着深度增加，偏移量减小，锯齿变细
-      const offset = (Math.random() - 0.5) * (100 / (depth + 1)); 
-      const angle = Math.atan2(y2 - y1, x2 - x1);
-      const perpAngle = angle + Math.PI / 2;
-      const nX = midX + Math.cos(perpAngle) * offset;
-      const nY = midY + Math.sin(perpAngle) * offset;
+      // 核心主干
+      let currentX = startX;
+      let currentY = 8;
+      const step = 0.4;
 
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(nX, nY);
-      ctx.lineTo(x2, y2);
-      
-      // 核心：纯白高光 + 幽蓝泛光
-      ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
-      ctx.lineWidth = width;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      
-      // 叠加幽蓝环境光
-      ctx.shadowBlur = width * 4;
-      ctx.shadowColor = `rgba(150, 200, 255, ${opacity})`;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      // 主干分叉
-      if (depth < 2 && Math.random() > 0.5) {
-        // 向右或左生出分叉，逐渐变细变暗
-        const branchX = nX + (Math.random() - 0.5) * 150;
-        const branchY = nY + Math.random() * 100 + 50;
-        drawBolt(nX, nY, branchX, branchY, depth + 1, maxDepth, width * 0.5, opacity * 0.7);
+      for (let y = 8; y > -5; y -= step) {
+        points.push(new THREE.Vector3(currentX, y, 0));
+        // 垂直方向的自然抖动
+        currentX += (Math.random() - 0.5) * 1.2; 
       }
 
-      drawBolt(x1, y1, nX, nY, depth + 1, maxDepth, width * 0.8, opacity);
-      drawBolt(nX, nY, x2, y2, depth + 1, maxDepth, width * 0.8, opacity);
+      // 使用 BufferGeometry 连成线
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      lightningMesh = new THREE.Line(geometry, lineMaterial);
+      
+      // 让闪电稍微倾斜
+      lightningMesh.rotation.z = (Math.random() - 0.5) * 0.2;
+      scene.add(lightningMesh);
     }
 
+    // ======= 4. 物理雷电动画与镜头震动 =======
+    let shakeIntensity = 0;
+    let lightningActive = false;
+    let flashTimeline = 0;
+
     function triggerLightning() {
-      ctx.clearRect(0, 0, w, h);
+      createLightning();
+      lightningActive = true;
+      flashTimeline = 0;
       
-      const startX = w * 0.2 + Math.random() * w * 0.6;
-      const endX = startX + (Math.random() - 0.5) * 300;
-      
-      // 瞬间环境过曝
-      flash.style.transition = 'none';
-      flash.style.opacity = '0.8';
-      
-      // 画闪电主干
-      drawBolt(startX, -50, endX, h * 0.7, 0, 4, 4, 1);
+      // 瞬间爆闪
+      bloomPass.strength = 4.0;
+      lineMaterial.opacity = 1.0;
+      shakeIntensity = 0.6; // 镜头剧烈震动
 
-      // 高频衰减脉冲（真实雷暴的闪烁感）
-      let pulse = 0;
+      // 高频频闪调度
+      let pulseCount = 0;
       const pulseInterval = setInterval(() => {
-        pulse++;
-        flash.style.opacity = pulse === 1 ? '0.2' : (pulse === 2 ? '0.6' : '0.1');
-        
-        if (pulse >= 3) {
+        pulseCount++;
+        if (pulseCount === 1) {
+          // 第一次暗下
+          bloomPass.strength = 1.5;
+          lineMaterial.opacity = 0.3;
+          shakeIntensity = 0.2;
+        } else if (pulseCount === 2) {
+          // 第二次小爆闪
+          bloomPass.strength = 3.0;
+          lineMaterial.opacity = 0.8;
+          shakeIntensity = 0.4;
+        } else if (pulseCount >= 3) {
+          // 余晖衰减
           clearInterval(pulseInterval);
-          // 余晖淡出
-          flash.style.transition = 'opacity 0.8s ease-out';
-          flash.style.opacity = '0';
-          ctx.clearRect(0, 0, w, h);
+          bloomPass.strength = 0;
+          lineMaterial.opacity = 0;
+          shakeIntensity = 0;
+          lightningActive = false;
+          if (lightningMesh) scene.remove(lightningMesh);
         }
-      }, 60);
+      }, 80);
 
-      // 随机下次触发时间 8~15秒
+      // 环境光遮罩闪烁
+      flashOverlay.style.transition = 'none';
+      flashOverlay.style.opacity = '0.6';
+      setTimeout(() => {
+        flashOverlay.style.transition = 'opacity 1s ease-out';
+        flashOverlay.style.opacity = '0';
+      }, 100);
+
+      // 随机安排下一次雷击 (8~15秒)
       setTimeout(triggerLightning, Math.random() * 7000 + 8000);
     }
 
+    // 延迟 2 秒启动第一次
     setTimeout(triggerLightning, 2000);
 
-    // ======= 3. 滚动文字动画（适配锁死的滚动容器） =======
+    // ======= 5. 渲染循环 =======
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      // 镜头震动算法 (物理阻尼震荡)
+      if (shakeIntensity > 0) {
+        camera.position.x = (Math.random() - 0.5) * shakeIntensity;
+        camera.position.y = (Math.random() - 0.5) * shakeIntensity;
+        shakeIntensity *= 0.85; // 迅速衰减
+      } else {
+        camera.position.x = 0;
+        camera.position.y = 0;
+      }
+
+      composer.render();
+    }
+    animate();
+
+    // 窗口尺寸适配
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ======= 6. 滚动文字动画 =======
     const heroTitle = document.getElementById('hero-title');
     const infoContent = document.getElementById('info-content');
     const infoSection = document.getElementById('info-section');
     
     scrollLock.addEventListener('scroll', () => {
       const scrollY = scrollLock.scrollTop;
-
       if (scrollY <= window.innerHeight) {
         const heroProg = scrollY / window.innerHeight;
         heroTitle.style.transform = `translateY(${scrollY * 0.4}px)`;
         heroTitle.style.opacity = 1 - heroProg;
         heroTitle.style.filter = `blur(${heroProg * 10}px)`;
       }
-
       const distance = infoSection.offsetTop - scrollY;
       if (distance < window.innerHeight && distance > 0) {
         const infoProg = 1 - (distance / window.innerHeight);
