@@ -11,7 +11,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <!-- 实时滚动进度监听器 -->
   <div class="debug-progress mono" id="progress-indicator">0%</div>
 
-  <!-- 第一页 -->
+  <!-- 第一页：彻底锁死在底层背景 -->
   <section class="hero-section">
     <div class="perspective-wrap">
       <div class="hero-stage" id="hero-masthead" style="transform: translate3d(0, -4vh, 0) rotateX(0deg) scaleY(1);">
@@ -59,7 +59,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 第二页 -->
+  <!-- 这个占位符提供滑动的物理空间 -->
+  <div class="scroll-spacer"></div>
+
+  <!-- 第二页：浮在上面的内容层 -->
   <section class="info-section">
     <div class="content-block">
       <h2 class="section-title">SEEKING PARTNERS</h2>
@@ -77,12 +80,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
+  :global(html) {
+    /* 彻底禁用浏览器触底回弹 */
+    overscroll-behavior-y: none; 
+  }
   :global(body) {
     margin: 0; padding: 0;
     background-color: #030303;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
   }
   :global(::-webkit-scrollbar) { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
@@ -96,11 +104,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     pointer-events: none;
   }
 
-  /* ======= 第一页 ======= */
+  /* ======= 第一页：纯固定背景 ======= */
   .hero-section { 
-    position: sticky; top: 0; 
-    height: 100vh;
-    height: 100lvh; 
+    position: fixed; /* 改成 fixed，彻底钉死，绝不被顶走 */
+    inset: 0;
+    height: 100vh; height: 100lvh;
     display: flex; align-items: center; justify-content: center; 
     z-index: 10; overflow: hidden; pointer-events: none;
   }
@@ -114,23 +122,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .hero-stage {
     position: relative;
-    width: 100%; max-width: 900px; height: 100vh;
-    height: 100lvh;
+    width: 100%; max-width: 900px; height: 100vh; height: 100lvh;
     display: flex; flex-direction: column; justify-content: center;
     padding: 0 40px;
     transform-origin: center bottom; 
     will-change: transform, opacity;
     pointer-events: auto;
-    
     -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
     mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-    
-    opacity: 0;
-    transition: opacity 0.3s ease-out;
+    opacity: 0; transition: opacity 0.3s ease-out;
   }
-  .hero-stage.loaded {
-    opacity: 1;
-  }
+  .hero-stage.loaded { opacity: 1; }
 
   .bg-layer { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
   .bg-image {
@@ -167,10 +169,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     filter: blur(0.3px) contrast(1.2); 
   }
 
-  /* ======= 第二页 ======= */
+  /* 占位符，提供滚动的物理空间 */
+  .scroll-spacer { height: 100vh; height: 100lvh; pointer-events: none; }
+
+  /* ======= 第二页：从底部滑上来盖住 ======= */
   .info-section { 
-    position: relative; z-index: 20; min-height: 100vh;
-    min-height: 100lvh;
+    position: relative; z-index: 20; min-height: 100vh; min-height: 100lvh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: rgba(5, 5, 5, 0.75);
@@ -225,14 +229,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
           
-          // 1. 计算全局真实滚动进度 (0 到 1)
           const totalScrollable = document.documentElement.scrollHeight - windowHeight;
           const globalProgress = Math.min(1, Math.max(0, scrollY / totalScrollable));
           
-          // 更新右上角数值，现在只有滑到底部才会是 100%
           progressIndicator.textContent = Math.round(globalProgress * 100) + '%';
 
-          // 2. 计算第一页专属的动画进度 (限制在滑动第一屏的范围内)
           const heroProgress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
           const rotateX = heroProgress * 70; 
