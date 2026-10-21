@@ -8,52 +8,57 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet">
 
-  <!-- 背景固定层 -->
-  <div class="fixed-bg">
-    <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg4.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
-    <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
-    <div class="fog-overlay"></div>
-    <div class="vignette"></div>
-  </div>
-
-  <!-- 第一页：3D 拉伸翻折（透视调轻微） -->
+  <!-- 第一页：包含背景+文字，一起在 3D 空间中运动 -->
   <section class="hero-section">
     <div class="perspective-wrap">
-      <div class="newspaper-masthead" id="hero-masthead">
+      
+      <!-- 第一页的舞台（带四周渐隐遮罩） -->
+      <div class="hero-stage" id="hero-masthead">
         
-        <div class="masthead-top mono">
-          <span>VOL. I</span>
-          <span>LONDON GAZETTE</span>
-          <span>EST. 1888</span>
+        <!-- 跟随翻折的背景图 -->
+        <div class="bg-layer">
+          <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
+          <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
+          <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
+          <div class="bg-image" style="background-image: url('/bg4.jpg')"></div>
+          <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
+          <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
         </div>
 
-        <div class="letter-body">
-          <div class="header-group">
-            <p class="salutation">To the Esteemed Visionaries,</p>
+        <!-- 文字内容层 -->
+        <div class="newspaper-masthead">
+          <div class="masthead-top mono">
+            <span>VOL. I</span>
+            <span>LONDON GAZETTE</span>
+            <span>EST. 1888</span>
           </div>
-          
-          <div class="content-group">
-            <p class="greeting">Dear Partner,</p>
-            <p class="body-text">
-              The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
-            </p>
-            <p class="body-text">
-              We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
-            </p>
-          </div>
-          
-          <div class="signature-group">
-            <p class="sign-off">Yours in the mist,</p>
-            <p class="signature">Gong Shui.</p>
+
+          <div class="letter-body">
+            <div class="header-group">
+              <p class="salutation">To the Esteemed Visionaries,</p>
+            </div>
+            
+            <div class="content-group">
+              <p class="greeting">Dear Partner,</p>
+              <p class="body-text">
+                The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
+              </p>
+              <p class="body-text">
+                We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
+              </p>
+            </div>
+            
+            <div class="signature-group">
+              <p class="sign-off">Yours in the mist,</p>
+              <p class="signature">Gong Shui.</p>
+            </div>
           </div>
         </div>
 
+        <!-- 顶部的纯黑吞噬遮罩 -->
         <div class="fade-mask" id="fade-mask"></div>
       </div>
+
     </div>
   </section>
 
@@ -77,6 +82,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <style>
   :global(body) {
     margin: 0; padding: 0;
+    /* 纯黑底 */
     background-color: #030303;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
@@ -84,18 +90,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   :global(::-webkit-scrollbar) { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
-
-  /* 背景 */
-  .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
-  .bg-image {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background-size: cover; background-position: center;
-    filter: grayscale(100%) contrast(130%) brightness(0.2);
-    opacity: 0; transition: opacity 3s ease-in-out; 
-  }
-  .bg-image.active { opacity: 1; z-index: 1; }
-  .fog-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,3,3,0.1) 0%, rgba(3,3,3,0.85) 60%, #030303 100%); pointer-events: none; z-index: 2; }
-  .vignette { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, transparent 10%, #030303 90%); pointer-events: none; z-index: 3; }
 
   /* ======= 第一页 ======= */
   .hero-section { 
@@ -105,24 +99,50 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .perspective-wrap {
-    /* 核心修复：透视距离从 1200px 拉长到 3000px，让两边的收窄变得极轻微 */
-    perspective: 3000px; 
+    /* 极限拉长透视，彻底消除夸张的 T 字形 */
+    perspective: 8000px; 
     perspective-origin: 50% 0%; 
-    width: 100%; max-width: 900px; padding: 0 40px; display: flex; justify-content: center;
+    width: 100%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+  }
+
+  /* 把背景和文字打包在一起 */
+  .hero-stage {
+    position: relative;
+    width: 100%; max-width: 900px; height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 40px;
+    transform-origin: center bottom; 
+    transform: rotateX(0deg) scaleY(1);
+    will-change: transform, opacity;
+    pointer-events: auto;
+    
+    /* 核心：四周渐隐遮罩，消除所有边缘轮廓 */
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  }
+
+  /* 跟随运动的背景图 */
+  .bg-layer {
+    position: absolute; inset: 0; z-index: -1;
+    overflow: hidden;
+  }
+  .bg-image {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center;
+    filter: grayscale(100%) contrast(130%) brightness(0.2);
+    opacity: 0; transition: opacity 3s ease-in-out; 
+  }
+  .bg-image.active { opacity: 1; }
+
+  .fade-mask {
+    position: absolute; inset: -30% 0 0 0;
+    background: linear-gradient(to bottom, #030303 0%, transparent 60%);
+    opacity: 0; pointer-events: none; z-index: 5;
   }
 
   .newspaper-masthead {
     position: relative; width: 100%; display: flex; flex-direction: column;
-    transform-origin: center bottom; 
-    transform: translateY(-4vh) rotateX(0deg) scaleY(1);
-    will-change: transform, opacity;
-    pointer-events: auto;
-  }
-
-  .fade-mask {
-    position: absolute; inset: -30% 0 0 0;
-    background: linear-gradient(to bottom, #030303 0%, transparent 50%);
-    opacity: 0; pointer-events: none; z-index: 5;
   }
 
   .masthead-top { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 0 0 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #888; margin-bottom: 30px; }
@@ -139,22 +159,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   /* ======= 第二页：半透明磨砂玻璃 ======= */
   .info-section { 
-    position: relative;
-    z-index: 20;
-    min-height: 100vh;
+    position: relative; z-index: 20; min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
-    
     background-color: rgba(5, 5, 5, 0.75);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%);
     mask-image: linear-gradient(to bottom, transparent 0%, black 35%);
-    
-    border-radius: 0;
-    box-shadow: none;
-    border-top: none;
   }
   
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
@@ -168,19 +180,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
 
   @media (max-width: 600px) {
+    .hero-stage { padding: 0 20px; }
     .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
     .info-section { padding: 80px 20px; }
-    /* 手机端透视距离也拉长 */
-    .perspective-wrap { perspective: 2000px; padding: 0 20px; }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const bgImages = document.querySelectorAll('.bg-image');
-    const heroMasthead = document.getElementById('hero-masthead');
+    const heroStage = document.getElementById('hero-masthead');
     const fadeMask = document.getElementById('fade-mask');
     
     let currentIndex = 0;
@@ -202,20 +213,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // ======= 第一页：拉伸翻折 =======
-          const rotateX = progress * 82; 
+          // 1. 角度极度收敛，最大只翻折 45 度
+          const rotateX = progress * 45; 
+          
+          // 2. 数学补偿拉伸，保证顶边永远不露出缝隙
           const rad = rotateX * Math.PI / 180;
-          const stretchY = 1 / Math.cos(rad);
-          const translateY = Math.pow(progress, 2) * 12; 
+          // 这里加上 1.2 倍的基础拉伸，配合径向遮罩，让整体更有深渊感
+          const stretchY = (1 / Math.cos(rad)) * 1.2; 
+          
+          const translateY = Math.pow(progress, 2) * 10; 
 
-          heroMasthead.style.transform = `
+          // 背景和文字一起翻折、拉长
+          heroStage.style.transform = `
             translate3d(0, calc(-4vh + ${translateY}vh), 0) 
             rotateX(${rotateX}deg) 
             scaleY(${stretchY})
           `;
           
-          heroMasthead.style.opacity = Math.max(0, 1 - (progress * 0.6));
-          fadeMask.style.opacity = Math.max(0, (progress - 0.4) * 2);
+          heroStage.style.opacity = Math.max(0, 1 - (progress * 0.6));
+          
+          // 上方继续用纯黑吞噬
+          fadeMask.style.opacity = Math.max(0, (progress - 0.3) * 1.5);
 
           ticking = false;
         });
