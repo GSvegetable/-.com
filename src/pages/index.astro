@@ -20,22 +20,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="vignette"></div>
   </div>
 
-  <!-- 第一页：3D 拉伸翻折 -->
+  <!-- 第一页：保持不变 -->
   <section class="hero-section" id="hero-section">
     <div class="perspective-wrap">
       <div class="newspaper-masthead" id="hero-masthead">
-        
         <div class="masthead-top mono">
           <span>VOL. I</span>
           <span>LONDON GAZETTE</span>
           <span>EST. 1888</span>
         </div>
-
         <div class="letter-body">
           <div class="header-group">
             <p class="salutation">To the Esteemed Visionaries,</p>
           </div>
-          
           <div class="content-group">
             <p class="greeting">Dear Partner,</p>
             <p class="body-text">
@@ -45,13 +42,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
             </p>
           </div>
-          
           <div class="signature-group">
             <p class="sign-off">Yours in the mist,</p>
             <p class="signature">Gong Shui.</p>
           </div>
         </div>
-
         <div class="fade-mask" id="fade-mask"></div>
       </div>
     </div>
@@ -59,12 +54,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="scroll-spacer"></div>
 
-  <!-- 第二页：软纸推拉层 -->
+  <!-- 第二页：柔性上滑与转折 -->
   <div class="info-wrapper">
+    <!-- 边缘模糊遮罩，盖在接缝处吃掉硬线 -->
+    <div class="fold-blur" id="fold-blur"></div>
+    
     <section class="info-section" id="info-section">
-      <!-- 专门用来做弧面折痕的内阴影层 -->
-      <div class="fold-shadow" id="fold-shadow"></div>
-      
       <div class="content-block">
         <h2 class="section-title">SEEKING PARTNERS</h2>
         <div class="roles-grid">
@@ -141,46 +136,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   /* 提供滚动空间 */
   .scroll-spacer { height: 200vh; }
 
-  /* ======= 第二页：软纸推进 ======= */
+  /* ======= 第二页 ======= */
   .info-wrapper {
-    position: fixed;
-    inset: 0;
-    z-index: 20;
-    display: flex;
-    align-items: flex-end;
-    /* 透视点锁死在最顶部，保证上半部分滑进来后是平的 */
-    perspective: 1500px;
-    perspective-origin: 50% 0%;
+    position: fixed; inset: 0; z-index: 20;
+    pointer-events: none; overflow: hidden;
+    /* 开启很浅的透视，只为让边缘有微翘感，不翻转 */
+    perspective: 2000px;
+  }
+
+  /* 吃死硬线的重度模糊遮罩 */
+  .fold-blur {
+    position: absolute;
+    top: 0; left: -10%; width: 120%; height: 60px;
+    background: #050505;
+    filter: blur(15px);
+    z-index: 21;
+    opacity: 0;
     pointer-events: none;
-    overflow: hidden;
   }
 
   .info-section { 
-    position: relative;
-    width: 100%;
-    height: 100vh;
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100vh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
     
-    /* 初始状态：完全在屏幕下方，并向前倾 60 度（底部翘起） */
-    transform-origin: center top; /* 轴心在顶部！ */
-    transform: translateY(100%) rotateX(-60deg);
-    will-change: transform;
+    /* 初始：在屏幕下方，头部平贴，下半部分前倾 */
+    transform-origin: center top;
+    transform: translateY(100%) rotateX(-35deg);
+    will-change: transform, border-radius;
     pointer-events: auto;
     z-index: 3;
-    overflow: hidden;
-  }
-
-  /* 模拟纸张弯曲的顶部内侧阴影 */
-  .fold-shadow {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 150px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
-    opacity: 0;
-    z-index: 4;
-    pointer-events: none;
+    box-shadow: inset 0 100px 100px -50px rgba(0,0,0,0.9); /* 顶部阴影，模拟卷纸 */
   }
   
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 5; }
@@ -208,7 +196,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const heroMasthead = document.getElementById('hero-masthead');
     const infoSection = document.getElementById('info-section');
     const fadeMask = document.getElementById('fade-mask');
-    const foldShadow = document.getElementById('fold-shadow');
+    const foldBlur = document.getElementById('fold-blur');
     
     let currentIndex = 0;
     setInterval(() => {
@@ -229,7 +217,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // ======= 1. 第一页 =======
+          // ======= 第一页 =======
           const rotateX = progress * 82; 
           const rad = rotateX * Math.PI / 180;
           const stretchY = 1 / Math.cos(rad);
@@ -243,26 +231,41 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           heroMasthead.style.opacity = Math.max(0, 1 - (progress * 0.6));
           fadeMask.style.opacity = Math.max(0, (progress - 0.4) * 2);
 
-          // ======= 2. 第二页：软纸推进 =======
+          // ======= 第二页：自下而上推 + 中间转折 =======
           if (progress > 0.1) {
-            // 滚动进度 0.1 -> 0.9 时，第二页完成推进
             const p = Math.min(1, (progress - 0.1) / 0.8);
             
-            // 位移：从 100% 推入到 0%（上半部分会先顶到屏幕最上方）
-            const ty = 100 - (p * 100);
-            
-            // 倾斜：从 -60度（翘起） 变成 0度（完全铺平）
-            // 曲线越到后面越平缓，就像是纸张前端铺平后，后面慢慢顺下来的感觉
-            const rx = -60 + (60 * Math.pow(p, 1.5)); 
+            // 基础位移：从 100% 推到 0
+            let ty = 100 - (p * 100);
+            let rx = -35; // 默认前倾 35 度
+            let borderR = 80;
+            let blurOpacity = 0;
 
-            // 动态圆角：一开始翘起时圆角大，铺平时圆角变小
-            const radius = 80 - (p * 40);
-            
+            // 转折点逻辑：进度 0.6 之后
+            if (p > 0.6) {
+              const turnP = (p - 0.6) / 0.4; // 0 -> 1
+              // 瞬间砸平：角度从 -35 极速归零
+              rx = -35 + (35 * Math.pow(turnP, 3)); 
+              // 圆角变小，绷紧
+              borderR = 80 - (turnP * 40);
+              // 砸平的瞬间，模糊线出现并吃掉接缝
+              blurOpacity = Math.sin(turnP * Math.PI) * 0.8;
+            } else {
+              // 转折前，一直保持前倾，慢慢滑动
+              rx = -35 - (p * 5); // 轻微增加倾斜感
+            }
+
+            // 为了让顶部贴合，位移稍微做一点非线性补偿
+            if (p > 0.8) {
+              ty = ty * 0.5; 
+            }
+
             infoSection.style.transform = `translateY(${ty}%) rotateX(${rx}deg)`;
-            infoSection.style.borderRadius = `${radius}px ${radius}px 0 0`;
-
-            // 用内部阴影模拟纸张卷曲（越陡阴影越深）
-            foldShadow.style.opacity = (1 - p) * 0.8;
+            infoSection.style.borderRadius = `${borderR}px ${borderR}px 0 0`;
+            
+            // 控制接缝处的模糊层
+            foldBlur.style.opacity = blurOpacity;
+            foldBlur.style.top = `${ty}vh`; 
           }
 
           ticking = false;
