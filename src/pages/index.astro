@@ -20,37 +20,49 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="vignette"></div>
   </div>
 
-  <!-- 第一页：钉在视口中 -->
+  <!-- 第一页：恢复 3D 极限拉伸翻折 -->
   <section class="hero-section">
-    <div class="newspaper-masthead">
-      <div class="masthead-top mono">
-        <span>VOL. I</span>
-        <span>LONDON GAZETTE</span>
-        <span>EST. 1888</span>
-      </div>
-      <div class="letter-body">
-        <div class="header-group">
-          <p class="salutation">To the Esteemed Visionaries,</p>
+    <div class="perspective-wrap">
+      <div class="newspaper-masthead" id="hero-masthead">
+        
+        <div class="masthead-top mono">
+          <span>VOL. I</span>
+          <span>LONDON GAZETTE</span>
+          <span>EST. 1888</span>
         </div>
-        <div class="content-group">
-          <p class="greeting">Dear Partner,</p>
-          <p class="body-text">
-            The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
-          </p>
-          <p class="body-text">
-            We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
-          </p>
+
+        <div class="letter-body">
+          <div class="header-group">
+            <p class="salutation">To the Esteemed Visionaries,</p>
+          </div>
+          
+          <div class="content-group">
+            <p class="greeting">Dear Partner,</p>
+            <p class="body-text">
+              The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
+            </p>
+            <p class="body-text">
+              We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
+            </p>
+          </div>
+          
+          <div class="signature-group">
+            <p class="sign-off">Yours in the mist,</p>
+            <p class="signature">Gong Shui.</p>
+          </div>
         </div>
-        <div class="signature-group">
-          <p class="sign-off">Yours in the mist,</p>
-          <p class="signature">Gong Shui.</p>
-        </div>
+
+        <!-- 暗黑吞噬遮罩 -->
+        <div class="fade-mask" id="fade-mask"></div>
       </div>
     </div>
   </section>
 
-  <!-- 第二页：直接平滑推上来 -->
+  <!-- 第二页：平推上来 + 强烈的模糊过渡 -->
   <section class="info-section">
+    <!-- 强力模糊过渡层 -->
+    <div class="soft-boundary"></div>
+    
     <div class="content-block">
       <h2 class="section-title">SEEKING PARTNERS</h2>
       <div class="roles-grid">
@@ -97,50 +109,53 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    padding: 40px;
     z-index: 10;
+    overflow: hidden;
     pointer-events: none;
   }
 
+  .perspective-wrap {
+    perspective: 1200px;
+    perspective-origin: 50% 0%; 
+    width: 100%;
+    max-width: 900px;
+    padding: 0 40px;
+    display: flex;
+    justify-content: center;
+  }
+
   .newspaper-masthead {
-    width: 100%; max-width: 900px;
+    position: relative;
+    width: 100%;
     display: flex; flex-direction: column;
-    transform: translateY(-4vh);
+    transform-origin: center bottom; 
+    transform: translateY(-4vh) rotateX(0deg) scaleY(1);
     will-change: transform, opacity;
     pointer-events: auto;
   }
 
-  .masthead-top {
-    display: flex; justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    padding: 0 0 12px 0;
-    font-size: 10px; letter-spacing: 0.3em; color: #888;
-    margin-bottom: 30px;
+  .fade-mask {
+    position: absolute;
+    inset: -30% 0 0 0;
+    background: linear-gradient(to bottom, #030303 0%, transparent 50%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
   }
 
-  .letter-body { 
-    padding: 20px 0; 
-    display: flex; flex-direction: column; 
-    position: relative; 
-    border-left: 1px solid rgba(255,255,255,0.1); 
-    padding-left: 30px; 
-    margin-left: 10px; 
-    margin-top: 10px; 
-  }
-  
+  .masthead-top { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 0 0 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #888; margin-bottom: 30px; }
+  .letter-body { padding: 20px 0; display: flex; flex-direction: column; position: relative; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; margin-left: 10px; margin-top: 10px; }
   .header-group { margin-bottom: 24px; }
   .salutation { font-family: 'Pinyon Script', cursive; font-size: clamp(40px, 5vw, 60px); color: #f4eee0; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
-  
   .content-group { max-width: 80%; }
   .greeting { font-family: 'Pinyon Script', cursive; font-size: 32px; color: #d1c5b4; margin: 0 0 16px 0; }
   .body-text { font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.8; color: #a39b8d; margin: 0 0 16px 0; text-align: justify; }
   .highlight { color: #d4af37; font-weight: 700; font-style: italic; }
-  
   .signature-group { margin-top: 20px; }
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  /* ======= 第二页：纯 CSS 平滑推拉 ======= */
+  /* ======= 第二页：平推 + 超强模糊过渡 ======= */
   .info-section { 
     position: relative;
     z-index: 20;
@@ -148,11 +163,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
-    border-radius: 40px 40px 0 0;
+    /* 圆角拉大 */
+    border-radius: 60px 60px 0 0; 
+    /* 加强外层阴影 */
     box-shadow: 0 -20px 60px rgba(0,0,0,0.9), inset 0 2px 0 rgba(255,255,255,0.05);
   }
+
+  /* 专门用来吃掉分界线的模糊层 */
+  .soft-boundary {
+    position: absolute;
+    top: -40px;
+    left: -5%;
+    width: 110%;
+    height: 80px;
+    background: #050505;
+    /* 重度模糊，形成像雾气一样的黑洞边缘 */
+    filter: blur(20px); 
+    border-radius: 50% 50% 0 0;
+    z-index: -1;
+    pointer-events: none;
+  }
   
-  .content-block { max-width: 1000px; width: 100%; }
+  .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; }
   .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 60px; }
   .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
   @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -167,14 +199,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
     .newspaper-masthead { transform: translateY(-2vh); }
-    .info-section { border-radius: 30px 30px 0 0; }
+    .info-section { border-radius: 40px 40px 0 0; }
+    .soft-boundary { filter: blur(15px); height: 60px; top: -30px; }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const bgImages = document.querySelectorAll('.bg-image');
-    const heroMasthead = document.querySelector('.newspaper-masthead');
+    const heroMasthead = document.getElementById('hero-masthead');
+    const fadeMask = document.getElementById('fade-mask');
     
     let currentIndex = 0;
     setInterval(() => {
@@ -186,7 +220,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       newBg.classList.add('active');
     }, 5000);
 
-    // 保留一点轻微的第一页后退景深，提升高级感，但完全不搞 3D
     let ticking = false;
     window.addEventListener('scroll', () => {
       if (!ticking) {
@@ -195,13 +228,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const windowHeight = window.innerHeight;
           
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
+
+          // ======= 恢复第一页的极限拉伸翻折 =======
+          const rotateX = progress * 82; 
+          const rad = rotateX * Math.PI / 180;
+          const stretchY = 1 / Math.cos(rad);
+          const translateY = Math.pow(progress, 2) * 12; 
+
+          heroMasthead.style.transform = `
+            translate3d(0, calc(-4vh + ${translateY}vh), 0) 
+            rotateX(${rotateX}deg) 
+            scaleY(${stretchY})
+          `;
           
-          // 轻微后退缩小 + 淡出
-          const scale = 1 - (progress * 0.05);
-          const translateY = -(progress * 5);
+          // 透明度缓慢消散
+          heroMasthead.style.opacity = Math.max(0, 1 - (progress * 0.6));
           
-          heroMasthead.style.transform = `translate3d(0, calc(-4vh + ${translateY}px), 0) scale(${scale})`;
-          heroMasthead.style.opacity = Math.max(0.2, 1 - progress * 0.8);
+          // 吞噬遮罩生效
+          fadeMask.style.opacity = Math.max(0, (progress - 0.4) * 2);
 
           ticking = false;
         });
