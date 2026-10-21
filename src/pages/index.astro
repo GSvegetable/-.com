@@ -4,15 +4,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="The Blank Front Page">
   
-  <!-- 6层交叉淡化背景 -->
+  <!-- 自动轮播背景层 -->
   <div class="fixed-bg">
-    <div class="bg-image" style="background-image: url('/bg1.jpg')"></div>
+    <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg4.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
     
+    <!-- 闪电光照遮罩层 -->
+    <div class="lightning-flash" id="lightning-flash"></div>
+
     <div class="fog-overlay"></div>
     <div class="vignette"></div>
   </div>
@@ -62,29 +65,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 
-  /* 核心：多层背景叠加 */
+  /* 背景图：加入平滑的淡入淡出过渡 */
   .bg-image {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
     background-size: cover; background-position: center;
     filter: grayscale(80%) contrast(120%) brightness(0.3);
-    opacity: 0; /* 默认全部透明，由JS控制 */
-    will-change: opacity, transform;
+    opacity: 0;
+    transition: opacity 2.5s ease-in-out; /* 2.5秒高级慢速渐变 */
+  }
+  .bg-image.active { opacity: 1; }
+
+  /* ======= 雷霆特效 ======= */
+  .lightning-flash {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 20%, rgba(220, 230, 255, 0.8) 0%, rgba(180, 200, 255, 0.2) 40%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: screen; /* 滤色模式照亮底层 */
+    z-index: 1;
+  }
+
+  /* 闪电闪烁动画：瞬间亮起 -> 骤暗 -> 二次爆闪 -> 彻底暗下 */
+  @keyframes lightningStrike {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    20% { opacity: 0.1; }
+    30% { opacity: 0.9; }
+    50% { opacity: 0.2; }
+    60% { opacity: 0.6; }
+    100% { opacity: 0; }
+  }
+
+  .lightning-flash.strike {
+    animation: lightningStrike 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
   }
 
   .fog-overlay {
     position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(5,5,5,0.1) 0%, rgba(5,5,5,0.7) 50%, #050505 100%);
-    pointer-events: none;
+    pointer-events: none; z-index: 2;
   }
 
   .vignette {
     position: absolute; inset: 0;
     background: radial-gradient(circle at 50% 30%, transparent 20%, #050505 90%);
-    pointer-events: none;
+    pointer-events: none; z-index: 3;
   }
 
-  .content-wrapper { position: relative; z-index: 2; }
+  .content-wrapper { position: relative; z-index: 4; }
 
   .hero-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
 
@@ -137,61 +166,51 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
+    // ======= 1. 自动轮播背景 (每5秒切换一张) =======
     const bgs = document.querySelectorAll('.bg-image');
+    let currentIndex = 0;
+
+    setInterval(() => {
+      bgs[currentIndex].classList.remove('active');
+      currentIndex = (currentIndex + 1) % bgs.length;
+      bgs[currentIndex].classList.add('active');
+    }, 5000);
+
+    // ======= 2. 随机打雷闪电特效 =======
+    const lightning = document.getElementById('lightning-flash');
+    
+    function triggerLightning() {
+      // 如果已经有 strike 类说明正在闪，就跳过
+      if (lightning.classList.contains('strike')) return;
+      
+      // 随机闪电的位置 (偏左或偏右，增加随机感)
+      const posX = Math.random() * 60 + 20; // 20% - 80%
+      lightning.style.background = `radial-gradient(circle at ${posX}% 20%, rgba(220, 230, 255, 0.8) 0%, rgba(180, 200, 255, 0.2) 40%, transparent 70%)`;
+      
+      lightning.classList.add('strike');
+      
+      // 动画结束后移除类名，以便下次触发
+      setTimeout(() => {
+        lightning.classList.remove('strike');
+      }, 800);
+
+      // 随机安排下一次打雷 (7秒到15秒之间)
+      const nextStrike = Math.random() * 8000 + 7000;
+      setTimeout(triggerLightning, nextStrike);
+    }
+
+    // 启动第一道雷（延迟2秒触发）
+    setTimeout(triggerLightning, 2000);
+
+    // ======= 3. 滚动文字动画（保留原有的） =======
     const heroTitle = document.getElementById('hero-title');
     const infoContent = document.getElementById('info-content');
     const infoSection = document.getElementById('info-section');
     
-    // 计算总滚动距离
-    const getScrollProgress = () => {
-      const scrollY = window.scrollY;
-      const maxScroll = document.body.scrollHeight - window.innerHeight;
-      return maxScroll > 0 ? scrollY / maxScroll : 0;
-    };
-
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
-      const progress = getScrollProgress(); // 0.0 到 1.0
-      
-      // ======= 核心：6张图的交叉淡化 =======
-      const numImages = bgs.length;
-      // 把 0~1 的进度分成 5 个区间，对应 6 张图
-      const segment = 1 / (numImages - 1); 
 
-      bgs.forEach((bg, index) => {
-        let opacity = 0;
-        // 当前图片的进度区间
-        const start = (index - 1) * segment;
-        const end = index * segment;
-
-        if (index === 0) {
-          // 第一张，进度0时最亮，进度超出segment后变暗
-          opacity = Math.max(0, 1 - (progress / segment));
-        } else if (index === numImages - 1) {
-          // 最后一张，只有当进度进入最后的区间时才亮起
-          opacity = Math.min(1, Math.max(0, (progress - start) / segment));
-        } else {
-          // 中间的图片：前半段淡入，后半段淡出
-          if (progress > start && progress < end) {
-            const mid = start + segment / 2;
-            if (progress < mid) {
-              opacity = (progress - start) / (segment / 2); // 淡入
-            } else {
-              opacity = 1 - ((progress - mid) / (segment / 2)); // 淡出
-            }
-          }
-        }
-        
-        // 特殊处理：如果页面没往下滑，确保第一张完全显示
-        if (progress === 0 && index === 0) opacity = 1;
-        if (progress === 1 && index === numImages - 1) opacity = 1;
-
-        // 应用透明度和缓慢缩放
-        bg.style.opacity = opacity;
-        bg.style.transform = `scale(${1 + progress * 0.4})`;
-      });
-
-      // ======= 第一屏文字淡出与模糊 =======
+      // 第一屏文字淡出与模糊
       if (scrollY <= window.innerHeight) {
         const heroProg = scrollY / window.innerHeight;
         heroTitle.style.transform = `translateY(${scrollY * 0.4}px)`;
@@ -199,7 +218,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         heroTitle.style.filter = `blur(${heroProg * 10}px)`;
       }
 
-      // ======= 第二屏文字浮现 =======
+      // 第二屏文字浮现
       const distance = infoSection.offsetTop - scrollY;
       if (distance < window.innerHeight && distance > 0) {
         const infoProg = 1 - (distance / window.innerHeight);
