@@ -22,7 +22,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <!-- 第一页：3D 翻折信件层 -->
   <section class="hero-section" id="hero-section">
-    <!-- 透视容器，赋予强烈的 3D 景深 -->
+    <!-- 透视容器 -->
     <div class="perspective-wrap">
       <div class="newspaper-masthead" id="hero-masthead">
         
@@ -100,7 +100,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .fog-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,3,3,0.1) 0%, rgba(3,3,3,0.85) 60%, #030303 100%); pointer-events: none; z-index: 2; }
   .vignette { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, transparent 10%, #030303 90%); pointer-events: none; z-index: 3; }
 
-  /* ======= 第一页：3D 舞台 ======= */
+  /* ======= 第一页 ======= */
   .hero-section { 
     position: sticky;
     top: 0;
@@ -113,7 +113,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     pointer-events: none;
   }
 
-  /* 核心：透视距离，越小的值 3D 效果越夸张 */
   .perspective-wrap {
     perspective: 1200px;
     width: 100%;
@@ -126,13 +125,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .newspaper-masthead {
     width: 100%;
     display: flex; flex-direction: column;
-    transform-origin: center bottom; /* 以底部为轴心翻折 */
-    transform: translateY(-4vh) rotateX(0deg);
-    /* 硬件加速，防抖动 */
+    /* 关键：以底部为轴心向后翻折 */
+    transform-origin: center bottom; 
+    transform: translateY(-4vh) rotateX(0deg) scaleY(1);
+    /* GPU 加速 */
     will-change: transform, opacity;
     pointer-events: auto;
-    /* 翻折时的光影质感 */
-    transition: box-shadow 0.1s ease-out;
   }
 
   .masthead-top {
@@ -165,7 +163,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  /* ======= 第二页：从翻折后的空间浮现 ======= */
+  /* ======= 第二页 ======= */
   .info-section { 
     position: relative;
     z-index: 20;
@@ -173,12 +171,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
-    /* 保持之前高级卡片的质感 */
     border-radius: 40px 40px 0 0;
-    box-shadow: 
-      0 -20px 60px rgba(0,0,0,0.9), 
-      inset 0 2px 0 rgba(255,255,255,0.05);
-    /* 初始稍微缩一点点，配合 JS 做浮现 */
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.9), inset 0 2px 0 rgba(255,255,255,0.05);
     transform: scale(0.95);
     transform-origin: center top;
     will-change: transform;
@@ -198,7 +192,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
-    .newspaper-masthead { transform: translateY(-2vh) rotateX(0deg); }
     .info-section { border-radius: 30px 30px 0 0; }
     .perspective-wrap { perspective: 800px; padding: 20px; }
   }
@@ -227,20 +220,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
           
-          // 滚动进度：滚动第一屏的距离
+          // 滚动进度 0 到 1
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // 1. 第一页：向上翻折，并伴随缩小和透明度消失
-          // 利用 rotateX 产生物理翻折感（最大翻折 60 度）
-          const rotateX = progress * 60; 
-          const scale = 1 - (progress * 0.2); // 稍微缩小，加深空间感
-          // 翻折时，加上暗化效果
-          const opacity = Math.max(0, 1 - (progress * 1.2)); 
-          
-          heroMasthead.style.transform = `translate3d(0, calc(-4vh - ${progress * 10}vh), 0) rotateX(${rotateX}deg) scale(${scale})`;
-          heroMasthead.style.opacity = opacity;
+          // 1. 计算翻折角度
+          const rotateX = progress * 65; 
 
-          // 2. 第二页：从被翻开的底部浮现出来（从 0.95 放大到 1）
+          // 2. 核心：非线性补偿拉伸（替代 App 里的着色器）
+          // 当纸张越向后翻，为了填满顶部的空间，我们给它加一个纵向的放大系数
+          // 越往后翻，拉得越长，彻底吃满顶部留黑
+          const stretchY = 1 + (progress * 0.45); 
+          
+          // 3. 整体微微缩放，配合纵向外扩
+          const scale = 1 - (progress * 0.1);
+          
+          // 4. 稍微往上平移一点，让拉伸后的纸张彻底覆盖屏幕顶端
+          const translateY = -progress * 5; 
+
+          // 应用 3D 变换组合
+          heroMasthead.style.transform = `
+            translate3d(0, calc(-4vh + ${translateY}vh), 0) 
+            rotateX(${rotateX}deg) 
+            scale(${scale}) 
+            scaleY(${stretchY})
+          `;
+
+          // 防止文字完全虚化，最后阶段稍微变暗
+          heroMasthead.style.opacity = Math.max(0, 1 - (progress * 1.1));
+
+          // 第二页：随着拉伸同步浮现
           const infoScale = 0.95 + (progress * 0.05);
           infoSection.style.transform = `scale(${infoScale})`;
 
