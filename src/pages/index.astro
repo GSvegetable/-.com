@@ -20,94 +20,47 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="vignette"></div>
   </div>
 
-  <!-- 核心交互：用 sticky 锁定的双门拉开层 -->
-  <div class="sticky-stage">
-    <div class="stage-layer stage-left">
-      <div class="stage-inner">
-        <div class="newspaper-masthead">
-          <div class="masthead-top mono">
-            <span>VOL. I</span>
-            <span>LONDON GAZETTE</span>
-            <span>EST. 1888</span>
-          </div>
+  <!-- 第一页：使用 sticky 钉在视口中，实现景深堆叠 -->
+  <section class="hero-section" id="hero-section">
+    <div class="newspaper-masthead" id="hero-masthead">
+      <div class="masthead-top mono">
+        <span>VOL. I</span>
+        <span>LONDON GAZETTE</span>
+        <span>EST. 1888</span>
+      </div>
 
-          <div class="letter-body">
-            <div class="header-group">
-              <p class="salutation">To the Esteemed Visionaries,</p>
-              <p class="address mono">The Foggy Streets of London.</p>
-            </div>
-            
-            <div class="content-group">
-              <p class="greeting">Dear Partner,</p>
-              <p class="body-text">
-                The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
-              </p>
-              <p class="body-text">
-                We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
-              </p>
-            </div>
-            
-            <div class="signature-group">
-              <p class="sign-off">Yours in the mist,</p>
-              <p class="signature">Gong Shui.</p>
-            </div>
-          </div>
-
-          <div class="masthead-bottom mono">
-            <div class="line"></div>
-            <span>CONFIDENTIAL / SEEKING PARTNERS</span>
-            <div class="line"></div>
-          </div>
+      <div class="letter-body">
+        <div class="header-group">
+          <p class="salutation">To the Esteemed Visionaries,</p>
+          <p class="address mono">The Foggy Streets of London.</p>
+        </div>
+        
+        <div class="content-group">
+          <p class="greeting">Dear Partner,</p>
+          <p class="body-text">
+            The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
+          </p>
+          <p class="body-text">
+            We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
+          </p>
+        </div>
+        
+        <div class="signature-group">
+          <p class="sign-off">Yours in the mist,</p>
+          <p class="signature">Gong Shui.</p>
         </div>
       </div>
-    </div>
 
-    <div class="stage-layer stage-right">
-      <div class="stage-inner">
-        <div class="newspaper-masthead">
-          <div class="masthead-top mono">
-            <span>VOL. I</span>
-            <span>LONDON GAZETTE</span>
-            <span>EST. 1888</span>
-          </div>
-
-          <div class="letter-body">
-            <div class="header-group">
-              <p class="salutation">To the Esteemed Visionaries,</p>
-              <p class="address mono">The Foggy Streets of London.</p>
-            </div>
-            
-            <div class="content-group">
-              <p class="greeting">Dear Partner,</p>
-              <p class="body-text">
-                The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
-              </p>
-              <p class="body-text">
-                We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
-              </p>
-            </div>
-            
-            <div class="signature-group">
-              <p class="sign-off">Yours in the mist,</p>
-              <p class="signature">Gong Shui.</p>
-            </div>
-          </div>
-
-          <div class="masthead-bottom mono">
-            <div class="line"></div>
-            <span>CONFIDENTIAL / SEEKING PARTNERS</span>
-            <div class="line"></div>
-          </div>
-        </div>
+      <div class="masthead-bottom mono">
+        <div class="line"></div>
+        <span>CONFIDENTIAL / SEEKING PARTNERS</span>
+        <div class="line"></div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- 滚动占位，拉开距离 -->
-  <div class="scroll-spacer"></div>
-
-  <!-- 第二页：底层招募区 -->
-  <section class="info-section">
+  <!-- 第二页：带有极强立体阴影，从底部推上来 -->
+  <section class="info-section" id="info-section">
     <div class="content-block">
       <h2 class="section-title">SEEKING PARTNERS</h2>
       <div class="roles-grid">
@@ -126,13 +79,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <style>
   :global(body) {
     margin: 0; padding: 0;
+    /* 恢复原生滚动，最顺滑 */
     background-color: #030303;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
   }
   .mono { font-family: 'Courier Prime', monospace; }
 
-  /* 背景固定层 */
+  /* 背景固定 */
   .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
   .bg-image {
     position: absolute; top: 0; left: 0;
@@ -145,63 +99,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .fog-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,3,3,0.1) 0%, rgba(3,3,3,0.85) 60%, #030303 100%); pointer-events: none; z-index: 2; }
   .vignette { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, transparent 10%, #030303 90%); pointer-events: none; z-index: 3; }
 
-  /* ======= 核心：双向舞台 ======= */
-  .sticky-stage {
+  /* ======= 第一页：固定在视口 ======= */
+  .hero-section { 
     position: sticky;
     top: 0;
     height: 100vh;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 40px;
     z-index: 10;
     pointer-events: none;
-    overflow: hidden;
   }
 
-  .stage-layer {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 50%;
-    overflow: hidden;
-    background: rgba(3,3,3,0.7);
-    backdrop-filter: blur(5px);
-    will-change: transform;
+  .newspaper-masthead {
+    width: 100%; max-width: 900px;
+    display: flex; flex-direction: column;
+    /* 向上提整体位置 */
+    transform: translateY(-4vh);
+    will-change: transform, opacity;
+    pointer-events: auto;
   }
-  .stage-left { left: 0; border-right: 1px solid rgba(255,255,255,0.05); }
-  .stage-right { right: 0; border-left: 1px solid rgba(255,255,255,0.05); }
 
-  .stage-inner {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 100vw;
-    display: flex; align-items: center; justify-content: center;
-    padding: 40px;
-    pointer-events: auto; /* 让文字可以被选中 */
-  }
-  .stage-left .stage-inner { left: 0; }
-  .stage-right .stage-inner { right: 0; }
-
-  /* 滚动占位（提供滑动的物理空间） */
-  .scroll-spacer { height: 100vh; }
-
-  /* ======= 第二页（在门后面） ======= */
-  .info-section { 
-    position: relative; 
-    z-index: 1;
-    min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 40px;
-    background-color: #050505;
-  }
-  .content-block { max-width: 1000px; width: 100%; }
-  .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 60px; }
-  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
-  @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
-  .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
-  .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
-  .action-area { text-align: center; margin-top: 80px; }
-  .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(20,20,20,0.8); transition: background 0.4s ease, border-color 0.4s ease; }
-  .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
-
-  /* ======= 信件排版（保持不变） ======= */
-  .newspaper-masthead { width: 100%; max-width: 900px; display: flex; flex-direction: column; }
+  /* 以下为排版，保持原样不变 */
   .masthead-top { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.15); padding: 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #888; }
   .letter-body { padding: 30px 0; display: flex; flex-direction: column; position: relative; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; margin-left: 10px; }
   .header-group { margin-bottom: 30px; }
@@ -218,19 +138,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .masthead-bottom .line { flex: 1; height: 1px; background: rgba(255,255,255,0.15); }
   .masthead-bottom span { font-size: 10px; letter-spacing: 0.3em; color: #666; }
 
+  /* ======= 第二页：带高级阴影覆盖上来 ======= */
+  .info-section { 
+    position: relative;
+    z-index: 20; /* 压住第一页 */
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 100px 40px;
+    background-color: #050505;
+    /* 顶部多层阴影，营造出纸张或幕布被揭开拉上来的高级感 */
+    box-shadow: 
+      0 -20px 50px rgba(0,0,0,0.8), 
+      0 -2px 10px rgba(255,255,255,0.03) inset;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  .content-block { max-width: 1000px; width: 100%; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 60px; }
+  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
+  @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
+  .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
+  .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
+  .action-area { text-align: center; margin-top: 80px; }
+  .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(20,20,20,0.8); transition: background 0.4s ease, border-color 0.4s ease; }
+  .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
+
   @media (max-width: 600px) {
-    .stage-inner { padding: 20px; }
     .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
+    .newspaper-masthead { transform: translateY(-2vh); }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const bgImages = document.querySelectorAll('.bg-image');
-    const stageLeft = document.querySelector('.stage-left');
-    const stageRight = document.querySelector('.stage-right');
+    const heroMasthead = document.getElementById('hero-masthead');
     
     // 背景轮播
     let currentIndex = 0;
@@ -243,24 +187,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       newBg.classList.add('active');
     }, 5000);
 
-    // 监听原生 window 滑动，把左右两扇门推开
+    // 核心交互：利用原生滚动产生空间景深
+    let ticking = false;
     window.addEventListener('scroll', () => {
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      
-      // 进度条：从 0（没动）到 1（滑动了一个屏幕的高度）
-      const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const windowHeight = window.innerHeight;
+          
+          // 计算滚动进度
+          const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-      // 左门往左滑，右门往右滑
-      stageLeft.style.transform = `translateX(-${progress * 100}%)`;
-      stageRight.style.transform = `translateX(${progress * 100}%)`;
-      
-      // 文字稍微往下沉一点，产生视差（轻轻移动，抵消门的撕裂感）
-      const innerText = document.querySelectorAll('.stage-inner');
-      innerText.forEach(el => {
-        el.style.transform = `translateY(${progress * 10}vh)`;
-        el.style.opacity = Math.max(0, 1 - progress * 1.5);
-      });
+          // 第一页：往后退缩并微微模糊，形成极强的空间景深
+          // 强制带 translateZ(0) 防止抖动
+          const scale = 1 - (progress * 0.05); // 缩小到 95%
+          const translateY = -(progress * 10); // 稍微上浮
+          
+          heroMasthead.style.transform = `translate3d(0, calc(-4vh + ${translateY}px), 0) scale(${scale})`;
+          
+          // 稍微降低透明度，但不是完全消失（保持0.2的底线，作为背景残影）
+          heroMasthead.style.opacity = Math.max(0.2, 1 - progress * 0.8);
+
+          ticking = false;
+        });
+        ticking = true;
+      }
     }, { passive: true });
   });
 </script>
