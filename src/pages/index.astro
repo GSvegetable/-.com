@@ -8,7 +8,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet">
 
-  <!-- 背景层 -->
+  <!-- 背景固定层 -->
   <div class="fixed-bg">
     <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
     <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
@@ -20,63 +20,49 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="vignette"></div>
   </div>
 
-  <!-- 第一页 -->
+  <!-- 第一页：钉在视口中 -->
   <section class="hero-section">
-    <div class="perspective-wrap">
-      <div class="newspaper-masthead">
-        <div class="masthead-top mono">
-          <span>VOL. I</span>
-          <span>LONDON GAZETTE</span>
-          <span>EST. 1888</span>
+    <div class="newspaper-masthead">
+      <div class="masthead-top mono">
+        <span>VOL. I</span>
+        <span>LONDON GAZETTE</span>
+        <span>EST. 1888</span>
+      </div>
+      <div class="letter-body">
+        <div class="header-group">
+          <p class="salutation">To the Esteemed Visionaries,</p>
         </div>
-        <div class="letter-body">
-          <div class="header-group">
-            <p class="salutation">To the Esteemed Visionaries,</p>
-          </div>
-          <div class="content-group">
-            <p class="greeting">Dear Partner,</p>
-            <p class="body-text">
-              The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
-            </p>
-            <p class="body-text">
-              We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
-            </p>
-          </div>
-          <div class="signature-group">
-            <p class="sign-off">Yours in the mist,</p>
-            <p class="signature">Gong Shui.</p>
-          </div>
+        <div class="content-group">
+          <p class="greeting">Dear Partner,</p>
+          <p class="body-text">
+            The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
+          </p>
+          <p class="body-text">
+            We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
+          </p>
+        </div>
+        <div class="signature-group">
+          <p class="sign-off">Yours in the mist,</p>
+          <p class="signature">Gong Shui.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 缩短滚动距离，滑一屏就到第二页 -->
-  <div class="scroll-spacer"></div>
-
-  <!-- 第二页：带有完整内容和占位固定 -->
-  <div class="info-wrapper" style="position: fixed; inset: 0; z-index: 20; pointer-events: none;">
-    <section class="info-section" style="pointer-events: auto;">
-      <div class="content-block">
-        <h2 class="section-title">SEEKING PARTNERS</h2>
-        <div class="roles-grid">
-          <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
-          <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
-          <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
-        </div>
-        <div class="action-area">
-          <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
-        </div>
+  <!-- 第二页：直接平滑推上来 -->
+  <section class="info-section">
+    <div class="content-block">
+      <h2 class="section-title">SEEKING PARTNERS</h2>
+      <div class="roles-grid">
+        <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
+        <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
+        <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
       </div>
-    </section>
-  </div>
-
-  <!-- 滚筒红线区域 (位置已调整) -->
-  <div class="red-line top-line"></div>
-  <div class="red-line bottom-line"></div>
-  <div class="roller-area">
-    <div class="roller-text mono">ROLLER AREA</div>
-  </div>
+      <div class="action-area">
+        <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
+      </div>
+    </div>
+  </section>
 
 </BaseLayout>
 
@@ -88,10 +74,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
-  :global(::-webkit-scrollbar) { display: none; }
+  :global(::-webkit-scrollbar) { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
 
-  /* 背景固定 */
+  /* 背景 */
   .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
   .bg-image {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -103,44 +89,67 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .fog-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,3,3,0.1) 0%, rgba(3,3,3,0.85) 60%, #030303 100%); pointer-events: none; z-index: 2; }
   .vignette { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, transparent 10%, #030303 90%); pointer-events: none; z-index: 3; }
 
-  /* 第一页 */
+  /* ======= 第一页 ======= */
   .hero-section { 
-    position: sticky; top: 0; height: 100vh;
-    display: flex; align-items: center; justify-content: center; 
-    z-index: 10; overflow: hidden; pointer-events: none;
-  }
-  .perspective-wrap {
-    perspective: 1200px; perspective-origin: 50% 0%; 
-    width: 100%; max-width: 900px; padding: 0 40px; display: flex; justify-content: center;
-  }
-  .newspaper-masthead {
-    position: relative; width: 100%; display: flex; flex-direction: column;
-    will-change: transform, opacity; pointer-events: auto;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 40px;
+    z-index: 10;
+    pointer-events: none;
   }
 
-  .masthead-top { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 0 0 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #888; margin-bottom: 30px; }
-  .letter-body { padding: 20px 0; display: flex; flex-direction: column; position: relative; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; margin-left: 10px; margin-top: 10px; }
+  .newspaper-masthead {
+    width: 100%; max-width: 900px;
+    display: flex; flex-direction: column;
+    transform: translateY(-4vh);
+    will-change: transform, opacity;
+    pointer-events: auto;
+  }
+
+  .masthead-top {
+    display: flex; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    padding: 0 0 12px 0;
+    font-size: 10px; letter-spacing: 0.3em; color: #888;
+    margin-bottom: 30px;
+  }
+
+  .letter-body { 
+    padding: 20px 0; 
+    display: flex; flex-direction: column; 
+    position: relative; 
+    border-left: 1px solid rgba(255,255,255,0.1); 
+    padding-left: 30px; 
+    margin-left: 10px; 
+    margin-top: 10px; 
+  }
+  
   .header-group { margin-bottom: 24px; }
   .salutation { font-family: 'Pinyon Script', cursive; font-size: clamp(40px, 5vw, 60px); color: #f4eee0; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+  
   .content-group { max-width: 80%; }
   .greeting { font-family: 'Pinyon Script', cursive; font-size: 32px; color: #d1c5b4; margin: 0 0 16px 0; }
   .body-text { font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.8; color: #a39b8d; margin: 0 0 16px 0; text-align: justify; }
   .highlight { color: #d4af37; font-weight: 700; font-style: italic; }
+  
   .signature-group { margin-top: 20px; }
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  /* 滑动距离缩短到 100vh */
-  .scroll-spacer { height: 100vh; }
-
-  /* 第二页本体，先固定露出，不加动画 */
+  /* ======= 第二页：纯 CSS 平滑推拉 ======= */
   .info-section { 
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100vh;
+    position: relative;
+    z-index: 20;
+    min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
-    z-index: 3;
+    border-radius: 40px 40px 0 0;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.9), inset 0 2px 0 rgba(255,255,255,0.05);
   }
   
   .content-block { max-width: 1000px; width: 100%; }
@@ -153,40 +162,51 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(20,20,20,0.8); transition: background 0.4s ease, border-color 0.4s ease; }
   .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
 
-  /* ======= 红线与滚筒区域 ======= */
-  .red-line {
-    position: fixed;
-    left: 0; width: 100%;
-    height: 2px;
-    background: #ff0000;
-    z-index: 9999;
-  }
-  
-  /* 上沿在 52vh，下沿在 85vh。总高度 33vh (1/3)，整体偏下 */
-  .top-line { top: 52vh; } 
-  .bottom-line { top: 85vh; } 
-
-  .roller-area {
-    position: fixed;
-    left: 0; width: 100%;
-    top: 52vh; height: 33vh;
-    background: rgba(255, 0, 0, 0.1);
-    z-index: 9998;
-    display: flex; align-items: center; justify-content: center;
-    pointer-events: none;
-  }
-  .roller-text {
-    color: #ff0000;
-    font-size: 24px;
-    letter-spacing: 0.2em;
-    opacity: 0.5;
-  }
-
   @media (max-width: 600px) {
     .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
-    .info-section { padding: 80px 20px; }
-    .perspective-wrap { perspective: 900px; padding: 0 20px; }
+    .newspaper-masthead { transform: translateY(-2vh); }
+    .info-section { border-radius: 30px 30px 0 0; }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const bgImages = document.querySelectorAll('.bg-image');
+    const heroMasthead = document.querySelector('.newspaper-masthead');
+    
+    let currentIndex = 0;
+    setInterval(() => {
+      bgImages[currentIndex].classList.remove('active');
+      bgImages[currentIndex].style.zIndex = '0';
+      currentIndex = (currentIndex + 1) % bgImages.length;
+      const newBg = bgImages[currentIndex];
+      newBg.style.zIndex = '1';
+      newBg.classList.add('active');
+    }, 5000);
+
+    // 保留一点轻微的第一页后退景深，提升高级感，但完全不搞 3D
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const windowHeight = window.innerHeight;
+          
+          const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
+          
+          // 轻微后退缩小 + 淡出
+          const scale = 1 - (progress * 0.05);
+          const translateY = -(progress * 5);
+          
+          heroMasthead.style.transform = `translate3d(0, calc(-4vh + ${translateY}px), 0) scale(${scale})`;
+          heroMasthead.style.opacity = Math.max(0.2, 1 - progress * 0.8);
+
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  });
+</script>
