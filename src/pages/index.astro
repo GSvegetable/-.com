@@ -8,14 +8,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet">
 
-  <!-- 第一页：包含背景+文字，一起在 3D 空间中运动 -->
+  <!-- 实时滚动进度监听器 -->
+  <div class="debug-progress mono" id="progress-indicator">0%</div>
+
+  <!-- 第一页 -->
   <section class="hero-section">
     <div class="perspective-wrap">
-      
-      <!-- 第一页的舞台（带四周渐隐遮罩） -->
       <div class="hero-stage" id="hero-masthead">
         
-        <!-- 跟随翻折的背景图 -->
+        <!-- 背景层 -->
         <div class="bg-layer">
           <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
           <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
@@ -25,7 +26,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
         </div>
 
-        <!-- 文字内容层 -->
+        <!-- 文字内容 -->
         <div class="newspaper-masthead">
           <div class="masthead-top mono">
             <span>VOL. I</span>
@@ -50,19 +51,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             
             <div class="signature-group">
               <p class="sign-off">Yours in the mist,</p>
-              <p class="signature">Gong Shui.</p>
+              <!-- 签名增加断墨断笔的遮罩效果 -->
+              <p class="signature ink-break">Gong Shui.</p>
             </div>
           </div>
         </div>
 
-        <!-- 顶部的纯黑吞噬遮罩 -->
         <div class="fade-mask" id="fade-mask"></div>
       </div>
-
     </div>
   </section>
 
-  <!-- 第二页：半透明磨砂玻璃推拉 -->
+  <!-- 第二页 -->
   <section class="info-section">
     <div class="content-block">
       <h2 class="section-title">SEEKING PARTNERS</h2>
@@ -82,7 +82,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <style>
   :global(body) {
     margin: 0; padding: 0;
-    /* 纯黑底 */
     background-color: #030303;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
@@ -90,6 +89,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   :global(::-webkit-scrollbar) { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
+
+  /* 调试进度监听器 */
+  .debug-progress {
+    position: fixed;
+    top: 20px; right: 20px;
+    color: #d4af37;
+    font-size: 14px;
+    z-index: 9999;
+    background: rgba(0,0,0,0.5);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    pointer-events: none;
+  }
 
   /* ======= 第一页 ======= */
   .hero-section { 
@@ -99,14 +112,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .perspective-wrap {
-    /* 极限拉长透视，彻底消除夸张的 T 字形 */
-    perspective: 8000px; 
+    /* 调整透视：让躺下的感觉更自然，不会太扭曲 */
+    perspective: 2500px; 
     perspective-origin: 50% 0%; 
     width: 100%; height: 100%;
     display: flex; justify-content: center; align-items: center;
   }
 
-  /* 把背景和文字打包在一起 */
   .hero-stage {
     position: relative;
     width: 100%; max-width: 900px; height: 100vh;
@@ -117,12 +129,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     will-change: transform, opacity;
     pointer-events: auto;
     
-    /* 核心：四周渐隐遮罩，消除所有边缘轮廓 */
+    /* 边缘虚化，确保不外露矩形轮廓 */
     -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
     mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
   }
 
-  /* 跟随运动的背景图 */
   .bg-layer {
     position: absolute; inset: 0; z-index: -1;
     overflow: hidden;
@@ -155,9 +166,38 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .highlight { color: #d4af37; font-weight: 700; font-style: italic; }
   .signature-group { margin-top: 20px; }
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
-  .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+  
+  /* 签名：Gong Shui */
+  .signature { 
+    font-family: 'Pinyon Script', cursive; 
+    font-size: clamp(50px, 6vw, 70px); 
+    color: #f4eee0; 
+    margin: 0; 
+    transform: rotate(-5deg); 
+    display: inline-block; 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  }
 
-  /* ======= 第二页：半透明磨砂玻璃 ======= */
+  /* 核心：模拟断墨断笔的遮罩 */
+  .ink-break {
+    /* 使用不规则的径向渐变遮罩，随机切断笔画边缘 */
+    -webkit-mask-image: 
+      radial-gradient(circle at 20% 50%, transparent 2px, black 3px),
+      radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px),
+      radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px),
+      radial-gradient(circle at 85% 40%, transparent 1px, black 2px),
+      radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px);
+    mask-image: 
+      radial-gradient(circle at 20% 50%, transparent 2px, black 3px),
+      radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px),
+      radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px),
+      radial-gradient(circle at 85% 40%, transparent 1px, black 2px),
+      radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px);
+    /* 轻微模糊边缘，模拟墨水晕染 */
+    filter: blur(0.3px) contrast(1.2); 
+  }
+
+  /* ======= 第二页 ======= */
   .info-section { 
     position: relative; z-index: 20; min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
@@ -193,6 +233,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const bgImages = document.querySelectorAll('.bg-image');
     const heroStage = document.getElementById('hero-masthead');
     const fadeMask = document.getElementById('fade-mask');
+    const progressIndicator = document.getElementById('progress-indicator');
     
     let currentIndex = 0;
     setInterval(() => {
@@ -213,26 +254,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // 1. 角度极度收敛，最大只翻折 45 度
-          const rotateX = progress * 45; 
-          
-          // 2. 数学补偿拉伸，保证顶边永远不露出缝隙
-          const rad = rotateX * Math.PI / 180;
-          // 这里加上 1.2 倍的基础拉伸，配合径向遮罩，让整体更有深渊感
-          const stretchY = (1 / Math.cos(rad)) * 1.2; 
-          
-          const translateY = Math.pow(progress, 2) * 10; 
+          // 实时更新监听器的百分比
+          progressIndicator.textContent = Math.round(progress * 100) + '%';
 
-          // 背景和文字一起翻折、拉长
+          // 恢复向后躺的纵深感，角度设为 70 度
+          const rotateX = progress * 70; 
+          
+          // 实时计算拉伸，保证顶部不露黑
+          const rad = rotateX * Math.PI / 180;
+          const stretchY = (1 / Math.cos(rad)) * 1.05; // 稍微拉伸一点点补偿
+          
+          const translateY = Math.pow(progress, 2) * 8; 
+
           heroStage.style.transform = `
             translate3d(0, calc(-4vh + ${translateY}vh), 0) 
             rotateX(${rotateX}deg) 
             scaleY(${stretchY})
           `;
           
-          heroStage.style.opacity = Math.max(0, 1 - (progress * 0.6));
+          // 渐隐
+          heroStage.style.opacity = Math.max(0, 1 - (progress * 0.5));
           
-          // 上方继续用纯黑吞噬
+          // 顶部黑洞吞噬
           fadeMask.style.opacity = Math.max(0, (progress - 0.3) * 1.5);
 
           ticking = false;
