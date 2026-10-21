@@ -4,160 +4,135 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="The Blank Front Page">
   
-  <div class="scroll-lock" id="scroll-lock">
-    <div class="scroll-content" id="scroll-content">
-      
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Courier+Prime&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet">
 
-      <!-- 背景层 -->
-      <div class="fixed-bg" id="bg-container">
-        <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
-        <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
-        <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
-        <div class="bg-image" style="background-image: url('/bg4.jpg')"></div>
-        <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
-        <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
-        <div class="fog-overlay"></div>
-        <div class="vignette"></div>
-      </div>
+  <!-- 背景层 -->
+  <div class="fixed-bg" id="bg-container">
+    <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
+    <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
+    <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
+    <div class="bg-image" style="background-image: url('/bg4.jpg')"></div>
+    <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
+    <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
+    <div class="fog-overlay"></div>
+    <div class="vignette"></div>
+  </div>
 
-      <!-- 第二页内容区：放在底层被第一页遮罩盖住 -->
-      <section class="info-section" id="info-section">
-        <div class="content-block">
-          <h2 class="section-title">SEEKING PARTNERS</h2>
-          <div class="roles-grid">
-            <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
-            <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
-            <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
+  <!-- 核心交互：用 sticky 锁定的双门拉开层 -->
+  <div class="sticky-stage">
+    <div class="stage-layer stage-left">
+      <div class="stage-inner">
+        <div class="newspaper-masthead">
+          <div class="masthead-top mono">
+            <span>VOL. I</span>
+            <span>LONDON GAZETTE</span>
+            <span>EST. 1888</span>
           </div>
-          <div class="action-area">
-            <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
-          </div>
-        </div>
-      </section>
 
-      <!-- 第一页：固定在顶层，滚动时中间裂开揭示第二页 -->
-      <div class="hero-reveal-wrapper" id="hero-reveal">
-        <!-- 舞台撕开专用固定线 -->
-        <div class="split-indicator"></div>
-        
-        <div class="stage-layer stage-left">
-          <div class="stage-inner">
-            <div class="newspaper-masthead">
-              <div class="masthead-top mono">
-                <span>VOL. I</span>
-                <span>LONDON GAZETTE</span>
-                <span>EST. 1888</span>
-              </div>
-
-              <div class="letter-body">
-                <div class="header-group">
-                  <p class="salutation">To the Esteemed Visionaries,</p>
-                  <p class="address mono">The Foggy Streets of London.</p>
-                </div>
-                
-                <div class="content-group">
-                  <p class="greeting">Dear Partner,</p>
-                  <p class="body-text">
-                    The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
-                  </p>
-                  <p class="body-text">
-                    We seek the Architects, the Illustrators, and the Chroniclers. Should you wish to join our secret endeavour, leave your mark.
-                  </p>
-                </div>
-                
-                <div class="signature-group">
-                  <p class="sign-off">Yours in the mist,</p>
-                  <p class="signature">Gong Shui.</p>
-                </div>
-
-                <div class="cn-annotation">
-                  <p class="cn-title">致尊敬的远见者：</p>
-                  <p class="cn-body">1888年，伦敦深陷迷雾，真相在煤气灯下交织。我们正用虚幻引擎5构筑这个世界，寻找代码工匠、光影画师与叙事记录者。若你愿加入这场秘密行动，请留下你的线索。</p>
-                </div>
-              </div>
-
-              <div class="masthead-bottom mono">
-                <div class="line"></div>
-                <span>CONFIDENTIAL / SEEKING PARTNERS</span>
-                <div class="line"></div>
-              </div>
+          <div class="letter-body">
+            <div class="header-group">
+              <p class="salutation">To the Esteemed Visionaries,</p>
+              <p class="address mono">The Foggy Streets of London.</p>
+            </div>
+            
+            <div class="content-group">
+              <p class="greeting">Dear Partner,</p>
+              <p class="body-text">
+                The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
+              </p>
+              <p class="body-text">
+                We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
+              </p>
+            </div>
+            
+            <div class="signature-group">
+              <p class="sign-off">Yours in the mist,</p>
+              <p class="signature">Gong Shui.</p>
             </div>
           </div>
-        </div>
 
-        <div class="stage-layer stage-right">
-          <div class="stage-inner">
-            <div class="newspaper-masthead">
-              <div class="masthead-top mono">
-                <span>VOL. I</span>
-                <span>LONDON GAZETTE</span>
-                <span>EST. 1888</span>
-              </div>
-
-              <div class="letter-body">
-                <div class="header-group">
-                  <p class="salutation">To the Esteemed Visionaries,</p>
-                  <p class="address mono">The Foggy Streets of London.</p>
-                </div>
-                
-                <div class="content-group">
-                  <p class="greeting">Dear Partner,</p>
-                  <p class="body-text">
-                    The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
-                  </p>
-                  <p class="body-text">
-                    We seek the Architects, the Illustrators, and the Chroniclers. Should you wish to join our secret endeavour, leave your mark.
-                  </p>
-                </div>
-                
-                <div class="signature-group">
-                  <p class="sign-off">Yours in the mist,</p>
-                  <p class="signature">Gong Shui.</p>
-                </div>
-
-                <div class="cn-annotation">
-                  <p class="cn-title">致尊敬的远见者：</p>
-                  <p class="cn-body">1888年，伦敦深陷迷雾，真相在煤气灯下交织。我们正用虚幻引擎5构筑这个世界，寻找代码工匠、光影画师与叙事记录者。若你愿加入这场秘密行动，请留下你的线索。</p>
-                </div>
-              </div>
-
-              <div class="masthead-bottom mono">
-                <div class="line"></div>
-                <span>CONFIDENTIAL / SEEKING PARTNERS</span>
-                <div class="line"></div>
-              </div>
-            </div>
+          <div class="masthead-bottom mono">
+            <div class="line"></div>
+            <span>CONFIDENTIAL / SEEKING PARTNERS</span>
+            <div class="line"></div>
           </div>
         </div>
       </div>
+    </div>
 
+    <div class="stage-layer stage-right">
+      <div class="stage-inner">
+        <div class="newspaper-masthead">
+          <div class="masthead-top mono">
+            <span>VOL. I</span>
+            <span>LONDON GAZETTE</span>
+            <span>EST. 1888</span>
+          </div>
+
+          <div class="letter-body">
+            <div class="header-group">
+              <p class="salutation">To the Esteemed Visionaries,</p>
+              <p class="address mono">The Foggy Streets of London.</p>
+            </div>
+            
+            <div class="content-group">
+              <p class="greeting">Dear Partner,</p>
+              <p class="body-text">
+                The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
+              </p>
+              <p class="body-text">
+                We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Singapore</span>.
+              </p>
+            </div>
+            
+            <div class="signature-group">
+              <p class="sign-off">Yours in the mist,</p>
+              <p class="signature">Gong Shui.</p>
+            </div>
+          </div>
+
+          <div class="masthead-bottom mono">
+            <div class="line"></div>
+            <span>CONFIDENTIAL / SEEKING PARTNERS</span>
+            <div class="line"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- 滚动占位，拉开距离 -->
+  <div class="scroll-spacer"></div>
+
+  <!-- 第二页：底层招募区 -->
+  <section class="info-section">
+    <div class="content-block">
+      <h2 class="section-title">SEEKING PARTNERS</h2>
+      <div class="roles-grid">
+        <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
+        <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
+        <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
+      </div>
+      <div class="action-area">
+        <a href="mailto:hi@gongshui.com" class="contact-btn mono">[ INITIATE CONTACT ]</a>
+      </div>
+    </div>
+  </section>
+
 </BaseLayout>
 
 <style>
   :global(body) {
     margin: 0; padding: 0;
-    overflow: hidden;
     background-color: #030303;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
   }
   .mono { font-family: 'Courier Prime', monospace; }
 
-  .scroll-lock {
-    position: fixed; inset: 0;
-    overflow-y: auto; overflow-x: hidden;
-    scrollbar-width: none; -ms-overflow-style: none;
-    -webkit-overflow-scrolling: touch; 
-  }
-  .scroll-lock::-webkit-scrollbar { display: none; }
-  .scroll-content { position: relative; height: 250vh; }
-
-  /* 背景 */
+  /* 背景固定层 */
   .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
   .bg-image {
     position: absolute; top: 0; left: 0;
@@ -170,16 +145,50 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .fog-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,3,3,0.1) 0%, rgba(3,3,3,0.85) 60%, #030303 100%); pointer-events: none; z-index: 2; }
   .vignette { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, transparent 10%, #030303 90%); pointer-events: none; z-index: 3; }
 
-  /* ======= 第二页（底层，等待揭示） ======= */
+  /* ======= 核心：双向舞台 ======= */
+  .sticky-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 10;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .stage-layer {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 50%;
+    overflow: hidden;
+    background: rgba(3,3,3,0.7);
+    backdrop-filter: blur(5px);
+    will-change: transform;
+  }
+  .stage-left { left: 0; border-right: 1px solid rgba(255,255,255,0.05); }
+  .stage-right { right: 0; border-left: 1px solid rgba(255,255,255,0.05); }
+
+  .stage-inner {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 100vw;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px;
+    pointer-events: auto; /* 让文字可以被选中 */
+  }
+  .stage-left .stage-inner { left: 0; }
+  .stage-right .stage-inner { right: 0; }
+
+  /* 滚动占位（提供滑动的物理空间） */
+  .scroll-spacer { height: 100vh; }
+
+  /* ======= 第二页（在门后面） ======= */
   .info-section { 
-    position: fixed; inset: 0;
-    z-index: 1; /* 在第一页下面，背景上面 */
+    position: relative; 
+    z-index: 1;
+    min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
     padding: 40px;
     background-color: #050505;
-    /* 缩放阻尼，揭示时展现空间纵深 */
-    transform: scale(1.05);
-    will-change: transform;
   }
   .content-block { max-width: 1000px; width: 100%; }
   .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 60px; }
@@ -191,58 +200,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(20,20,20,0.8); transition: background 0.4s ease, border-color 0.4s ease; }
   .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
 
-  /* ======= 第一页：舞台双向裂开遮罩 ======= */
-  .hero-reveal-wrapper {
-    position: fixed; inset: 0;
-    z-index: 10;
-    pointer-events: none; 
-    display: flex;
-    overflow: hidden;
-  }
-
-  /* 中心极细发光线 */
-  .split-indicator {
-    position: absolute;
-    left: 50%; top: 0; bottom: 0;
-    width: 1px;
-    background: rgba(255,255,255,0.15);
-    box-shadow: 0 0 10px rgba(255,255,255,0.1);
-    z-index: 20;
-    transform: translateX(-50%);
-    will-change: opacity;
-  }
-
-  .stage-layer {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 50%;
-    overflow: hidden;
-    background: rgba(3,3,3,0.7); /* 半透明材质 */
-    backdrop-filter: blur(3px); /* 轻微的毛玻璃 */
-    will-change: transform;
-  }
-  .stage-left { left: 0; border-right: 1px solid rgba(255,255,255,0.05); }
-  .stage-right { right: 0; border-left: 1px solid rgba(255,255,255,0.05); }
-
-  /* 舞台内容容器：必须撑满全屏，让文字在分割处保持无缝 */
-  .stage-inner {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 100vw;
-    display: flex; align-items: center; justify-content: center;
-    padding: 40px;
-    pointer-events: auto;
-  }
-  /* 左右两侧容器的 X 轴定位，保证文字对齐 */
-  .stage-left .stage-inner { left: 0; }
-  .stage-right .stage-inner { right: 0; }
-
-  .newspaper-masthead {
-    width: 100%; max-width: 900px;
-    display: flex; flex-direction: column;
-  }
-
-  /* 以下保留原有信件排版样式 */
+  /* ======= 信件排版（保持不变） ======= */
+  .newspaper-masthead { width: 100%; max-width: 900px; display: flex; flex-direction: column; }
   .masthead-top { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.15); padding: 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #888; }
   .letter-body { padding: 30px 0; display: flex; flex-direction: column; position: relative; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; margin-left: 10px; }
   .header-group { margin-bottom: 30px; }
@@ -255,9 +214,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .signature-group { margin-top: 20px; }
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
-  .cn-annotation { margin-top: 30px; padding-top: 16px; border-top: 1px dashed rgba(255,255,255,0.1); max-width: 450px; margin-left: auto; text-align: right; }
-  .cn-title { font-family: 'Noto Serif SC', serif; font-weight: 400; font-size: 14px; color: #c2b8a6; margin: 0 0 6px 0; }
-  .cn-body { font-family: 'Noto Serif SC', serif; font-weight: 300; font-size: 12px; line-height: 1.8; color: #777; margin: 0; }
   .masthead-bottom { display: flex; align-items: center; gap: 20px; }
   .masthead-bottom .line { flex: 1; height: 1px; background: rgba(255,255,255,0.15); }
   .masthead-bottom span { font-size: 10px; letter-spacing: 0.3em; color: #666; }
@@ -267,19 +223,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
-    .cn-annotation { text-align: left; margin-left: 0; }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const scrollLock = document.getElementById('scroll-lock');
     const bgImages = document.querySelectorAll('.bg-image');
     const stageLeft = document.querySelector('.stage-left');
     const stageRight = document.querySelector('.stage-right');
-    const splitIndicator = document.querySelector('.split-indicator');
-    const infoSection = document.querySelector('.info-section');
     
+    // 背景轮播
     let currentIndex = 0;
     setInterval(() => {
       bgImages[currentIndex].classList.remove('active');
@@ -290,35 +243,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       newBg.classList.add('active');
     }, 5000);
 
-    // 获取总可滚动高度
-    const scrollHeight = document.querySelector('.scroll-content').scrollHeight;
-    const windowHeight = window.innerHeight;
-    const maxScroll = scrollHeight - windowHeight;
+    // 监听原生 window 滑动，把左右两扇门推开
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      
+      // 进度条：从 0（没动）到 1（滑动了一个屏幕的高度）
+      const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-    let ticking = false;
-    scrollLock.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const scrollY = scrollLock.scrollTop;
-          // 计算滚动进度，0 到 1（在 150vh 处完全展开，留一些缓冲）
-          const progress = Math.min(1, Math.max(0, scrollY / maxScroll));
-
-          // 1. 左右舞台移动
-          // 使用百分比偏移，保证在不同屏幕上都丝滑
-          stageLeft.style.transform = `translateX(-${progress * 100}%)`;
-          stageRight.style.transform = `translateX(${progress * 100}%)`;
-
-          // 2. 中心分割线淡出
-          splitIndicator.style.opacity = Math.max(0, 1 - progress * 2);
-
-          // 3. 底层招募区域从 1.05 缩放到 1.0，产生空间推拉感
-          const scale = 1.05 - (progress * 0.05);
-          infoSection.style.transform = `scale(${scale})`;
-
-          ticking = false;
-        });
-        ticking = true;
-      }
+      // 左门往左滑，右门往右滑
+      stageLeft.style.transform = `translateX(-${progress * 100}%)`;
+      stageRight.style.transform = `translateX(${progress * 100}%)`;
+      
+      // 文字稍微往下沉一点，产生视差（轻轻移动，抵消门的撕裂感）
+      const innerText = document.querySelectorAll('.stage-inner');
+      innerText.forEach(el => {
+        el.style.transform = `translateY(${progress * 10}vh)`;
+        el.style.opacity = Math.max(0, 1 - progress * 1.5);
+      });
     }, { passive: true });
   });
 </script>
