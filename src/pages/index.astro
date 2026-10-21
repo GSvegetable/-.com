@@ -20,9 +20,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="vignette"></div>
   </div>
 
-  <!-- 第一页：使用 sticky 钉在视口中，实现景深堆叠 -->
+  <!-- 第一页：使用 sticky 钉在视口中 -->
   <section class="hero-section" id="hero-section">
     <div class="newspaper-masthead" id="hero-masthead">
+      
+      <!-- 顶部三行（已加倒影） -->
       <div class="masthead-top mono">
         <span>VOL. I</span>
         <span>LONDON GAZETTE</span>
@@ -30,9 +32,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
 
       <div class="letter-body">
+        <!-- 删除了单独一行的伦敦雾街 -->
         <div class="header-group">
           <p class="salutation">To the Esteemed Visionaries,</p>
-          <p class="address mono">The Foggy Streets of London.</p>
         </div>
         
         <div class="content-group">
@@ -51,15 +53,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
       </div>
 
-      <div class="masthead-bottom mono">
-        <div class="line"></div>
-        <span>CONFIDENTIAL / SEEKING PARTNERS</span>
-        <div class="line"></div>
-      </div>
+      <!-- 底部的 confidential 已彻底删除 -->
     </div>
   </section>
 
-  <!-- 第二页：带有极强立体阴影，从底部推上来 -->
+  <!-- 第二页：带高级阴影覆盖上来 -->
   <section class="info-section" id="info-section">
     <div class="content-block">
       <h2 class="section-title">SEEKING PARTNERS</h2>
@@ -79,7 +77,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <style>
   :global(body) {
     margin: 0; padding: 0;
-    /* 恢复原生滚动，最顺滑 */
     background-color: #030303;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
@@ -99,7 +96,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .fog-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,3,3,0.1) 0%, rgba(3,3,3,0.85) 60%, #030303 100%); pointer-events: none; z-index: 2; }
   .vignette { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, transparent 10%, #030303 90%); pointer-events: none; z-index: 3; }
 
-  /* ======= 第一页：固定在视口 ======= */
+  /* ======= 第一页 ======= */
   .hero-section { 
     position: sticky;
     top: 0;
@@ -115,41 +112,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .newspaper-masthead {
     width: 100%; max-width: 900px;
     display: flex; flex-direction: column;
-    /* 向上提整体位置 */
     transform: translateY(-4vh);
     will-change: transform, opacity;
     pointer-events: auto;
   }
 
-  /* 以下为排版，保持原样不变 */
-  .masthead-top { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.15); padding: 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #888; }
-  .letter-body { padding: 30px 0; display: flex; flex-direction: column; position: relative; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; margin-left: 10px; }
-  .header-group { margin-bottom: 30px; }
+  /* 顶部三行与倒影 */
+  .masthead-top {
+    display: flex; justify-content: space-between;
+    /* 去掉上下边框，让倒影更干净 */
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    padding: 12px 0 16px 0;
+    font-size: 10px; letter-spacing: 0.3em; color: #888;
+    
+    /* 核心：纯 CSS 倒影，带渐隐遮罩 */
+    -webkit-box-reflect: below 2px linear-gradient(transparent, transparent 60%, rgba(255,255,255,0.15));
+  }
+
+  .letter-body { 
+    padding: 20px 0; 
+    display: flex; flex-direction: column; 
+    position: relative; 
+    border-left: 1px solid rgba(255,255,255,0.1); 
+    padding-left: 30px; 
+    margin-left: 10px; 
+    margin-top: 10px; /* 调整上移后的视觉距离 */
+  }
+  
+  .header-group { margin-bottom: 24px; }
   .salutation { font-family: 'Pinyon Script', cursive; font-size: clamp(40px, 5vw, 60px); color: #f4eee0; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
-  .address { font-size: 12px; color: #c2b8a6; margin: 10px 0 0 40px; letter-spacing: 0.1em; }
+  
   .content-group { max-width: 80%; }
   .greeting { font-family: 'Pinyon Script', cursive; font-size: 32px; color: #d1c5b4; margin: 0 0 16px 0; }
   .body-text { font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.8; color: #a39b8d; margin: 0 0 16px 0; text-align: justify; }
   .highlight { color: #d4af37; font-weight: 700; font-style: italic; }
+  
   .signature-group { margin-top: 20px; }
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
-  .masthead-bottom { display: flex; align-items: center; gap: 20px; }
-  .masthead-bottom .line { flex: 1; height: 1px; background: rgba(255,255,255,0.15); }
-  .masthead-bottom span { font-size: 10px; letter-spacing: 0.3em; color: #666; }
 
-  /* ======= 第二页：带高级阴影覆盖上来 ======= */
+  /* ======= 第二页 ======= */
   .info-section { 
     position: relative;
-    z-index: 20; /* 压住第一页 */
+    z-index: 20;
     min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
-    /* 顶部多层阴影，营造出纸张或幕布被揭开拉上来的高级感 */
-    box-shadow: 
-      0 -20px 50px rgba(0,0,0,0.8), 
-      0 -2px 10px rgba(255,255,255,0.03) inset;
+    box-shadow: 0 -20px 50px rgba(0,0,0,0.8), 0 -2px 10px rgba(255,255,255,0.03) inset;
     border-top: 1px solid rgba(255,255,255,0.05);
   }
   
@@ -176,7 +186,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const bgImages = document.querySelectorAll('.bg-image');
     const heroMasthead = document.getElementById('hero-masthead');
     
-    // 背景轮播
     let currentIndex = 0;
     setInterval(() => {
       bgImages[currentIndex].classList.remove('active');
@@ -187,7 +196,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       newBg.classList.add('active');
     }, 5000);
 
-    // 核心交互：利用原生滚动产生空间景深
     let ticking = false;
     window.addEventListener('scroll', () => {
       if (!ticking) {
@@ -195,17 +203,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
           
-          // 计算滚动进度
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // 第一页：往后退缩并微微模糊，形成极强的空间景深
-          // 强制带 translateZ(0) 防止抖动
-          const scale = 1 - (progress * 0.05); // 缩小到 95%
-          const translateY = -(progress * 10); // 稍微上浮
+          const scale = 1 - (progress * 0.05);
+          const translateY = -(progress * 10);
           
           heroMasthead.style.transform = `translate3d(0, calc(-4vh + ${translateY}px), 0) scale(${scale})`;
-          
-          // 稍微降低透明度，但不是完全消失（保持0.2的底线，作为背景残影）
           heroMasthead.style.opacity = Math.max(0.2, 1 - progress * 0.8);
 
           ticking = false;
