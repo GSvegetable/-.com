@@ -57,15 +57,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 留出滚动的空间 -->
   <div class="scroll-spacer"></div>
 
-  <!-- 第二页：固定在视口中的推拉层 -->
+  <!-- 第二页：软纸推拉层 -->
   <div class="info-wrapper">
-    <!-- 砸平瞬间出现的边缘模糊虚化层 -->
-    <div class="edge-blur" id="edge-blur"></div>
-    
     <section class="info-section" id="info-section">
+      <!-- 专门用来做弧面折痕的内阴影层 -->
+      <div class="fold-shadow" id="fold-shadow"></div>
+      
       <div class="content-block">
         <h2 class="section-title">SEEKING PARTNERS</h2>
         <div class="roles-grid">
@@ -90,17 +89,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
-  :global(::-webkit-scrollbar) {
-    display: none;
-    width: 0 !important;
-  }
+  :global(::-webkit-scrollbar) { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
 
   /* 背景固定 */
   .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
   .bg-image {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background-size: cover; background-position: center;
     filter: grayscale(100%) contrast(130%) brightness(0.2);
     opacity: 0; transition: opacity 3s ease-in-out; 
@@ -111,32 +106,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   /* ======= 第一页 ======= */
   .hero-section { 
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    z-index: 10;
-    overflow: hidden;
-    pointer-events: none;
+    position: sticky; top: 0; height: 100vh;
+    display: flex; align-items: center; justify-content: center; 
+    z-index: 10; overflow: hidden; pointer-events: none;
   }
-
   .perspective-wrap {
-    perspective: 1200px;
-    perspective-origin: 50% 0%; 
-    width: 100%; max-width: 900px;
-    padding: 0 40px; display: flex; justify-content: center;
+    perspective: 1200px; perspective-origin: 50% 0%; 
+    width: 100%; max-width: 900px; padding: 0 40px; display: flex; justify-content: center;
   }
-
   .newspaper-masthead {
     position: relative; width: 100%; display: flex; flex-direction: column;
     transform-origin: center bottom; 
     transform: translateY(-4vh) rotateX(0deg) scaleY(1);
-    will-change: transform, opacity;
-    pointer-events: auto;
+    will-change: transform, opacity; pointer-events: auto;
   }
-
   .fade-mask {
     position: absolute; inset: -30% 0 0 0;
     background: linear-gradient(to bottom, #030303 0%, transparent 50%);
@@ -155,33 +138,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-  /* 提供滚动的物理空间 */
+  /* 提供滚动空间 */
   .scroll-spacer { height: 200vh; }
 
-  /* ======= 第二页：固定舞台，独立推拉 ======= */
+  /* ======= 第二页：软纸推进 ======= */
   .info-wrapper {
     position: fixed;
     inset: 0;
     z-index: 20;
     display: flex;
-    align-items: flex-end; /* 靠底对齐，方便自下而上推 */
-    perspective: 1200px;
-    perspective-origin: 50% 100%; /* 透视点在底部 */
+    align-items: flex-end;
+    /* 透视点锁死在最顶部，保证上半部分滑进来后是平的 */
+    perspective: 1500px;
+    perspective-origin: 50% 0%;
     pointer-events: none;
     overflow: hidden;
-  }
-
-  /* 砸平瞬间的边缘虚化线 */
-  .edge-blur {
-    position: absolute;
-    top: 0; left: -5%;
-    width: 110%; height: 60px;
-    background: #050505;
-    border-radius: 50%;
-    filter: blur(15px);
-    opacity: 0;
-    z-index: 2;
-    pointer-events: none;
   }
 
   .info-section { 
@@ -192,20 +163,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     padding: 100px 40px;
     background-color: #050505;
     
-    /* 顶部大圆角，提供柔和的过渡 */
-    border-radius: 60px 60px 0 0; 
-    box-shadow: 0 -20px 50px rgba(0,0,0,0.8), inset 0 2px 0 rgba(255,255,255,0.05);
-    
-    /* 初始状态：在视口下方，向前倾 -50 度 */
-    transform-origin: center top;
-    transform: translateY(100%) rotateX(-50deg);
-    
+    /* 初始状态：完全在屏幕下方，并向前倾 60 度（底部翘起） */
+    transform-origin: center top; /* 轴心在顶部！ */
+    transform: translateY(100%) rotateX(-60deg);
     will-change: transform;
     pointer-events: auto;
     z-index: 3;
+    overflow: hidden;
+  }
+
+  /* 模拟纸张弯曲的顶部内侧阴影 */
+  .fold-shadow {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 150px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+    opacity: 0;
+    z-index: 4;
+    pointer-events: none;
   }
   
-  .content-block { max-width: 1000px; width: 100%; }
+  .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 5; }
   .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 60px; }
   .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
   @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -219,7 +197,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .letter-body { padding: 20px 0 20px 20px; margin-left: 0; }
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
-    .info-section { border-radius: 40px 40px 0 0; padding: 80px 20px; }
+    .info-section { padding: 80px 20px; }
     .perspective-wrap { perspective: 900px; padding: 0 20px; }
   }
 </style>
@@ -230,7 +208,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const heroMasthead = document.getElementById('hero-masthead');
     const infoSection = document.getElementById('info-section');
     const fadeMask = document.getElementById('fade-mask');
-    const edgeBlur = document.getElementById('edge-blur');
+    const foldShadow = document.getElementById('fold-shadow');
     
     let currentIndex = 0;
     setInterval(() => {
@@ -249,10 +227,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
           
-          // 总滚动进度：0 到 1
           const progress = Math.min(1, Math.max(0, scrollY / windowHeight));
 
-          // ======= 1. 第一页：动态拉伸与翻折 =======
+          // ======= 1. 第一页 =======
           const rotateX = progress * 82; 
           const rad = rotateX * Math.PI / 180;
           const stretchY = 1 / Math.cos(rad);
@@ -266,41 +243,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           heroMasthead.style.opacity = Math.max(0, 1 - (progress * 0.6));
           fadeMask.style.opacity = Math.max(0, (progress - 0.4) * 2);
 
-          // ======= 2. 第二页：自下而上滑入 -> 瞬间砸平 =======
-          let ty = 100;
-          let rx = -50;
-          let blurOpacity = 0;
-
+          // ======= 2. 第二页：软纸推进 =======
           if (progress > 0.1) {
-            if (progress <= 0.6) {
-              // 阶段1：从底部滑上来 (进度 0.1 -> 0.6)
-              const p = (progress - 0.1) / 0.5;
-              // 滑动速度：平滑推入
-              ty = 100 - (p * 60); // 滑到离底部 40vh 的位置
-              rx = -50 + (p * 10); // 倾角从 -50 变到 -40
-            } else if (progress <= 0.85) {
-              // 阶段2：转折点，瞬间砸平 (进度 0.6 -> 0.85)
-              const p = (progress - 0.6) / 0.25;
-              const ease = 1 - Math.pow(1 - p, 5); // 极速砸下的重力加速度
-              ty = 40 - (p * 40); // 剩余 40vh 瞬间贴底
-              rx = -40 + (40 * ease); // 角度瞬间归零
-              
-              // 砸平的一瞬间，出现边缘模糊过度线
-              blurOpacity = Math.sin(p * Math.PI); 
-            } else {
-              // 阶段3：完全贴合
-              ty = 0;
-              rx = 0;
-            }
-          }
+            // 滚动进度 0.1 -> 0.9 时，第二页完成推进
+            const p = Math.min(1, (progress - 0.1) / 0.8);
+            
+            // 位移：从 100% 推入到 0%（上半部分会先顶到屏幕最上方）
+            const ty = 100 - (p * 100);
+            
+            // 倾斜：从 -60度（翘起） 变成 0度（完全铺平）
+            // 曲线越到后面越平缓，就像是纸张前端铺平后，后面慢慢顺下来的感觉
+            const rx = -60 + (60 * Math.pow(p, 1.5)); 
 
-          // 应用第二页的物理状态
-          infoSection.style.transform = `translateY(${ty}vh) rotateX(${rx}deg)`;
-          
-          // 动态控制模糊线，使其出现在交界处
-          edgeBlur.style.opacity = blurOpacity;
-          // 随着面板上升，动态定位这条模糊线的位置
-          edgeBlur.style.top = `calc(${ty}vh - 20px)`;
+            // 动态圆角：一开始翘起时圆角大，铺平时圆角变小
+            const radius = 80 - (p * 40);
+            
+            infoSection.style.transform = `translateY(${ty}%) rotateX(${rx}deg)`;
+            infoSection.style.borderRadius = `${radius}px ${radius}px 0 0`;
+
+            // 用内部阴影模拟纸张卷曲（越陡阴影越深）
+            foldShadow.style.opacity = (1 - p) * 0.8;
+          }
 
           ticking = false;
         });
