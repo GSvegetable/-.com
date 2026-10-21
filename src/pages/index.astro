@@ -7,10 +7,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="scroll-lock" id="scroll-lock">
     <div class="scroll-content" id="scroll-content">
       
-      <!-- WebGL 动态云层背景 -->
+      <!-- WebGL 动态体积云 -->
       <canvas id="cloud-canvas"></canvas>
 
-      <!-- 自动轮播的真实建筑背景层 -->
+      <!-- 轮播背景层 -->
       <div class="fixed-bg" id="bg-container">
         <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
         <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
@@ -18,27 +18,42 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="bg-image" style="background-image: url('/bg4.jpg')"></div>
         <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
         <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
-        
-        <!-- 叠加的暗色与雾气遮罩，让云层和背景融合 -->
         <div class="fog-overlay"></div>
         <div class="vignette"></div>
       </div>
 
       <div class="content-wrapper">
+        <!-- 第一页：英伦报纸头版排版 -->
         <section class="hero-section">
-          <div class="title-container" id="hero-title">
-            <div class="sub-title mono">EST. 1888 · LONDON</div>
-            <h1 class="victorian-title">
-              <span class="line-small">The</span>
-              <span class="line-huge blood-splatter" data-text="Blank">Blank</span>
-              <span class="line-medium">Front Page</span>
-            </h1>
-            <div class="vertical-line"></div>
+          <div class="newspaper-masthead" id="hero-title">
+            <!-- 顶部极细刊号框 -->
+            <div class="masthead-top">
+              <span>VOL. I</span>
+              <span>LONDON GAZETTE</span>
+              <span>EST. 1888</span>
+            </div>
+
+            <!-- 核心排版区 -->
+            <div class="masthead-center">
+              <span class="pre-title">The</span>
+              <div class="title-wrap">
+                <h1 class="main-title blood-splatter" data-text="Blank">Blank</h1>
+                <span class="post-title">FRONT PAGE</span>
+              </div>
+            </div>
+
+            <!-- 底部副标题与分割线 -->
+            <div class="masthead-bottom">
+              <div class="line"></div>
+              <span class="mono">CONFIDENTIAL / SEEKING PARTNERS</span>
+              <div class="line"></div>
+            </div>
           </div>
         </section>
 
         <div class="transition-spacer"></div>
 
+        <!-- 第二页 -->
         <section class="info-section" id="info-section">
           <div class="content-block" id="info-content">
             <h2 class="section-title">SEEKING PARTNERS</h2>
@@ -64,6 +79,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background-color: #030303;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   .mono { font-family: 'Courier New', Courier, monospace; }
 
@@ -75,15 +91,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .scroll-lock::-webkit-scrollbar { display: none; }
   .scroll-content { position: relative; }
 
-  /* 全屏云层 Canvas */
   #cloud-canvas {
     position: fixed; inset: 0;
     width: 100%; height: 100%;
-    z-index: 1; /* 压在背景图上面，文字下面 */
-    pointer-events: none;
+    z-index: 1; pointer-events: none;
   }
 
-  /* 背景层 */
   .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
   .bg-image {
     position: absolute; top: 0; left: 0;
@@ -112,15 +125,106 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .content-wrapper { position: relative; z-index: 4; }
-  .hero-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
-  .title-container { display: flex; flex-direction: column; align-items: center; will-change: transform, opacity, filter; }
-  .sub-title { font-size: 11px; letter-spacing: 0.4em; color: #888; margin-bottom: 40px; }
-  .victorian-title { font-family: 'Playfair Display', serif; display: flex; flex-direction: column; align-items: center; margin: 0; line-height: 0.9; }
-  .line-small { font-size: clamp(28px, 5vw, 56px); font-style: italic; font-weight: 400; color: #a0a0a0; transform: translateX(-15vw); }
-  .line-medium { font-size: clamp(32px, 7vw, 80px); font-style: italic; font-weight: 400; color: #d1c5b4; letter-spacing: 0.08em; transform: translateX(10vw); }
-  .line-huge { position: relative; font-size: clamp(80px, 20vw, 240px); font-style: italic; font-weight: 400; color: #fff; letter-spacing: -0.01em; text-shadow: 0 10px 30px rgba(0,0,0,0.8); margin: -1vh 0; }
+  
+  /* ======= 第一页：报纸头版排版 ======= */
+  .hero-section { 
+    min-height: 100vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 40px;
+  }
 
-  .blood-splatter { position: relative; display: inline-block; }
+  .newspaper-masthead {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    /* 关键：开启 GPU 硬件加速，彻底解决滑动抖动 */
+    transform: translateZ(0);
+    will-change: transform, opacity;
+  }
+
+  /* 顶部极细线框与小字 */
+  .masthead-top {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding: 12px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #888;
+  }
+
+  /* 核心排版区：极度错位与反差 */
+  .masthead-center {
+    display: flex;
+    flex-direction: column;
+    padding: 60px 0;
+    position: relative;
+  }
+
+  .pre-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 8vw, 80px);
+    font-style: italic;
+    color: #a0a0a0;
+    margin-bottom: -20px;
+    margin-left: 5vw;
+    position: relative;
+    z-index: 2;
+  }
+
+  .title-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* 整体靠右对齐 */
+  }
+
+  .main-title {
+    position: relative;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(100px, 22vw, 260px);
+    font-style: italic;
+    font-weight: 400;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 0.8;
+    margin: 0;
+    z-index: 1;
+  }
+
+  .post-title {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(14px, 2vw, 18px);
+    letter-spacing: 0.8em;
+    color: #d1c5b4;
+    margin-top: 20px;
+    margin-right: 20px;
+  }
+
+  /* 底部副标题 */
+  .masthead-bottom {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .masthead-bottom .line {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  .masthead-bottom span {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #666;
+  }
+
+  /* 血液特效保持 */
   .blood-splatter::after {
     content: attr(data-text); position: absolute; left: 0; top: 0; z-index: -1;
     color: transparent;
@@ -137,10 +241,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     100% { opacity: 1; transform: scale(1) rotate(0deg); }
   }
 
-  .vertical-line { width: 1px; height: 60px; background: linear-gradient(180deg, #555, transparent); margin-top: 40px; }
+  /* ======= 第二页 ======= */
   .transition-spacer { height: 40vh; }
   .info-section { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 40px 40px 100px; }
-  .content-block { max-width: 1000px; width: 100%; will-change: transform, opacity; }
+  .content-block { max-width: 1000px; width: 100%; transform: translateZ(0); will-change: transform, opacity; }
   .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 80px; }
   .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
   @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -169,7 +273,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       newBg.classList.add('active');
     }, 5000);
 
-    // ======= 2. WebGL 体积云渲染 =======
+    // ======= 2. WebGL 体积云 =======
     const canvas = document.getElementById('cloud-canvas');
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -183,14 +287,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
     };
 
-    // 核心：FBM 流体噪声着色器
     const fragmentShader = `
       precision highp float;
       uniform float uTime;
       uniform vec2 uResolution;
       varying vec2 vUv;
 
-      // 2D 随机噪声
       float hash(vec2 p) {
         p = fract(p * vec2(123.34, 456.21));
         p += dot(p, p + 45.32);
@@ -208,7 +310,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
       }
 
-      // 分形布朗运动 (多层叠加)
       float fbm(vec2 p) {
         float v = 0.0;
         float a = 0.5;
@@ -223,35 +324,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       void main() {
         vec2 uv = gl_FragCoord.xy / uResolution.xy;
-        // 适配屏幕比例
         vec2 st = (gl_FragCoord.xy * 2.0 - uResolution.xy) / min(uResolution.x, uResolution.y);
         
-        // 流动坐标
         vec2 q = vec2(0.0);
         q.x = fbm(st + 0.1 * uTime);
         q.y = fbm(st + vec2(1.0));
 
-        // 扭曲的噪声场
         vec2 r = vec2(0.0);
         r.x = fbm(st + 1.0 * q + vec2(1.7, 9.2) + 0.15 * uTime);
         r.y = fbm(st + 1.0 * q + vec2(8.3, 2.8) + 0.126 * uTime);
 
         float f = fbm(st + r);
 
-        // 调色：深邃的灰蓝色调，展现1888伦敦的阴霾
-        vec3 color1 = vec3(0.02, 0.02, 0.03); // 暗黑
-        vec3 color2 = vec3(0.08, 0.09, 0.11); // 灰蓝
-        vec3 color3 = vec3(0.18, 0.19, 0.22); // 亮灰云
+        vec3 color1 = vec3(0.02, 0.02, 0.03);
+        vec3 color2 = vec3(0.08, 0.09, 0.11);
+        vec3 color3 = vec3(0.18, 0.19, 0.22);
 
         vec3 color = mix(color1, color2, f);
-        // 边缘加亮，制造体积感
         color = mix(color, color3, smoothstep(0.3, 0.8, f) * 0.8);
         
-        // 底部暗角
         float vignette = smoothstep(1.0, 0.2, length(st));
         color *= vignette;
 
-        // 输出时不透明度随高度变化，让底部更透明，能透出下方的建筑
         float alpha = smoothstep(0.2, 1.0, f + 0.2);
         
         gl_FragColor = vec4(color, alpha * 0.85);
@@ -290,27 +384,36 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
     });
 
-    // ======= 3. 滚动文字动画 =======
+    // ======= 3. 滚动顺滑处理 (解决抖动 + 移除 blur) =======
     const heroTitle = document.getElementById('hero-title');
     const infoContent = document.getElementById('info-content');
     const infoSection = document.getElementById('info-section');
     
+    let ticking = false;
     scrollLock.addEventListener('scroll', () => {
-      const scrollY = scrollLock.scrollTop;
-      if (scrollY <= window.innerHeight) {
-        const heroProg = scrollY / window.innerHeight;
-        heroTitle.style.transform = `translateY(${scrollY * 0.4}px)`;
-        heroTitle.style.opacity = 1 - heroProg;
-        heroTitle.style.filter = `blur(${heroProg * 10}px)`;
-      }
-      const distance = infoSection.offsetTop - scrollY;
-      if (distance < window.innerHeight && distance > 0) {
-        const infoProg = 1 - (distance / window.innerHeight);
-        infoContent.style.opacity = infoProg;
-        infoContent.style.transform = `translateY(${(1 - infoProg) * 80}px)`;
-      } else if (distance <= 0) {
-        infoContent.style.opacity = 1;
-        infoContent.style.transform = `translateY(0)`;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = scrollLock.scrollTop;
+
+          if (scrollY <= window.innerHeight) {
+            const heroProg = scrollY / window.innerHeight;
+            // 只做位移和淡出，绝对不加 blur！
+            heroTitle.style.transform = `translate3d(0, ${scrollY * 0.4}px, 0)`;
+            heroTitle.style.opacity = 1 - heroProg;
+          }
+
+          const distance = infoSection.offsetTop - scrollY;
+          if (distance < window.innerHeight && distance > 0) {
+            const infoProg = 1 - (distance / window.innerHeight);
+            infoContent.style.opacity = infoProg;
+            infoContent.style.transform = `translate3d(0, ${(1 - infoProg) * 80}px, 0)`;
+          } else if (distance <= 0) {
+            infoContent.style.opacity = 1;
+            infoContent.style.transform = `translate3d(0, 0, 0)`;
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     }, { passive: true });
   });
