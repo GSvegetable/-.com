@@ -8,13 +8,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Courier+Prime&display=swap" rel="stylesheet">
 
-  <!-- 实时滚动进度监听器 -->
   <div class="debug-progress mono" id="progress-indicator">0%</div>
 
-  <!-- 第一页：彻底锁死在底层背景 -->
   <section class="hero-section">
     <div class="perspective-wrap">
-      <div class="hero-stage" id="hero-masthead" style="transform: translate3d(0, -4vh, 0) rotateX(0deg) scaleY(1);">
+      <!-- 初始位置直接拔高到 -10vh -->
+      <div class="hero-stage" id="hero-masthead" style="transform: translate3d(0, -10vh, 0) rotateX(0deg) scaleY(1);">
         
         <div class="bg-layer">
           <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
@@ -59,10 +58,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 这个占位符提供滑动的物理空间 -->
   <div class="scroll-spacer"></div>
 
-  <!-- 第二页：浮在上面的内容层 -->
   <section class="info-section">
     <div class="content-block">
       <h2 class="section-title">SEEKING PARTNERS</h2>
@@ -80,10 +77,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
-  :global(html) {
-    /* 彻底禁用浏览器触底回弹 */
-    overscroll-behavior-y: none; 
-  }
+  :global(html) { overscroll-behavior-y: none; }
   :global(body) {
     margin: 0; padding: 0;
     background-color: #030303;
@@ -95,7 +89,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   :global(::-webkit-scrollbar) { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
 
-  /* 调试进度监听器 */
   .debug-progress {
     position: fixed; top: 20px; right: 20px;
     color: #d4af37; font-size: 14px; z-index: 9999;
@@ -104,10 +97,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     pointer-events: none;
   }
 
-  /* ======= 第一页：纯固定背景 ======= */
+  /* ======= 第一页 ======= */
   .hero-section { 
-    position: fixed; /* 改成 fixed，彻底钉死，绝不被顶走 */
-    inset: 0;
+    position: fixed; inset: 0;
     height: 100vh; height: 100lvh;
     display: flex; align-items: center; justify-content: center; 
     z-index: 10; overflow: hidden; pointer-events: none;
@@ -128,8 +120,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transform-origin: center bottom; 
     will-change: transform, opacity;
     pointer-events: auto;
-    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    
+    /* 移除了遮罩 */
+    
     opacity: 0; transition: opacity 0.3s ease-out;
   }
   .hero-stage.loaded { opacity: 1; }
@@ -169,10 +162,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     filter: blur(0.3px) contrast(1.2); 
   }
 
-  /* 占位符，提供滚动的物理空间 */
   .scroll-spacer { height: 100vh; height: 100lvh; pointer-events: none; }
 
-  /* ======= 第二页：从底部滑上来盖住 ======= */
+  /* ======= 第二页 ======= */
   .info-section { 
     position: relative; z-index: 20; min-height: 100vh; min-height: 100lvh;
     display: flex; align-items: center; justify-content: center;
@@ -239,10 +231,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const rotateX = heroProgress * 70; 
           const rad = rotateX * Math.PI / 180;
           const stretchY = (1 / Math.cos(rad)) * 1.05; 
-          const translateY = Math.pow(heroProgress, 2) * 8; 
+          
+          // 将基础位置从 -4 调整为 -10，整体拔高
+          const translateY = -10 + (Math.pow(heroProgress, 2) * 8); 
 
           heroStage.style.transform = `
-            translate3d(0, ${-4 + translateY}vh, 0) 
+            translate3d(0, ${translateY}vh, 0) 
             rotateX(${rotateX}deg) 
             scaleY(${stretchY})
           `;
