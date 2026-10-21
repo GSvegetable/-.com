@@ -7,8 +7,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="scroll-lock" id="scroll-lock">
     <div class="scroll-content" id="scroll-content">
       
-      <!-- 纯 CSS 动态浓雾 (不再使用 WebGL，保证 60 帧顺滑) -->
-      <div class="css-fog-layer"></div>
+      <!-- 引入极致花体字和复古衬线字 -->
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Noto+Serif+SC:wght@300;400&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
 
       <!-- 轮播背景层 -->
       <div class="fixed-bg" id="bg-container">
@@ -23,35 +25,66 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
 
       <div class="content-wrapper">
-        <!-- 第一页：完美居中固定，只做淡出 -->
+        <!-- 第一页：英伦信纸 -->
         <section class="hero-section">
-          <div class="newspaper-masthead" id="hero-title">
-            <div class="masthead-top">
-              <span>VOL. I</span>
-              <span>LONDON GAZETTE</span>
-              <span>EST. 1888</span>
-            </div>
-
-            <div class="masthead-center">
-              <span class="pre-title">The</span>
-              <div class="title-wrap">
-                <h1 class="main-title blood-splatter" data-text="Blank">Blank</h1>
-                <span class="post-title">FRONT PAGE</span>
+          <div class="letter-wrapper" id="hero-title">
+            
+            <!-- 信纸本体 -->
+            <div class="letter-paper">
+              
+              <!-- 右上角邮票与邮戳 -->
+              <div class="stamp-area">
+                <div class="postmark">
+                  <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="4 2"/>
+                    <circle cx="50" cy="50" r="35" fill="none" stroke="#222" stroke-width="1"/>
+                    <text x="50" y="45" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#222">LONDON</text>
+                    <text x="50" y="60" font-family="sans-serif" font-size="8" text-anchor="middle" fill="#222">OC 21 · 88</text>
+                  </svg>
+                </div>
+                <div class="stamp">
+                  <div class="stamp-inner">
+                    <span class="stamp-value">1d</span>
+                    <svg class="queen-silhouette" viewBox="0 0 50 60">
+                      <path d="M25,5 C15,5 10,15 10,25 C10,40 20,55 25,55 C30,55 40,40 40,25 C40,15 35,5 25,5 Z" fill="#222" opacity="0.6"/>
+                    </svg>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div class="masthead-bottom">
-              <div class="line"></div>
-              <span class="mono">CONFIDENTIAL / SEEKING PARTNERS</span>
-              <div class="line"></div>
+              <!-- 信件正文排版 -->
+              <div class="letter-content">
+                <p class="salutation">To the Esteemed Visionaries,</p>
+                <p class="address-step">The Foggy Streets of London.</p>
+                
+                <p class="body-text">Dear Partner,</p>
+                <p class="body-text">The year is 1888. The city drowns in mist, and mysteries unfold in the gaslight.</p>
+                <p class="body-text">We are crafting a grand illusion (Unreal Engine 5), a world of shadows and truth.</p>
+                <p class="body-text">We seek the Architects, the Illustrators, and the Chroniclers.</p>
+                <p class="body-text">Should you wish to join our secret endeavour, leave your mark.</p>
+                
+                <p class="sign-off">Yours in the mist,</p>
+                <p class="signature">Gong Shui.</p>
+
+                <!-- 中文注脚 -->
+                <div class="cn-annotation">
+                  <p>致尊敬的远见者：</p>
+                  <p>1888年，伦敦深陷迷雾，真相在煤气灯下交织。我们正用虚幻引擎5构筑这个世界，寻找代码工匠、光影画师与叙事记录者。若你愿加入这场秘密行动，请留下你的线索。</p>
+                </div>
+              </div>
+
+              <!-- 右下角火漆印章 -->
+              <div class="wax-seal">
+                <div class="seal-inner">G</div>
+              </div>
+
             </div>
           </div>
         </section>
 
-        <!-- 留出滚动空间 -->
         <div class="transition-spacer"></div>
 
-        <!-- 第二页：正常滚动 -->
+        <!-- 第二页：招募内容 -->
         <section class="info-section" id="info-section">
           <div class="content-block" id="info-content">
             <h2 class="section-title">SEEKING PARTNERS</h2>
@@ -77,34 +110,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background-color: #030303;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
   }
   .mono { font-family: 'Courier New', Courier, monospace; }
 
+  /* 隐藏滚动条，保持极致顺滑 */
   .scroll-lock {
     position: fixed; inset: 0;
     overflow-y: auto; overflow-x: hidden;
     scrollbar-width: none; -ms-overflow-style: none;
-    /* 开启原生惯性滚动 */
     -webkit-overflow-scrolling: touch; 
   }
   .scroll-lock::-webkit-scrollbar { display: none; }
   .scroll-content { position: relative; }
 
-  /* 静态但带呼吸感的 CSS 雾气遮罩 */
-  .css-fog-layer {
-    position: fixed; inset: 0;
-    z-index: 1; pointer-events: none;
-    background: radial-gradient(circle at 20% 30%, rgba(40, 45, 55, 0.4) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(30, 35, 45, 0.5) 0%, transparent 60%);
-    animation: fogMove 20s infinite alternate linear;
-  }
-
-  @keyframes fogMove {
-    0% { transform: scale(1) translate(0, 0); }
-    100% { transform: scale(1.1) translate(2%, 2%); }
-  }
-
+  /* 背景层 */
   .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
   .bg-image {
     position: absolute; top: 0; left: 0;
@@ -112,14 +131,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background-size: cover; background-position: center;
     filter: grayscale(100%) contrast(130%) brightness(0.2);
     opacity: 0;
-    /* 移除会导致抖动的高开销滤镜动画 */
     transition: opacity 3s ease-in-out; 
-    will-change: opacity;
   }
-  .bg-image.active {
-    opacity: 1; z-index: 1;
-  }
-
+  .bg-image.active { opacity: 1; z-index: 1; }
   .fog-overlay {
     position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(3,3,3,0.1) 0%, rgba(3,3,3,0.8) 60%, #030303 100%);
@@ -133,59 +147,161 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .content-wrapper { position: relative; z-index: 4; }
   
-  /* ======= 第一页排版 ======= */
+  /* ======= 第一页：信件区域 ======= */
   .hero-section { 
     min-height: 100vh; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    padding: 40px;
+    padding: 40px 20px;
   }
 
-  .newspaper-masthead {
-    width: 100%; max-width: 900px;
-    display: flex; flex-direction: column;
-    /* 强制 GPU 加速，锁定图层 */
+  .letter-wrapper {
+    width: 100%; max-width: 800px;
     transform: translateZ(0);
-    will-change: opacity;
+    will-change: opacity, transform;
   }
 
-  /* 移除所有 text-shadow，极大减轻渲染压力 */
-  .masthead-top {
-    display: flex; justify-content: space-between;
-    border-top: 1px solid rgba(255,255,255,0.2);
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    padding: 12px 0;
-    font-family: 'Courier New', monospace;
-    font-size: 11px; letter-spacing: 0.2em; color: #888;
+  /* 信纸物理质感：羊皮纸底色、边缘阴影、高光 */
+  .letter-paper {
+    position: relative;
+    background-color: #e8e2d2; /* 泛黄纸张底色 */
+    /* 模拟纸张老化渐变 */
+    background-image: radial-gradient(circle at 50% 0%, #f4eedc 0%, #e8e2d2 60%, #d8d0bc 100%);
+    box-shadow: 
+      0 20px 50px rgba(0,0,0,0.6), /* 外部宏观投影 */
+      inset 0 0 40px rgba(100, 90, 70, 0.15), /* 内部纸张纤维暗角 */
+      inset 0 0 5px rgba(255,255,255,0.8); /* 边缘高光 */
+    padding: 60px 50px;
+    border-radius: 2px;
+    /* 微微倾斜，增加随意感 */
+    transform: rotate(-1.5deg);
   }
 
-  .masthead-center { display: flex; flex-direction: column; padding: 60px 0; position: relative; }
-  .pre-title { font-family: 'Playfair Display', serif; font-size: clamp(40px, 8vw, 80px); font-style: italic; color: #a0a0a0; margin-bottom: -20px; margin-left: 5vw; position: relative; z-index: 2; }
-  .title-wrap { display: flex; flex-direction: column; align-items: flex-end; }
-  .main-title { position: relative; font-family: 'Playfair Display', serif; font-size: clamp(100px, 22vw, 260px); font-style: italic; font-weight: 400; color: #fff; letter-spacing: -0.02em; line-height: 0.8; margin: 0; z-index: 1; }
-  .post-title { font-family: 'Courier New', monospace; font-size: clamp(14px, 2vw, 18px); letter-spacing: 0.8em; color: #d1c5b4; margin-top: 20px; margin-right: 20px; }
-
-  .masthead-bottom { display: flex; align-items: center; gap: 20px; }
-  .masthead-bottom .line { flex: 1; height: 1px; background: rgba(255,255,255,0.2); }
-  .masthead-bottom span { font-size: 10px; letter-spacing: 0.3em; color: #666; }
-
-  .blood-splatter::after {
-    content: attr(data-text); position: absolute; left: 0; top: 0; z-index: -1;
-    color: transparent;
-    background-image: radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 25%, transparent 60%), radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 10%);
-    -webkit-background-clip: text; background-clip: text;
-    opacity: 0; transform: scale(0.8) rotate(2deg); transform-origin: top right;
-    animation: bloodSplat 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
+  /* 邮票与邮戳 */
+  .stamp-area {
+    position: absolute;
+    top: 30px; right: 30px;
+    display: flex; align-items: center;
   }
-  @keyframes bloodSplat {
-    0% { opacity: 0; transform: scale(0.3) rotate(5deg); }
-    60% { opacity: 1; transform: scale(1.05) rotate(-2deg); }
-    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+
+  .postmark {
+    width: 80px; height: 80px;
+    transform: rotate(-15deg);
+    margin-right: -20px;
+    opacity: 0.6;
+    /* 模拟油墨渗透 */
+    mix-blend-mode: multiply; 
+  }
+
+  .stamp {
+    width: 60px; height: 75px;
+    background: #c5b9a5;
+    /* 邮票齿孔效果 */
+    background-image: radial-gradient(circle, transparent 40%, #e8e2d2 45%);
+    background-size: 8px 8px;
+    background-position: -4px -4px;
+    border: 1px solid #b0a590;
+    box-shadow: 1px 2px 4px rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .stamp-inner {
+    width: 50px; height: 65px;
+    border: 1px solid #8c7e69;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: #d6ccb8;
+  }
+  .stamp-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; font-weight: bold; color: #222;
+  }
+  .queen-silhouette { width: 24px; height: 30px; margin-top: 4px; }
+
+  /* 信件正文排版 */
+  .letter-content {
+    color: #1a1816;
+    max-width: 90%;
+  }
+
+  .salutation {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 32px;
+    margin: 0 0 10px 0;
+  }
+
+  .address-step {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-style: italic;
+    margin: 0 0 40px 40px; /* 阶梯缩进 */
+    color: #4a453d;
+  }
+
+  .body-text {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 28px;
+    line-height: 1.4;
+    margin: 0 0 15px 0;
+    /* 增加墨水在纸上的渗透感 */
+    text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.1);
+  }
+
+  .sign-off {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 28px;
+    margin: 40px 0 0 0;
+  }
+
+  .signature {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 36px;
+    margin: 0;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+
+  /* 中文注脚 */
+  .cn-annotation {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(0,0,0,0.2);
+  }
+  .cn-annotation p {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #5c564d;
+    margin: 0 0 6px 0;
+  }
+
+  /* 右下角火漆印章 */
+  .wax-seal {
+    position: absolute;
+    bottom: -20px; right: 40px;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    /* 多层渐变和阴影模拟火漆的融化与高光 */
+    background: radial-gradient(circle at 35% 35%, #a82e2e 0%, #7a1515 40%, #4a0808 100%);
+    box-shadow: 
+      3px 5px 15px rgba(0,0,0,0.5),
+      inset 2px 2px 5px rgba(255,255,255,0.2),
+      inset -3px -3px 8px rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(10deg);
+  }
+  .seal-inner {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 700; color: #d19a9a;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
   }
 
   /* ======= 第二页 ======= */
-  .transition-spacer { height: 40vh; }
+  .transition-spacer { height: 30vh; }
   .info-section { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 40px 40px 100px; }
   .content-block { max-width: 1000px; width: 100%; transform: translateZ(0); will-change: transform, opacity; }
   .section-title { font-family: 'Playfair Display', serif; font-size: 14px; letter-spacing: 0.3em; font-weight: 400; color: #888; text-align: center; margin-bottom: 80px; }
@@ -194,10 +310,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
   .action-area { text-align: center; margin-top: 100px; }
-  
-  /* 移除按钮的 backdrop-filter */
   .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(20,20,20,0.8); transition: background 0.4s ease, border-color 0.4s ease; }
   .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
+
+  /* 适配平板手机尺寸 */
+  @media (max-width: 600px) {
+    .letter-paper { padding: 40px 20px; transform: rotate(0deg); }
+    .stamp-area { top: 15px; right: 15px; transform: scale(0.8); }
+    .letter-content { max-width: 100%; }
+    .salutation { font-size: 24px; }
+    .body-text { font-size: 22px; }
+    .signature { font-size: 28px; }
+    .address-step { margin-left: 20px; }
+    .wax-seal { right: 20px; width: 70px; height: 70px; }
+    .seal-inner { width: 54px; height: 54px; font-size: 24px; }
+  }
 </style>
 
 <script>
@@ -217,7 +344,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       newBg.classList.add('active');
     }, 5000);
 
-    // 纯 CSS 雾化代替了高负载 WebGL。JS 只处理最轻量的透明度淡出。
+    // 依然保持顺滑的像素取整和淡出
     let ticking = false;
     scrollLock.addEventListener('scroll', () => {
       if (!ticking) {
@@ -225,19 +352,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = scrollLock.scrollTop;
           const windowHeight = window.innerHeight;
 
-          // 第一屏文字：不做位移，只做透明度渐变，彻底根绝抖动
           if (scrollY <= windowHeight) {
             const heroProg = scrollY / windowHeight;
-            // 强制取整对齐像素，防止亚像素颤动
-            heroTitle.style.opacity = Math.max(0, 1 - heroProg);
+            // 信纸在滑动时往上飘走并淡出
+            heroTitle.style.opacity = Math.max(0, 1 - heroProg * 1.5);
+            heroTitle.style.transform = `translate3d(0, ${-scrollY * 0.2}px, 0)`;
           }
 
-          // 第二屏文字：强制像素取整
           const distance = infoContent.getBoundingClientRect().top;
           if (distance < windowHeight && distance > -300) {
             const infoProg = Math.max(0, Math.min(1, 1 - (distance / windowHeight)));
             infoContent.style.opacity = infoProg;
-            // 取整，消灭微震
             const translateY = Math.round((1 - infoProg) * 60);
             infoContent.style.transform = `translate3d(0, ${translateY}px, 0)`;
           } else if (distance <= -300) {
