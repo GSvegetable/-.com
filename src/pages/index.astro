@@ -41,7 +41,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <p class="body-text">
                 The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
               </p>
-              <!-- 需求1：Singapore 改为 Toronto -->
               <p class="body-text">
                 We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Toronto</span>.
               </p>
@@ -61,13 +60,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="scroll-spacer"></div>
 
-  <!-- 第二页 -->
+  <!-- 第二页：通过 Mask 控制顶部透明度 -->
   <section class="info-section" id="info-section">
-    <!-- 需求4：顶部边缘模糊遮罩，JS控制它在80%时消失 -->
-    <div class="top-fade-mask" id="top-fade-mask"></div>
-
     <div class="content-block">
-      <!-- 需求2：标题改为加入社区 -->
       <h2 class="section-title mono">JOIN THE COMMUNITY</h2>
       
       <div class="roles-grid">
@@ -77,9 +72,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
       
       <div class="action-area">
-        <!-- 需求3：重做按钮设计 -->
         <a href="mailto:hi@gongshui.com" class="contact-btn">
-          <span class="btn-text">INITIATE CONTACT</span>
+          <span class="btn-text">JOIN THE COMMUNITY</span>
         </a>
       </div>
     </div>
@@ -177,23 +171,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     position: relative; z-index: 20; min-height: 100vh; min-height: 100lvh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
-    background-color: rgba(5, 5, 5, 0.85);
-    /* 增加圆角，让“分界线”清晰时更有质感 */
+    
+    /* 纯黑底色，完全实心不透底 */
+    background-color: #050505;
     border-radius: 60px 60px 0 0;
-  }
-
-  /* 顶部模糊遮罩层 */
-  .top-fade-mask {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 120px;
-    background: linear-gradient(to bottom, #050505 0%, transparent 100%);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 60px 60px 0 0;
-    pointer-events: none;
-    z-index: 10;
-    opacity: 1; /* JS 会在 80% 时将其降为 0 */
-    will-change: opacity;
+    
+    /* 默认开启遮罩，JS 会动态修改它的值。初始顶部 35% 是透明的 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 35%);
+    
+    /* 加一点极柔和的阴影，强化分界线的立体感 */
+    box-shadow: 0 -20px 40px rgba(0,0,0,0.5);
   }
   
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
@@ -206,7 +194,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   
   .action-area { text-align: center; margin-top: 80px; }
 
-  /* 需求3：全新高级按钮设计 */
+  /* 按钮设计 */
   .contact-btn {
     display: inline-flex;
     flex-direction: column;
@@ -218,7 +206,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transition: all 0.4s ease;
   }
   
-  /* 按钮的上下金线 */
   .contact-btn::before, .contact-btn::after {
     content: '';
     position: absolute;
@@ -229,7 +216,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn::before { top: 0; }
   .contact-btn::after { bottom: 0; }
 
-  /* 中间微弱的暗金光晕背景 */
   .contact-btn .btn-text {
     color: var(--gold);
     font-family: 'Courier Prime', monospace;
@@ -241,10 +227,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .contact-btn::before {
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0); /* 用于悬停时发光 */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0);
   }
 
-  /* 悬停效果：上下金线发光，背景透出微光，文字变白 */
   .contact-btn:hover { background: rgba(212, 175, 55, 0.05); }
   .contact-btn:hover::before, .contact-btn:hover::after {
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
@@ -259,7 +244,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
     .info-section { padding: 80px 20px; border-radius: 40px 40px 0 0; }
-    .top-fade-mask { border-radius: 40px 40px 0 0; height: 80px; }
   }
 </style>
 
@@ -269,7 +253,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const heroStage = document.getElementById('hero-masthead');
     const fadeMask = document.getElementById('fade-mask');
     const progressIndicator = document.getElementById('progress-indicator');
-    const topFadeMask = document.getElementById('top-fade-mask');
+    const infoSection = document.getElementById('info-section');
     
     heroStage.classList.add('loaded');
 
@@ -312,11 +296,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           heroStage.style.opacity = Math.max(0, 1 - (heroProgress * 0.5));
           fadeMask.style.opacity = Math.max(0, (heroProgress - 0.3) * 1.5);
 
-          // 需求4：当全局进度达到 80% 时，分界线的模糊完全消失
-          if (globalProgress >= 0.8) {
-            topFadeMask.style.opacity = 0;
+          // ======= 核心：动态遮罩控制 =======
+          // 当 globalProgress 从 0 到 0.8 时，maskStop 从 35% 逐渐降到 0%
+          // 到 80% 时，maskStop 为 0，彻底变成实心，分界线清晰可见
+          let maskStop = 35 - (globalProgress / 0.8) * 35;
+          maskStop = Math.max(0, maskStop);
+          
+          if (maskStop > 0.1) {
+            infoSection.style.webkitMaskImage = `linear-gradient(to bottom, transparent 0%, black ${maskStop}%)`;
+            infoSection.style.maskImage = `linear-gradient(to bottom, transparent 0%, black ${maskStop}%)`;
           } else {
-            topFadeMask.style.opacity = 1;
+            infoSection.style.webkitMaskImage = 'none';
+            infoSection.style.maskImage = 'none';
           }
 
           ticking = false;
