@@ -7,8 +7,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="scroll-lock" id="scroll-lock">
     <div class="scroll-content" id="scroll-content">
       
-      <!-- WebGL 动态体积云 -->
-      <canvas id="cloud-canvas"></canvas>
+      <!-- 纯 CSS 动态浓雾 (不再使用 WebGL，保证 60 帧顺滑) -->
+      <div class="css-fog-layer"></div>
 
       <!-- 轮播背景层 -->
       <div class="fixed-bg" id="bg-container">
@@ -23,17 +23,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
 
       <div class="content-wrapper">
-        <!-- 第一页：英伦报纸头版排版 -->
+        <!-- 第一页：完美居中固定，只做淡出 -->
         <section class="hero-section">
           <div class="newspaper-masthead" id="hero-title">
-            <!-- 顶部极细刊号框 -->
             <div class="masthead-top">
               <span>VOL. I</span>
               <span>LONDON GAZETTE</span>
               <span>EST. 1888</span>
             </div>
 
-            <!-- 核心排版区 -->
             <div class="masthead-center">
               <span class="pre-title">The</span>
               <div class="title-wrap">
@@ -42,7 +40,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               </div>
             </div>
 
-            <!-- 底部副标题与分割线 -->
             <div class="masthead-bottom">
               <div class="line"></div>
               <span class="mono">CONFIDENTIAL / SEEKING PARTNERS</span>
@@ -51,9 +48,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </section>
 
+        <!-- 留出滚动空间 -->
         <div class="transition-spacer"></div>
 
-        <!-- 第二页 -->
+        <!-- 第二页：正常滚动 -->
         <section class="info-section" id="info-section">
           <div class="content-block" id="info-content">
             <h2 class="section-title">SEEKING PARTNERS</h2>
@@ -87,14 +85,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     position: fixed; inset: 0;
     overflow-y: auto; overflow-x: hidden;
     scrollbar-width: none; -ms-overflow-style: none;
+    /* 开启原生惯性滚动 */
+    -webkit-overflow-scrolling: touch; 
   }
   .scroll-lock::-webkit-scrollbar { display: none; }
   .scroll-content { position: relative; }
 
-  #cloud-canvas {
+  /* 静态但带呼吸感的 CSS 雾气遮罩 */
+  .css-fog-layer {
     position: fixed; inset: 0;
-    width: 100%; height: 100%;
     z-index: 1; pointer-events: none;
+    background: radial-gradient(circle at 20% 30%, rgba(40, 45, 55, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(30, 35, 45, 0.5) 0%, transparent 60%);
+    animation: fogMove 20s infinite alternate linear;
+  }
+
+  @keyframes fogMove {
+    0% { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.1) translate(2%, 2%); }
   }
 
   .fixed-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
@@ -104,13 +112,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background-size: cover; background-position: center;
     filter: grayscale(100%) contrast(130%) brightness(0.2);
     opacity: 0;
-    transform: scale(1.05);
-    transition: opacity 3s ease-in-out, transform 6s ease-out;
-    will-change: opacity, transform;
+    /* 移除会导致抖动的高开销滤镜动画 */
+    transition: opacity 3s ease-in-out; 
+    will-change: opacity;
   }
   .bg-image.active {
-    opacity: 1; transform: scale(1);
-    filter: grayscale(100%) contrast(130%) brightness(0.3); z-index: 1;
+    opacity: 1; z-index: 1;
   }
 
   .fog-overlay {
@@ -126,7 +133,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .content-wrapper { position: relative; z-index: 4; }
   
-  /* ======= 第一页：报纸头版排版 ======= */
+  /* ======= 第一页排版 ======= */
   .hero-section { 
     min-height: 100vh; 
     display: flex; 
@@ -136,101 +143,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .newspaper-masthead {
-    width: 100%;
-    max-width: 900px;
-    display: flex;
-    flex-direction: column;
-    /* 关键：开启 GPU 硬件加速，彻底解决滑动抖动 */
+    width: 100%; max-width: 900px;
+    display: flex; flex-direction: column;
+    /* 强制 GPU 加速，锁定图层 */
     transform: translateZ(0);
-    will-change: transform, opacity;
+    will-change: opacity;
   }
 
-  /* 顶部极细线框与小字 */
+  /* 移除所有 text-shadow，极大减轻渲染压力 */
   .masthead-top {
-    display: flex;
-    justify-content: space-between;
+    display: flex; justify-content: space-between;
     border-top: 1px solid rgba(255,255,255,0.2);
     border-bottom: 1px solid rgba(255,255,255,0.2);
     padding: 12px 0;
     font-family: 'Courier New', monospace;
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    color: #888;
+    font-size: 11px; letter-spacing: 0.2em; color: #888;
   }
 
-  /* 核心排版区：极度错位与反差 */
-  .masthead-center {
-    display: flex;
-    flex-direction: column;
-    padding: 60px 0;
-    position: relative;
-  }
+  .masthead-center { display: flex; flex-direction: column; padding: 60px 0; position: relative; }
+  .pre-title { font-family: 'Playfair Display', serif; font-size: clamp(40px, 8vw, 80px); font-style: italic; color: #a0a0a0; margin-bottom: -20px; margin-left: 5vw; position: relative; z-index: 2; }
+  .title-wrap { display: flex; flex-direction: column; align-items: flex-end; }
+  .main-title { position: relative; font-family: 'Playfair Display', serif; font-size: clamp(100px, 22vw, 260px); font-style: italic; font-weight: 400; color: #fff; letter-spacing: -0.02em; line-height: 0.8; margin: 0; z-index: 1; }
+  .post-title { font-family: 'Courier New', monospace; font-size: clamp(14px, 2vw, 18px); letter-spacing: 0.8em; color: #d1c5b4; margin-top: 20px; margin-right: 20px; }
 
-  .pre-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(40px, 8vw, 80px);
-    font-style: italic;
-    color: #a0a0a0;
-    margin-bottom: -20px;
-    margin-left: 5vw;
-    position: relative;
-    z-index: 2;
-  }
+  .masthead-bottom { display: flex; align-items: center; gap: 20px; }
+  .masthead-bottom .line { flex: 1; height: 1px; background: rgba(255,255,255,0.2); }
+  .masthead-bottom span { font-size: 10px; letter-spacing: 0.3em; color: #666; }
 
-  .title-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* 整体靠右对齐 */
-  }
-
-  .main-title {
-    position: relative;
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(100px, 22vw, 260px);
-    font-style: italic;
-    font-weight: 400;
-    color: #fff;
-    letter-spacing: -0.02em;
-    line-height: 0.8;
-    margin: 0;
-    z-index: 1;
-  }
-
-  .post-title {
-    font-family: 'Courier New', monospace;
-    font-size: clamp(14px, 2vw, 18px);
-    letter-spacing: 0.8em;
-    color: #d1c5b4;
-    margin-top: 20px;
-    margin-right: 20px;
-  }
-
-  /* 底部副标题 */
-  .masthead-bottom {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .masthead-bottom .line {
-    flex: 1;
-    height: 1px;
-    background: rgba(255,255,255,0.2);
-  }
-
-  .masthead-bottom span {
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    color: #666;
-  }
-
-  /* 血液特效保持 */
   .blood-splatter::after {
     content: attr(data-text); position: absolute; left: 0; top: 0; z-index: -1;
     color: transparent;
-    background-image: 
-      radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 25%, transparent 60%),
-      radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 10%);
+    background-image: radial-gradient(circle at 85% 15%, #9c0505 0%, #5a0000 25%, transparent 60%), radial-gradient(circle at 70% 10%, #8a0303 3%, transparent 10%);
     -webkit-background-clip: text; background-clip: text;
     opacity: 0; transform: scale(0.8) rotate(2deg); transform-origin: top right;
     animation: bloodSplat 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards;
@@ -251,18 +194,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
   .action-area { text-align: center; margin-top: 100px; }
-  .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); transition: all 0.4s ease; }
+  
+  /* 移除按钮的 backdrop-filter */
+  .contact-btn { display: inline-block; font-size: 13px; color: #fff; text-decoration: none; letter-spacing: 0.2em; border: 1px solid #444; padding: 20px 60px; background: rgba(20,20,20,0.8); transition: background 0.4s ease, border-color 0.4s ease; }
   .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
 </style>
 
 <script>
-  import * as THREE from 'three';
-
   document.addEventListener('DOMContentLoaded', () => {
     const scrollLock = document.getElementById('scroll-lock');
-
-    // ======= 1. 背景轮播 =======
     const bgs = document.querySelectorAll('.bg-image');
+    const heroTitle = document.getElementById('hero-title');
+    const infoContent = document.getElementById('info-content');
+    
     let currentIndex = 0;
     setInterval(() => {
       bgs[currentIndex].classList.remove('active');
@@ -273,144 +217,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       newBg.classList.add('active');
     }, 5000);
 
-    // ======= 2. WebGL 体积云 =======
-    const canvas = document.getElementById('cloud-canvas');
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-    const uniforms = {
-      uTime: { value: 0 },
-      uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-    };
-
-    const fragmentShader = `
-      precision highp float;
-      uniform float uTime;
-      uniform vec2 uResolution;
-      varying vec2 vUv;
-
-      float hash(vec2 p) {
-        p = fract(p * vec2(123.34, 456.21));
-        p += dot(p, p + 45.32);
-        return fract(p.x * p.y);
-      }
-
-      float noise(vec2 p) {
-        vec2 i = floor(p);
-        vec2 f = fract(p);
-        f = f * f * (3.0 - 2.0 * f);
-        float a = hash(i);
-        float b = hash(i + vec2(1.0, 0.0));
-        float c = hash(i + vec2(0.0, 1.0));
-        float d = hash(i + vec2(1.0, 1.0));
-        return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-      }
-
-      float fbm(vec2 p) {
-        float v = 0.0;
-        float a = 0.5;
-        mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
-        for (int i = 0; i < 5; i++) {
-          v += a * noise(p);
-          p = rot * p * 2.0;
-          a *= 0.5;
-        }
-        return v;
-      }
-
-      void main() {
-        vec2 uv = gl_FragCoord.xy / uResolution.xy;
-        vec2 st = (gl_FragCoord.xy * 2.0 - uResolution.xy) / min(uResolution.x, uResolution.y);
-        
-        vec2 q = vec2(0.0);
-        q.x = fbm(st + 0.1 * uTime);
-        q.y = fbm(st + vec2(1.0));
-
-        vec2 r = vec2(0.0);
-        r.x = fbm(st + 1.0 * q + vec2(1.7, 9.2) + 0.15 * uTime);
-        r.y = fbm(st + 1.0 * q + vec2(8.3, 2.8) + 0.126 * uTime);
-
-        float f = fbm(st + r);
-
-        vec3 color1 = vec3(0.02, 0.02, 0.03);
-        vec3 color2 = vec3(0.08, 0.09, 0.11);
-        vec3 color3 = vec3(0.18, 0.19, 0.22);
-
-        vec3 color = mix(color1, color2, f);
-        color = mix(color, color3, smoothstep(0.3, 0.8, f) * 0.8);
-        
-        float vignette = smoothstep(1.0, 0.2, length(st));
-        color *= vignette;
-
-        float alpha = smoothstep(0.2, 1.0, f + 0.2);
-        
-        gl_FragColor = vec4(color, alpha * 0.85);
-      }
-    `;
-
-    const vertexShader = `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = vec4(position, 1.0);
-      }
-    `;
-
-    const material = new THREE.ShaderMaterial({ 
-      vertexShader, 
-      fragmentShader, 
-      uniforms,
-      transparent: true,
-      depthWrite: false
-    });
-
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
-    scene.add(mesh);
-
-    const clock = new THREE.Clock();
-    function animate() {
-      requestAnimationFrame(animate);
-      uniforms.uTime.value = clock.getElapsedTime();
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener('resize', () => {
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
-    });
-
-    // ======= 3. 滚动顺滑处理 (解决抖动 + 移除 blur) =======
-    const heroTitle = document.getElementById('hero-title');
-    const infoContent = document.getElementById('info-content');
-    const infoSection = document.getElementById('info-section');
-    
+    // 纯 CSS 雾化代替了高负载 WebGL。JS 只处理最轻量的透明度淡出。
     let ticking = false;
     scrollLock.addEventListener('scroll', () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const scrollY = scrollLock.scrollTop;
+          const windowHeight = window.innerHeight;
 
-          if (scrollY <= window.innerHeight) {
-            const heroProg = scrollY / window.innerHeight;
-            // 只做位移和淡出，绝对不加 blur！
-            heroTitle.style.transform = `translate3d(0, ${scrollY * 0.4}px, 0)`;
-            heroTitle.style.opacity = 1 - heroProg;
+          // 第一屏文字：不做位移，只做透明度渐变，彻底根绝抖动
+          if (scrollY <= windowHeight) {
+            const heroProg = scrollY / windowHeight;
+            // 强制取整对齐像素，防止亚像素颤动
+            heroTitle.style.opacity = Math.max(0, 1 - heroProg);
           }
 
-          const distance = infoSection.offsetTop - scrollY;
-          if (distance < window.innerHeight && distance > 0) {
-            const infoProg = 1 - (distance / window.innerHeight);
+          // 第二屏文字：强制像素取整
+          const distance = infoContent.getBoundingClientRect().top;
+          if (distance < windowHeight && distance > -300) {
+            const infoProg = Math.max(0, Math.min(1, 1 - (distance / windowHeight)));
             infoContent.style.opacity = infoProg;
-            infoContent.style.transform = `translate3d(0, ${(1 - infoProg) * 80}px, 0)`;
-          } else if (distance <= 0) {
+            // 取整，消灭微震
+            const translateY = Math.round((1 - infoProg) * 60);
+            infoContent.style.transform = `translate3d(0, ${translateY}px, 0)`;
+          } else if (distance <= -300) {
             infoContent.style.opacity = 1;
             infoContent.style.transform = `translate3d(0, 0, 0)`;
           }
+
           ticking = false;
         });
         ticking = true;
