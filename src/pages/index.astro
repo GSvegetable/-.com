@@ -3,23 +3,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="The Blank Front Page">
-  
-  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- 新的圆环进度条 -->
-  <svg class="progress-ring" viewBox="0 0 36 36">
-    <circle class="ring-bg" cx="18" cy="18" r="14" fill="none" stroke-width="2" />
-    <circle class="ring-fill" id="progress-ring-fill" cx="18" cy="18" r="14" fill="none" stroke-width="2" stroke-dasharray="87.96" stroke-dashoffset="87.96" />
-  </svg>
-
-  <div class="fog" aria-hidden="true">
-    <div class="fog-layer fog-a" id="fog-a"></div>
-    <div class="fog-layer fog-b" id="fog-b"></div>
-  </div>
+  <div class="progress-ring" id="progress-ring"></div>
 
   <section class="hero-section">
     <div class="perspective-wrap">
-      <div class="hero-stage" id="hero-masthead" style="transform: translate3d(0, -10vh, 0) rotateX(0deg) scaleY(1);">
+      <div class="hero-stage" id="hero-masthead">
         <div class="bg-layer">
           <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
           <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
@@ -53,7 +45,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
           </div>
         </div>
-        <div class="fade-mask" id="fade-mask"></div>
       </div>
     </div>
   </section>
@@ -70,89 +61,72 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="action-area" id="action-area">
         <div class="contact-btn" id="suspect-btn" role="button">
           <span class="btn-text mono">
-            <span class="btn-letter">S</span>
-            <span class="btn-letter">U</span>
-            <span class="btn-letter">S</span>
+            <span class="btn-letter">S</span><span class="btn-letter">U</span><span class="btn-letter">S</span>
             <span class="btn-letter target-p">P</span>
-            <span class="btn-letter">E</span>
-            <span class="btn-letter">C</span>
-            <span class="btn-letter">T</span>
+            <span class="btn-letter">E</span><span class="btn-letter">C</span><span class="btn-letter">T</span>
           </span>
         </div>
       </div>
     </div>
-    <div class="info-dim" id="info-dim"></div>
   </section>
 
   <div class="p2-dwell" id="p2-dwell"></div>
 
-  <section class="page-three" id="page-three" aria-label="Case files">
+  <section class="page-three" id="page-three">
     <div class="p3-stage" id="p3-stage">
-      <div class="p3-lantern" id="p3-lantern"></div>
-
       <div class="p3-inner">
         <header class="p3-mast mono">
-          <span>NO. 001</span>
-          <span>THE BLANK FRONT PAGE</span>
-          <span>ONE PENNY</span>
+          <span>NO. 001</span><span>THE BLANK FRONT PAGE</span><span>ONE PENNY</span>
         </header>
 
         <div class="p3-cases">
           <article class="case case--intro">
             <h2 class="intro-title serif">
-              <span class="line"><span style="--i:1">The truth is</span></span>
-              <span class="line"><span style="--i:2">buried in the mist.</span></span>
+              <span class="line"><span>The truth is</span></span>
+              <span class="line"><span>buried in the mist.</span></span>
             </h2>
-            
-            <div class="handwritten-area reveal" style="--i:4">
+            <div class="handwritten-area">
               <p class="handwritten-text">Three files. One city. Open them in order.</p>
-              <div class="handwritten-hint">
-                <span>SCROLL TO OPEN</span>
-                <svg viewBox="0 0 24 24" class="scribble-arrow" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16m0 0l-6-6m6 6l6-6"/></svg>
-              </div>
+              <div class="handwritten-hint"><span>SCROLL TO OPEN</span></div>
             </div>
           </article>
 
           <article class="case case--file">
-            <div class="case-num serif" aria-hidden="true">I</div>
+            <div class="case-num serif">I</div>
             <div class="case-text">
               <div class="case-header-group">
-                <h3 class="case-title serif wipe" style="--i:1">The Penny-a-Liner</h3>
-                <p class="case-sub serif reveal" style="--i:3">Paid by the line. Loyal to no paper.</p>
+                <h3 class="case-title serif">The Penny-a-Liner</h3>
+                <p class="case-sub serif">Paid by the line. Loyal to no paper.</p>
               </div>
-              <i class="rule" style="--i:2"></i>
-              <p class="case-body serif dropcap reveal" style="--i:4">He sells his words to many papers and belongs to none. He knows which editor will print what, and exactly where to send a story so that it blows up. A loophole in the newspaper system, not an employee of it.</p>
-              <div class="stamp-art mono" style="--r:-8deg" aria-hidden="true">Freelance</div>
+              <i class="rule"></i>
+              <p class="case-body serif dropcap">He sells his words to many papers and belongs to none. He knows which editor will print what, and exactly where to send a story so that it blows up. A loophole in the newspaper system, not an employee of it.</p>
+              <div class="stamp-art mono" style="--r:-8deg">Freelance</div>
             </div>
           </article>
 
           <article class="case case--file">
-            <div class="case-num serif" aria-hidden="true">II</div>
+            <div class="case-num serif">II</div>
             <div class="case-text">
               <div class="case-header-group">
-                <h3 class="case-title serif wipe" style="--i:1">The Maid</h3>
-                <p class="case-sub serif reveal" style="--i:3">To high society, servants are air.</p>
+                <h3 class="case-title serif">The Maid</h3>
+                <p class="case-sub serif">To high society, servants are air.</p>
               </div>
-              <i class="rule" style="--i:2"></i>
-              <p class="case-body serif dropcap reveal" style="--i:4">She sees what he cannot. She knows what normal looks like, so she knows the moment something is wrong, and her network of servants runs deeper than any newspaper's. She is his eyes. He is her voice.</p>
-              <div class="stamp-art mono" style="--r:6deg" aria-hidden="true">Informant</div>
+              <i class="rule"></i>
+              <p class="case-body serif dropcap">She sees what he cannot. She knows what normal looks like, so she knows the moment something is wrong, and her network of servants runs deeper than any newspaper's. She is his eyes. He is her voice.</p>
+              <div class="stamp-art mono" style="--r:6deg">Informant</div>
             </div>
           </article>
 
           <article class="case case--file">
-            <div class="case-num serif" aria-hidden="true">III</div>
+            <div class="case-num serif">III</div>
             <div class="case-text">
               <div class="case-header-group">
-                <h3 class="case-title serif wipe" style="--i:1">The City</h3>
-                <p class="case-sub serif reveal" style="--i:3">1888. Fog, gaslight, and a great many closed doors.</p>
+                <h3 class="case-title serif">The City</h3>
+                <p class="case-sub serif">1888. Fog, gaslight, and a great many closed doors.</p>
               </div>
-              <i class="rule" style="--i:2"></i>
-              <p class="case-body serif dropcap reveal" style="--i:4">We are building it in Unreal Engine 5, from London, Shanghai and Toronto. The case is open, and it needs Architects, Illustrators and Chroniclers.</p>
-              <div class="p3-sign reveal" style="--i:6">
-                <p class="p3-sign-off serif">Yours in the mist,</p>
-                <p class="p3-signature">Gong Shui.</p>
-              </div>
-              <div class="stamp-art mono" style="--r:-5deg" aria-hidden="true">Open</div>
+              <i class="rule"></i>
+              <p class="case-body serif dropcap">We are building it in Unreal Engine 5, from London, Shanghai and Toronto. The case is open, and it needs Architects, Illustrators and Chroniclers.</p>
+              <div class="stamp-art mono" style="--r:-5deg">Open</div>
             </div>
           </article>
         </div>
@@ -165,17 +139,199 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
           </div>
           <div class="footer-bottom">
-            <span class="mono">© 2026 宫水工作室</span>
-            <span class="mono">LONDON · SHANGHAI · TORONTO</span>
+            <span class="mono">© 2026 宫水工作室</span><span class="mono">LONDON · SHANGHAI · TORONTO</span>
           </div>
         </footer>
-
       </div>
     </div>
   </section>
 
   <div class="white-screen" id="white-screen"></div>
-
 </BaseLayout>
 
-<script src="/script.js" defer></script>
+<style is:global>
+  @import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap');
+
+  html { overscroll-behavior-y: none; }
+  body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; overscroll-behavior-y: none; }
+  ::-webkit-scrollbar { display: none; width: 0 !important; }
+  .mono { font-family: 'Courier Prime', monospace; }
+  .serif { font-family: 'Playfair Display', serif; }
+
+  .progress-ring {
+    position: fixed; top: 20px; right: 20px; width: 24px; height: 24px; border-radius: 50%;
+    background: conic-gradient(#d4af37 0%, rgba(255,255,255,0.1) 0%);
+    z-index: 9999; pointer-events: none; -webkit-mask: radial-gradient(transparent 8px, #000 9px); mask: radial-gradient(transparent 8px, #000 9px);
+  }
+
+  .hero-section { position: fixed; inset: 0; height: 100vh; height: 100lvh; display: flex; align-items: center; justify-content: center; z-index: 10; overflow: hidden; pointer-events: none; }
+  .perspective-wrap { perspective: 2500px; perspective-origin: 50% 0%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+  .hero-stage { position: relative; width: 100%; max-width: 100%; height: 100vh; height: 100lvh; display: flex; flex-direction: column; justify-content: center; padding: 0; transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto; transition: opacity 0.3s ease-out; }
+  .bg-layer { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+  .bg-image { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: grayscale(100%) contrast(130%) brightness(0.35); opacity: 0; transform: scale(1); transition: opacity 3s ease-in-out, transform 30s linear; }
+  .bg-image.active { opacity: 1; transform: scale(1.15); }
+
+  .newspaper-masthead { position: relative; z-index: 2; width: 100%; max-width: 900px; margin: 0 auto; padding: 0 40px; display: flex; flex-direction: column; }
+  .masthead-top { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 0 0 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #aaa; margin-bottom: 30px; }
+  .letter-body { padding: 20px 0; display: flex; flex-direction: column; position: relative; border-left: 1px solid rgba(255,255,255,0.15); padding-left: 30px; margin-left: 10px; margin-top: 10px; }
+  .header-group { margin-bottom: 24px; }
+  .salutation { font-family: 'Pinyon Script', cursive; font-size: clamp(40px, 5vw, 60px); color: #f4eee0; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+  .content-group { max-width: 80%; }
+  .greeting { font-family: 'Pinyon Script', cursive; font-size: 32px; color: #d1c5b4; margin: 0 0 16px 0; }
+  .body-text { font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.8; color: #c4bcad; margin: 0 0 16px 0; text-align: justify; }
+  .highlight { color: #d4af37; font-weight: 700; font-style: italic; }
+  .signature-group { margin-top: 20px; }
+  .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #888; margin: 0; }
+  .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+  .ink-break { -webkit-mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); filter: blur(0.3px) contrast(1.2); }
+
+  .scroll-spacer { height: 100vh; height: 100lvh; pointer-events: none; }
+  .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; height: 100lvh; width: 100vw; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.9); overflow: hidden; transform-origin: 50% 35%; will-change: transform; }
+  .p2-dwell { height: 60vh; height: 60lvh; pointer-events: none; }
+  .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
+  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(150px); opacity: 0; }
+  @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
+  .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
+  .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
+
+  .action-area { text-align: center; margin-top: 80px; transform: translateY(150px); opacity: 0; }
+  .contact-btn { display: inline-flex; padding: 16px 40px; cursor: pointer; position: relative; }
+  .btn-text { color: #d4af37; font-family: 'Courier Prime', monospace; font-size: 14px; letter-spacing: 0.25em; display: flex; }
+  .btn-letter { display: inline-block; transition: transform 1.5s ease, opacity 1s ease; }
+  .contact-btn.is-zooming .btn-letter { opacity: 0; }
+  .contact-btn.is-zooming .target-p { opacity: 1 !important; transform: scale(800); z-index: 99999; }
+
+  .white-screen { position: fixed; inset: 0; background-color: #ffffff; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 1s ease 1s; }
+  .white-screen.active { opacity: 1; pointer-events: auto; }
+
+  .page-three { --paper-base: #ffffff; --ink: #000000; --ink-soft: #444444; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: #ffffff; }
+  .p3-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: #ffffff; }
+  .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; }
+  .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
+  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  .case { position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; transition: opacity 0.6s ease, transform 0.9s ease; }
+  .case.is-active { opacity: 1; visibility: visible; transform: none; }
+  .case--intro { flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .intro-title { font-size: clamp(42px, 9vw, 130px); font-weight: 900; font-style: italic; line-height: 0.95; color: #000; margin: 0; }
+  .handwritten-area { margin-top: 40px; }
+  .handwritten-text { font-size: 24px; font-style: italic; color: #444; }
+  .handwritten-hint { margin-top: 20px; font-family: 'Courier Prime', monospace; font-size: 16px; letter-spacing: 0.4em; }
+
+  .case--file { position: relative; align-items: center; width: 100%; }
+  .case-num { position: absolute; left: -5%; font-size: clamp(240px, 35vw, 600px); font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 2px rgba(0,0,0,0.1); opacity: 0; transition: opacity 0.5s ease; z-index: 1; }
+  .case.is-active .case-num { opacity: 1; }
+  .case-text { position: relative; z-index: 2; max-width: 580px; margin-left: 20%; }
+  .case-title { font-size: clamp(40px, 5.5vw, 80px); font-weight: 900; font-style: italic; color: #000; margin: 0 0 10px 0; }
+  .case-sub { font-size: 20px; font-style: italic; color: rgba(0,0,0,0.6); }
+  .rule { display: block; width: 80px; height: 3px; margin: 20px 0; background: #7b1e1e; }
+  .case-body { font-size: 16px; line-height: 2; color: #444; text-align: justify; }
+  .stamp-art { position: absolute; right: 0; top: -40px; color: #d4af37; font-family: 'Pinyon Script', cursive; font-size: 54px; transform: rotate(-8deg); }
+
+  .site-footer { border-top: 1px solid rgba(0,0,0,0.15); padding-top: 20px; font-size: 13px; color: #444; flex-shrink: 0; }
+  .footer-main { display: flex; gap: 40px; }
+  .footer-logo { font-size: 20px; font-weight: 700; font-style: italic; color: #000; }
+  .footer-tagline { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 0.15em; color: #888; }
+  .footer-bottom { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 10px; color: #999; }
+
+  @media (max-width: 900px) {
+    .case--file { flex-direction: column; justify-content: center; }
+    .case-num { left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0.1; font-size: 80vw; }
+    .case-text { margin-left: 0; max-width: 100%; }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const heroStage = document.getElementById('hero-masthead');
+    const progressRing = document.getElementById('progress-ring');
+    const infoSection = document.getElementById('info-section');
+    const rolesGrid = document.getElementById('roles-grid');
+    const actionArea = document.getElementById('action-area');
+    const pageThree = document.getElementById('page-three');
+    const dwell = document.getElementById('p2-dwell');
+    const cases = Array.from(document.querySelectorAll('.case'));
+
+    if (!heroStage || !pageThree) return;
+
+    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const smooth = (t) => t * t * (3 - 2 * t);
+
+    // 点击 SUSPECT 纯白穿透
+    const suspectBtn = document.getElementById('suspect-btn');
+    const whiteScreen = document.getElementById('white-screen');
+    if (suspectBtn && whiteScreen) {
+      suspectBtn.addEventListener('click', () => {
+        suspectBtn.classList.add('is-zooming');
+        whiteScreen.classList.add('active');
+      });
+    }
+
+    // 章节切换
+    let step = -2;
+    const setStep = (s) => {
+      if (s === step) return;
+      step = s;
+      cases.forEach((el, i) => {
+        el.classList.toggle('is-active', i === s);
+      });
+    };
+
+    let ticking = false;
+    const update = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const totalScrollable = Math.max(1, document.documentElement.scrollHeight - windowHeight);
+      const globalProgress = clamp(scrollY / totalScrollable);
+      
+      if (progressRing) {
+        progressRing.style.background = `conic-gradient(#d4af37 ${globalProgress * 100}%, rgba(255,255,255,0.1) ${globalProgress * 100}%)`;
+      }
+
+      const p3 = pageThree.getBoundingClientRect();
+      const rise = clamp(1 - p3.top / windowHeight);
+      const e = smooth(rise); 
+      const run = Math.max(1, p3.height - windowHeight);
+      const q = clamp(-p3.top / run);
+      const dwellH = Math.max(1, dwell.offsetHeight);
+      const d = clamp(1 - (p3.top - windowHeight) / dwellH);
+      const lift = d * 18 + e * 30;
+
+      // 第一页翻折
+      const heroRawProgress = scrollY / windowHeight;
+      const rotateX = Math.min(89, heroRawProgress * 70); 
+      const stretchY = (1 / Math.cos(rotateX * Math.PI / 180)) * 1.05; 
+      const translateY = -10 + (Math.pow(heroRawProgress, 2) * 8); 
+      heroStage.style.transform = `translate3d(0, ${translateY}vh, 0) rotateX(${rotateX}deg) scaleY(${stretchY})`;
+      heroStage.style.opacity = Math.max(0, 1 - (heroRawProgress * 0.3)) * (1 - rise);
+
+      // 第二页推拉
+      infoSection.style.transform = e > 0 ? `translate3d(0, ${(-e * 4).toFixed(3)}vh, 0) scale(${(1 - e * 0.08).toFixed(4)})` : 'none';
+      infoSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
+
+      const p = clamp((scrollY - windowHeight * 0.5) / (windowHeight * 0.5));
+      const ease = smooth(p);
+      if (ease >= 0.99) {
+        if (rolesGrid) { rolesGrid.style.transform = 'none'; rolesGrid.style.opacity = '1'; }
+        if (actionArea) { actionArea.style.transform = 'none'; actionArea.style.opacity = '1'; }
+      } else {
+        if (rolesGrid) { rolesGrid.style.transform = `translate3d(0, ${150 * (1 - ease) - lift}px, 0)`; rolesGrid.style.opacity = ease; }
+        if (actionArea) { actionArea.style.transform = `translate3d(0, ${180 * (1 - ease) - lift * 0.6}px, 0)`; actionArea.style.opacity = ease; }
+      }
+
+      // 第三页翻页
+      const s = rise > 0.2 ? Math.min(3, Math.floor(q * 4)) : -1;
+      setStep(s);
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => { update(); ticking = false; });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    update();
+  });
+</script>
+</BaseLayout>
