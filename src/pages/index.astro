@@ -4,6 +4,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="The Blank Front Page">
   
+  <style is:global>
+    /* 强制锁定浏览器为浅色模式，禁止自动反色 */
+    html, body {
+      color-scheme: only light !important;
+    }
+  </style>
+
   <link rel="stylesheet" href="/style.css">
 
   <!-- 新的圆环进度条 -->
