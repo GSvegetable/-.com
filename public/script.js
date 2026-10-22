@@ -44,37 +44,28 @@ document.addEventListener('DOMContentLoaded', () => {
     newBg.classList.add('active');
   }, 5000);
 
-  // ======== 全新的高质感撕纸算法 ========
   const buildTear = () => {
     const rand = mulberry32(1888);
-    const n = 300; // 增加点数，让边缘更细密
+    const n = 300; 
     const base = [];
     const fibre = [];
     let drift = 0;
     
     for (let i = 0; i <= n; i++) {
       const t = i / n;
-      
-      // 1. 基础缓慢起伏
       drift = drift * 0.8 + (rand() - 0.5) * 6;
-      // 2. 高频锯齿断裂
       const wave = Math.sin(t * Math.PI * 18) * 2 + Math.sin(t * Math.PI * 45 + 1.3) * 1.5;
-      // 3. 随机的小碎片
       const jag = (rand() - 0.5) * 8;
-      
       let y = clamp(50 + wave + drift + jag, 15, 85);
       
-      // 模拟拉丝：随机在某些地方产生一条长长的毛边
       if (rand() > 0.94) {
         y = clamp(y - (rand() * 15 + 5), 5, 85);
       }
-      
       base.push([t * 100, y]);
       
-      // 纤维层比基础层更细碎，且随机向上突出
       let fY = y - (1 + rand() * 4);
       if (rand() > 0.9) {
-        fY = fY - (rand() * 10); // 极细的拔丝
+        fY = fY - (rand() * 10); 
       }
       fibre.push([t * 100, Math.max(2, fY)]);
     }
@@ -143,20 +134,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const d = clamp(1 - (p3.top - windowHeight) / dwellH);
     const lift = d * 18 + e * 30;
 
-    const heroProgress = clamp(scrollY / windowHeight);
-    const rotateX = heroProgress * 70; 
+    // --- 解决第一页不拉伸的BUG ---
+    // 解除限制，让进度随着滚动一直增加
+    const heroRawProgress = scrollY / windowHeight;
+    // 最大倾斜 89 度（极度拉长，填满屏幕）
+    const rotateX = Math.min(89, heroRawProgress * 70); 
     const rad = rotateX * Math.PI / 180;
     const stretchY = (1 / Math.cos(rad)) * 1.05; 
-    const translateY = -10 + (Math.pow(heroProgress, 2) * 8); 
+    const translateY = -10 + (Math.pow(heroRawProgress, 2) * 8); 
 
     heroStage.style.transform = `
       translate3d(0, ${translateY}vh, 0) 
       rotateX(${rotateX}deg) 
       scaleY(${stretchY})
     `;
-    heroStage.style.opacity = Math.max(0, 1 - (heroProgress * 0.5)) * (1 - rise);
+    // 透明度根据无限拉长的进度来计算
+    heroStage.style.opacity = Math.max(0, 1 - (heroRawProgress * 0.3)) * (1 - rise);
     heroSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
-    fadeMask.style.opacity = Math.max(0, (heroProgress - 0.3) * 1.5);
+    fadeMask.style.opacity = Math.max(0, (heroRawProgress - 0.3) * 1.5);
 
     let maskStop = 35 - ((scrollY - windowHeight * 0.8) / (windowHeight * 0.8)) * 35;
     maskStop = Math.max(0, maskStop);
