@@ -18,8 +18,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="hero-section">
     <div class="perspective-wrap">
       <div class="hero-stage" id="hero-masthead" style="transform: translate3d(0, -10vh, 0) rotateX(0deg) scaleY(1);">
-        
-        <!-- 全屏背景层 -->
         <div class="bg-layer">
           <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
           <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
@@ -28,8 +26,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
           <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
         </div>
-
-        <!-- 居中的文字内容层 -->
         <div class="newspaper-masthead">
           <div class="masthead-top mono">
             <span>VOL. I</span>
@@ -55,7 +51,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
           </div>
         </div>
-
         <div class="fade-mask" id="fade-mask"></div>
       </div>
     </div>
@@ -82,6 +77,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="p2-dwell" id="p2-dwell"></div>
 
   <section class="page-three" id="page-three" aria-label="Case files">
+    <!-- 增强的撕纸边缘与渐隐融合 -->
     <div class="tear-wrap" aria-hidden="true">
       <div class="tear tear-fibre" id="tear-fibre"></div>
       <div class="tear tear-base" id="tear-base"></div>
@@ -184,32 +180,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .fog-a { background: radial-gradient(40% 55% at 22% 58%, rgba(220,214,200,0.50), transparent 70%), radial-gradient(35% 50% at 62% 40%, rgba(220,214,200,0.38), transparent 70%), radial-gradient(30% 45% at 90% 65%, rgba(220,214,200,0.42), transparent 70%); }
   .fog-b { background: radial-gradient(45% 50% at 40% 45%, rgba(190,186,176,0.40), transparent 70%), radial-gradient(35% 55% at 78% 62%, rgba(190,186,176,0.36), transparent 70%), radial-gradient(30% 45% at 8% 35%, rgba(190,186,176,0.34), transparent 70%); }
 
-  /* ====== 核心修改：第一页 ====== */
   .hero-section { position: fixed; inset: 0; height: 100vh; height: 100lvh; display: flex; align-items: center; justify-content: center; z-index: 10; overflow: hidden; pointer-events: none; }
   .perspective-wrap { perspective: 2500px; perspective-origin: 50% 0%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
   
-  /* 解除宽度限制，铺满全屏 */
   .hero-stage { 
     position: relative; 
     width: 100%; 
     max-width: 100%; 
     height: 100vh; height: 100lvh; 
     display: flex; flex-direction: column; justify-content: center; 
-    padding: 0; /* 移除 padding */
+    padding: 0; 
     transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto; 
     opacity: 0; transition: opacity 0.3s ease-out; 
   }
   .hero-stage.loaded { opacity: 1; }
   
-  /* 背景层铺满 */
   .bg-layer { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
-  /* 调亮背景图：brightness 从 0.2 提升到 0.35 */
   .bg-image { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: grayscale(100%) contrast(130%) brightness(0.35); opacity: 0; transition: opacity 3s ease-in-out; }
   .bg-image.active { opacity: 1; }
 
   .fade-mask { position: absolute; inset: -30% 0 0 0; background: linear-gradient(to bottom, #030303 0%, transparent 60%); opacity: 0; pointer-events: none; z-index: 5; }
   
-  /* 文字内容层单独限制宽度并居中 */
   .newspaper-masthead { 
     position: relative; z-index: 2; 
     width: 100%; max-width: 900px; 
@@ -278,10 +269,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       var(--grain);
   }
 
-  .tear-wrap { position: absolute; left: 0; right: 0; top: -64px; height: 66px; z-index: 2; pointer-events: none; filter: drop-shadow(0px -4px 12px rgba(0,0,0,0.8)); }
+  /* ====== 核心修改：消除分界线 ====== */
+  .tear-wrap { 
+    position: absolute; left: 0; right: 0; top: -64px; height: 66px; 
+    z-index: 2; pointer-events: none; 
+    /* 移除导致生硬边缘的阴影 */
+    filter: none; 
+  }
+
+  /* 在撕纸层上方盖一层向上渐隐的黑雾，让第三页从黑暗中浮现 */
+  .tear-wrap::before {
+    content: '';
+    position: absolute;
+    bottom: 100%; left: -10%; right: -10%;
+    height: 80px;
+    background: linear-gradient(to top, #050505 0%, transparent 100%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
   .tear { position: absolute; inset: 0; background-image: var(--grain); }
-  .tear-fibre { background-color: #a38c70; filter: brightness(0.9) contrast(1.2); }
-  .tear-base { background-color: var(--paper-base); box-shadow: inset 0 -20px 20px -20px rgba(0,0,0,0.8); }
+  /* 纤维层颜色调暗，去掉高光 */
+  .tear-fibre { background-color: #907b62; } 
+  
+  /* 基础纸张层去掉内阴影，仅保留纸张颜色 */
+  .tear-base { background-color: var(--paper-base); } 
 
   .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
   .p3-grain, .p3-vignette { position: absolute; inset: 0; pointer-events: none; }
