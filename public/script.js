@@ -15,8 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const fogA = document.getElementById('fog-a');
   const fogB = document.getElementById('fog-b');
   const cases = Array.from(document.querySelectorAll('.case'));
-  const ticks = Array.from(document.querySelectorAll('.tick'));
-  const segFills = Array.from(document.querySelectorAll('.seg i'));
   
   const progressRingFill = document.getElementById('progress-ring-fill');
   const ringCircumference = 87.96;
@@ -25,18 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   heroStage.classList.add('loaded');
 
-  // ====== 5秒融化计时器 ======
+  // 融化计时器
   let meltTimer = null;
   const meltTarget = document.getElementById('melt-target');
-  
   if (meltTarget) {
     meltTimer = setTimeout(() => {
-      // 触发融化动画
       meltTarget.classList.add('melt-active');
-    }, 5000); // 5秒后触发
+    }, 5000);
   }
 
-  // 如果用户滚动了页面，取消融化（或者你也可以让它继续融化，看你想怎么设计）
   window.addEventListener('scroll', () => {
     if (window.scrollY > 50 && meltTimer) {
       clearTimeout(meltTimer);
@@ -44,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (meltTarget) meltTarget.classList.remove('melt-active');
     }
   }, { passive: true });
-  // ===========================
 
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const smooth = (t) => t * t * (3 - 2 * t);
@@ -61,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const suspectBtn = document.getElementById('suspect-btn');
   const whiteScreen = document.getElementById('white-screen');
-
   if (suspectBtn) {
     suspectBtn.addEventListener('click', () => {
       if (suspectBtn.classList.contains('is-zooming')) return;
@@ -78,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.toggle('is-active', i === s);
       el.classList.toggle('is-past', i < s);
     });
-    ticks.forEach((t, i) => t.classList.toggle('is-on', s >= i + 1));
   };
 
   let ptr = null;
@@ -99,16 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
   stage.addEventListener('pointerleave', clearPtr);
   stage.addEventListener('pointercancel', clearPtr);
   stage.addEventListener('pointerup', (ev) => { if (ev.pointerType !== 'mouse') clearPtr(); });
-
-  ticks.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const k = Number(btn.dataset.k);
-      const r = pageThree.getBoundingClientRect();
-      const absTop = r.top + window.scrollY;
-      const run = Math.max(1, r.height - stage.offsetHeight);
-      window.scrollTo({ top: absTop + run * (0.25 * (k + 1) + 0.04), behavior: 'smooth' });
-    });
-  });
 
   const update = () => {
     const scrollY = window.scrollY;
@@ -183,8 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const s = rise > 0.2 ? Math.min(3, Math.floor(q * 4)) : -1;
     setStep(s);
-    segFills[0].style.transform = `scaleX(${clamp((q - 0.25) / 0.25).toFixed(3)})`;
-    segFills[1].style.transform = `scaleX(${clamp((q - 0.5) / 0.25).toFixed(3)})`;
     if (!reduceMotion) placeLantern(q);
   };
 
