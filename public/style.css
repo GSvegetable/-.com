@@ -1,26 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap');
 
-:global(html) { overscroll-behavior-y: none; }
-:global(body) { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; overscroll-behavior-y: none; }
-:global(::-webkit-scrollbar) { display: none; width: 0 !important; }
+html { overscroll-behavior-y: none; }
+body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; overscroll-behavior-y: none; }
+::-webkit-scrollbar { display: none; width: 0 !important; }
+
 .mono { font-family: 'Courier Prime', monospace; }
 .serif { font-family: 'Playfair Display', serif; }
 
 /* 圆环进度条 */
 .progress-ring {
   position: fixed; top: 20px; right: 20px;
-  z-index: 9999; pointer-events: none;
-}
-.progress-ring svg { display: block; transform: rotate(-90deg); }
-.ring-bg {
-  fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 2;
-}
-.ring-fill {
-  fill: none; stroke: #d4af37; stroke-width: 2;
-  stroke-dasharray: 100.53; /* 2 * PI * 16 = 100.53 */
-  stroke-dashoffset: 100.53;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 0.1s ease-out;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: conic-gradient(#d4af37 0%, rgba(255,255,255,0.1) 0%);
+  z-index: 9999;
+  pointer-events: none;
+  -webkit-mask: radial-gradient(transparent 8px, #000 9px);
+  mask: radial-gradient(transparent 8px, #000 9px);
 }
 
 .fog { position: fixed; inset: 0; z-index: 35; pointer-events: none; overflow: hidden; }
