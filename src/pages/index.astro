@@ -52,7 +52,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="scroll-spacer"></div>
 
-  <!-- 第二页 (去掉了按钮和所有交互) -->
+  <!-- 第二页 -->
   <section class="info-section" id="info-section">
     <div class="content-block">
       <div class="roles-grid" id="roles-grid">
@@ -131,7 +131,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
         </div>
 
-        <footer class="site-footer">
+        <!-- 底部页脚（现在默认藏在屏幕下方） -->
+        <footer class="site-footer" id="site-footer">
           <div class="footer-main">
             <div class="footer-brand">
               <span class="footer-logo serif">宫水</span>
@@ -201,9 +202,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   /* 第三页 */
   .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: transparent; }
   .p3-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
-  .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; z-index: 1; }
+  
+  /* 内层改为 padding-bottom: 0，让内容区更大 */
+  .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
-  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
+  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; }
 
   .case { position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, 4vh, 0); transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s; }
   .case.is-past { transform: translate3d(0, -4vh, 0); }
@@ -246,7 +249,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .stamp-art { position: absolute; right: -20px; top: -30px; color: #d4af37; font-family: 'Pinyon Script', cursive; font-size: 44px; pointer-events: none; opacity: 0; transform: rotate(var(--r, -8deg)) scale(2.4); transition: opacity 0.35s ease, transform 0.35s ease; }
   .case.is-active .stamp-art { opacity: 0.9; transform: rotate(var(--r, -8deg)) scale(1); transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s; }
 
-  .site-footer { border-top: 1px solid rgba(0,0,0,0.15); padding-top: 20px; font-size: 13px; color: #444; flex-shrink: 0; }
+  /* 核心修改：页脚绝对定位，默认藏到下面去 */
+  .site-footer { 
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    padding: 20px 40px 40px; 
+    border-top: 1px solid rgba(0,0,0,0.15); 
+    background-color: var(--paper-base);
+    transform: translateY(100%);
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+    box-sizing: border-box;
+    z-index: 10;
+  }
   .footer-main { display: flex; gap: 40px; }
   .footer-logo { font-size: 20px; font-weight: 700; font-style: italic; color: #000; }
   .footer-tagline { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 0.15em; color: #888; }
@@ -269,6 +283,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const rolesGrid = document.getElementById('roles-grid');
     const pageThree = document.getElementById('page-three');
     const p3Stage = document.getElementById('p3-stage');
+    const siteFooter = document.getElementById('site-footer'); // 新增获取页脚
     const dwell = document.getElementById('p2-dwell');
     const cases = Array.from(document.querySelectorAll('.case'));
 
@@ -325,8 +340,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       const rise = clamp(1 - p3.top / windowHeight); 
       const run = Math.max(1, p3.height - windowHeight);
-      const q = clamp(-p3.top / run);
+      const q = clamp(-p3.top / run); // q 从 0 到 1 控制四个故事的切换
       
+      // 核心修改：当 q > 0.92 时，也就是第三个故事（The City）快要结束时，页脚滑上来
+      if (siteFooter) {
+        if (q > 0.92) {
+          siteFooter.style.transform = 'translateY(0)';
+        } else {
+          siteFooter.style.transform = 'translateY(100%)';
+        }
+      }
+
       const heroRawProgress = scrollY / windowHeight;
       const heroRotate = Math.min(89, heroRawProgress * 70); 
       const stretchY = (1 / Math.cos(heroRotate * Math.PI / 180)) * 1.05; 
