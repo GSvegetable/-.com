@@ -58,10 +58,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 占位符 -->
+  <!-- 为第一页提供滑动空间的占位 -->
   <div class="scroll-spacer"></div>
 
-  <!-- 第二页 -->
+  <!-- 第二页：设为 sticky，推上来后就不动了，等着被第三页盖住 -->
   <section class="info-section" id="info-section">
     <div class="content-block">
       
@@ -81,7 +81,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 第三页：淡褐色简版 -->
+  <!-- 第三页：淡褐色，推上来覆盖第二页 -->
   <section class="page-three">
     <div class="page-three-content">
       <h2 class="mono">CASE FILES</h2>
@@ -174,7 +174,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   /* ======= 第二页 ======= */
   .info-section { 
-    position: relative; z-index: 20; min-height: 100vh; min-height: 100lvh;
+    position: sticky; /* 核心：变成粘性，推上来后定住，被第三页覆盖 */
+    top: 0;
+    z-index: 20; 
+    height: 100vh; height: 100lvh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
     background-color: #050505;
@@ -225,23 +228,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* ======= 第三页：简简单单的淡褐色 ======= */
+  /* ======= 第三页：覆盖层 ======= */
   .page-three {
     position: relative;
-    z-index: 30; /* 压在第二页上面 */
-    min-height: 100vh;
-    background-color: #cbb89d; /* 淡褐色/羊皮纸色 */
+    z-index: 30; 
+    min-height: 100vh; min-height: 100lvh;
+    background-color: #cbb89d; 
     display: flex;
     align-items: center;
     justify-content: center;
-    /* 顶部圆角，平滑过渡 */
     border-radius: 60px 60px 0 0;
-    box-shadow: 0 -20px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 -20px 40px rgba(0,0,0,0.6);
   }
 
   .page-three-content {
     text-align: center;
-    color: #2b2520; /* 深色文字 */
+    color: #2b2520;
   }
 
   .page-three-content h2 {
@@ -295,12 +297,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
           
-          // 进度条按整个页面总高度算
           const totalScrollable = document.documentElement.scrollHeight - windowHeight;
           const globalProgress = Math.min(1, Math.max(0, scrollY / totalScrollable));
           progressIndicator.textContent = Math.round(globalProgress * 100) + '%';
 
-          // 第一页动画基于滑动一屏的距离
+          // 1. 第一页滑动逻辑
           const heroProgress = Math.min(1, Math.max(0, scrollY / windowHeight));
           const rotateX = heroProgress * 70; 
           const rad = rotateX * Math.PI / 180;
@@ -312,12 +313,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             rotateX(${rotateX}deg) 
             scaleY(${stretchY})
           `;
-          
           heroStage.style.opacity = Math.max(0, 1 - (heroProgress * 0.5));
           fadeMask.style.opacity = Math.max(0, (heroProgress - 0.3) * 1.5);
 
-          // 第二页遮罩：滑动距离超过 1.5 屏之后，开始逐渐消散
-          // 之前用户看到的 80% 大概就是 scrollY 到了 1.6 屏左右
+          // 2. 第二页遮罩消散逻辑 (滑动到 0.8 屏到 1.6 屏之间)
           let maskStop = 35 - ((scrollY - windowHeight * 0.8) / (windowHeight * 0.8)) * 35;
           maskStop = Math.max(0, maskStop);
           
@@ -329,29 +328,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             infoSection.style.maskImage = 'none';
           }
 
-          // ======= 核心：第二页元素的物理触发距离 =======
-          // 第1页：0 ~ 1vh
-          // 第2页：1vh ~ 2vh
-          // 滑到 1.76 屏的时候开始触发上滑
-          const triggerStart = windowHeight * 1.76;
-          const triggerEnd = windowHeight * 2.0; // 正好是第二页盖满屏幕的时候
+          // 3. 第二页内容动画：当第二页刚开始露头时（0.5 屏到 1.0 屏），内容浮出
+          const contentTriggerStart = windowHeight * 0.5;
+          const contentTriggerEnd = windowHeight * 1.0; 
 
-          if (scrollY > triggerStart) {
-            // 限制在 0 到 1 之间
-            const p = Math.min(1, (scrollY - triggerStart) / (triggerEnd - triggerStart));
+          if (scrollY > contentTriggerStart) {
+            const p = Math.min(1, (scrollY - contentTriggerStart) / (contentTriggerEnd - contentTriggerStart));
             const ease = 1 - Math.pow(1 - p, 3);
 
-            // 岗位艺术字
             rolesGrid.style.transform = `translateY(${150 * (1 - ease)}px)`;
             rolesGrid.style.opacity = ease;
 
-            // 按钮紧随其后（比岗位慢一点）
+            // 按钮稍微慢一点点
             const pBtn = Math.max(0, (p - 0.2) / 0.8); 
             const easeBtn = 1 - Math.pow(1 - pBtn, 3);
             
             actionArea.style.transform = `translateY(${180 * (1 - easeBtn)}px)`;
             actionArea.style.opacity = easeBtn;
-
           } else {
             rolesGrid.style.transform = `translateY(150px)`;
             rolesGrid.style.opacity = 0;
