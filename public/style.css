@@ -1,23 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap');
 
-html { overscroll-behavior-y: none; }
-body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; overscroll-behavior-y: none; }
-::-webkit-scrollbar { display: none; width: 0 !important; }
-
+:global(html) { overscroll-behavior-y: none; }
+:global(body) { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; overscroll-behavior-y: none; }
+:global(::-webkit-scrollbar) { display: none; width: 0 !important; }
 .mono { font-family: 'Courier Prime', monospace; }
 .serif { font-family: 'Playfair Display', serif; }
 
-/* 圆环进度条 */
+/* 新的圆环进度条 */
 .progress-ring {
-  position: fixed; top: 20px; right: 20px;
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: conic-gradient(#d4af37 0%, rgba(255,255,255,0.1) 0%);
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  width: 36px;
+  height: 36px;
   z-index: 9999;
+  transform: rotate(-90deg);
   pointer-events: none;
-  -webkit-mask: radial-gradient(transparent 8px, #000 9px);
-  mask: radial-gradient(transparent 8px, #000 9px);
 }
+.ring-bg { stroke: rgba(255,255,255,0.15); }
+.ring-fill { stroke: #d4af37; transition: stroke-dashoffset 0.1s linear; }
 
 .fog { position: fixed; inset: 0; z-index: 35; pointer-events: none; overflow: hidden; }
 .fog-layer { position: absolute; top: -10%; bottom: -10%; left: -60%; width: 220%; opacity: 0; will-change: transform, opacity; }
