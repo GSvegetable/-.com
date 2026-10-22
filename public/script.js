@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroSection = document.querySelector('.hero-section');
   const heroStage = document.getElementById('hero-masthead');
   const fadeMask = document.getElementById('fade-mask');
-  const progressIndicator = document.getElementById('progress-indicator');
+  const progressRingFill = document.getElementById('progress-ring-fill');
   const infoSection = document.getElementById('info-section');
   const infoDim = document.getElementById('info-dim');
   const rolesGrid = document.getElementById('roles-grid');
@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const smooth = (t) => t * t * (3 - 2 * t);
 
+  // 圆环周长
+  const CIRCUMFERENCE = 2 * Math.PI * 16;
+
   let currentIndex = 0;
   setInterval(() => {
     bgImages[currentIndex].classList.remove('active');
@@ -36,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     newBg.classList.add('active');
   }, 30000);
 
-  // 点击 SUSPECT 放大 P 并纯白穿透
   const suspectBtn = document.getElementById('suspect-btn');
   const whiteScreen = document.getElementById('white-screen');
 
@@ -94,7 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const totalScrollable = Math.max(1, document.documentElement.scrollHeight - windowHeight);
     const globalProgress = clamp(scrollY / totalScrollable);
-    progressIndicator.textContent = Math.round(globalProgress * 100) + '%';
+    
+    // 更新圆环进度 (stroke-dashoffset)
+    if (progressRingFill) {
+      const offset = CIRCUMFERENCE - (globalProgress * CIRCUMFERENCE);
+      progressRingFill.style.strokeDashoffset = offset;
+    }
 
     const p3 = pageThree.getBoundingClientRect();
     const rise = clamp(1 - p3.top / windowHeight);
