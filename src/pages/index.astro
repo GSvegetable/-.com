@@ -63,6 +63,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="p2-dwell" id="p2-dwell"></div>
 
+  <!-- 第三页 -->
   <section class="page-three" id="page-three">
     <div class="p3-stage" id="p3-stage">
       <div class="p3-inner">
@@ -192,14 +193,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  /* 核心修复：缩短滚动高度至 380vh，让切换更紧凑 */
-  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 380vh; width: 100%; background-color: #ffffff; }
+  /* 修复纯白屏的核心：高度恢复到 500vh，确保滚动距离充足 */
+  /* 同时背景色恢复为 transparent，如果内容滚完了，底下漏出的是 body 的黑底，不会是一大片白 */
+  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: transparent; }
   
+  /* 白纸本体：在这里铺满纯白，并且高度固定 100vh，死死贴住屏幕 */
   .p3-stage { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
   
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
-  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; min-height: 50vh; }
+  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; }
 
   .case { position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, 4vh, 0); transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s; }
   .case.is-past { transform: translate3d(0, -4vh, 0); }
@@ -321,9 +324,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const run = Math.max(1, p3.height - windowHeight);
       const q = clamp(-p3.top / run);
       
-      // 优化滚动映射：把 q 均分为四份进行切页，避免长距离的视觉静止
+      // 当滚到最后 5% 的距离时，页脚才升上来
       if (siteFooter) {
-        if (q > 0.88) siteFooter.style.transform = 'translateY(0)';
+        if (q > 0.95) siteFooter.style.transform = 'translateY(0)';
         else siteFooter.style.transform = 'translateY(100%)';
       }
 
