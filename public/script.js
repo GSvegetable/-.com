@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const fadeMask = document.getElementById('fade-mask');
   const progressIndicator = document.getElementById('progress-indicator');
   const infoSection = document.getElementById('info-section');
+  const infoDim = document.getElementById('info-dim');
   const rolesGrid = document.getElementById('roles-grid');
   const actionArea = document.getElementById('action-area');
 
@@ -15,8 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const fogA = document.getElementById('fog-a');
   const fogB = document.getElementById('fog-b');
   const cases = Array.from(document.querySelectorAll('.case'));
-  const ticks = Array.from(document.querySelectorAll('.tick'));
-  const segFills = Array.from(document.querySelectorAll('.seg i'));
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -43,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.toggle('is-active', i === s);
       el.classList.toggle('is-past', i < s);
     });
-    ticks.forEach((t, i) => t.classList.toggle('is-on', s >= i + 1));
   };
 
   let ptr = null;
@@ -64,16 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
   stage.addEventListener('pointerleave', clearPtr);
   stage.addEventListener('pointercancel', clearPtr);
   stage.addEventListener('pointerup', (ev) => { if (ev.pointerType !== 'mouse') clearPtr(); });
-
-  ticks.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const k = Number(btn.dataset.k);
-      const r = pageThree.getBoundingClientRect();
-      const absTop = r.top + window.scrollY;
-      const run = Math.max(1, r.height - stage.offsetHeight);
-      window.scrollTo({ top: absTop + run * (0.25 * (k + 1) + 0.04), behavior: 'smooth' });
-    });
-  });
 
   const update = () => {
     const scrollY = window.scrollY;
@@ -111,10 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
     infoSection.style.transform = e > 0
       ? `translate3d(0, ${(-e * 4).toFixed(3)}vh, 0) scale(${(1 - e * 0.08).toFixed(4)})`
       : 'none';
+    infoDim.style.opacity = (e * 0.9).toFixed(3);
     infoSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
 
-    const contentTriggerStart = windowHeight * 0.2;
-    const contentTriggerEnd = windowHeight * 0.8; 
+    const contentTriggerStart = windowHeight * 0.5;
+    const contentTriggerEnd = windowHeight * 1.0; 
     const p = clamp((scrollY - contentTriggerStart) / (contentTriggerEnd - contentTriggerStart));
     const ease = smooth(p);
 
@@ -143,8 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const s = rise > 0.2 ? Math.min(3, Math.floor(q * 4)) : -1;
     setStep(s);
-    segFills[0].style.transform = `scaleX(${clamp((q - 0.25) / 0.25).toFixed(3)})`;
-    segFills[1].style.transform = `scaleX(${clamp((q - 0.5) / 0.25).toFixed(3)})`;
     if (!reduceMotion) placeLantern(q);
   };
 
