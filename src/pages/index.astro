@@ -78,9 +78,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <section class="page-three" id="page-three" aria-label="Case files">
     <svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
-      <filter id="tear-edge">
-        <feTurbulence type="fractalNoise" baseFrequency="0.03 0.12" numOctaves="4" result="noise" />
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G" />
+      <filter id="tear-edge" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02 0.12" numOctaves="5" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="25" xChannelSelector="R" yChannelSelector="G" />
+        <feDropShadow dx="0" dy="8" stdDeviation="6" flood-opacity="0.4" />
       </filter>
     </svg>
 
@@ -158,13 +159,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <footer class="p3-foot mono">
           <span class="foot-l">LONDON · SHANGHAI · TORONTO</span>
-          <nav class="rail" aria-label="Case files">
-            <button class="tick" type="button" data-k="0" aria-label="Open file I">I</button>
-            <span class="seg"><i></i></span>
-            <button class="tick" type="button" data-k="1" aria-label="Open file II">II</button>
-            <span class="seg"><i></i></span>
-            <button class="tick" type="button" data-k="2" aria-label="Open file III">III</button>
-          </nav>
           <span class="foot-r">EST. 1888</span>
         </footer>
       </div>
@@ -211,12 +205,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; height: 100lvh; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 40px rgba(0,0,0,0.5); overflow: hidden; transform-origin: 50% 35%; will-change: transform; }
   .info-dim { display: none; }
+  
   .p2-dwell { height: 60vh; height: 60lvh; pointer-events: none; }
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
   
-  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; opacity: 1 !important; transform: none !important; animation: fadeUpIn 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-timeline: view(); animation-range: entry 5% cover 30%; will-change: transform, opacity; }
-  .action-area { text-align: center; margin-top: 80px; opacity: 1 !important; transform: none !important; animation: fadeUpIn 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both; animation-timeline: view(); animation-range: entry 5% cover 30%; will-change: transform, opacity; }
-  @keyframes fadeUpIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  .roles-grid { 
+    display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; 
+    opacity: 1 !important; transform: none !important;
+    animation: fadeUpIn 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; 
+    animation-timeline: view(); animation-range: entry 5% cover 30%; 
+    will-change: transform, opacity;
+  }
+  .action-area { 
+    text-align: center; margin-top: 80px; 
+    opacity: 1 !important; transform: none !important;
+    animation: fadeUpIn 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both; 
+    animation-timeline: view(); animation-range: entry 5% cover 30%; 
+    will-change: transform, opacity;
+  }
+  @keyframes fadeUpIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
   @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
@@ -231,7 +241,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* 第三页：彻底放弃悬空，回归沉浸式铺满全屏 + 高级灰 + 狂野毛边 */
   .page-three { 
     --paper-base: #d4cfc3; 
     --paper-light: #e3ded1;
@@ -247,21 +256,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       var(--grain);
   }
 
-  /* 撕纸质感升级 */
-  .tear-wrap { position: absolute; left: 0; right: 0; top: -80px; height: 85px; z-index: 2; pointer-events: none; filter: drop-shadow(0px -8px 16px rgba(0,0,0,0.6)); }
-  .tear { position: absolute; inset: -20px 0 0 0; }
-  
-  .tear-fibre { 
-    background-color: #8c816e; 
-    filter: url(#tear-edge); 
-    clip-path: polygon(0% 100%, 0% 70%, 3% 65%, 1% 50%, 5% 40%, 2% 25%, 7% 10%, 4% 0%, 12% 5%, 15% 0%, 22% 15%, 28% 5%, 35% 20%, 42% 0%, 48% 10%, 55% 5%, 62% 18%, 68% 2%, 75% 12%, 82% 0%, 88% 15%, 92% 5%, 97% 20%, 100% 10%, 100% 100%);
-    transform: translateY(4px) scaleX(1.01);
+  /* 极度真实的手撕边缘质感 */
+  .tear-wrap { 
+    position: absolute; left: 0; right: 0; top: -120px; height: 122px; 
+    z-index: 2; pointer-events: none; 
   }
-  
+  .tear { 
+    position: absolute; inset: -20px 0 0 0; 
+    /* 极度夸张、犬牙交错的不规则撕纸路径 */
+    clip-path: polygon(
+      0% 100%, 0% 70%, 1% 85%, 2% 50%, 3.5% 75%, 5% 45%, 6% 90%, 8% 55%, 9% 80%, 12% 30%, 14% 65%, 
+      15% 40%, 18% 85%, 20% 50%, 22% 75%, 25% 20%, 27% 80%, 29% 45%, 32% 70%, 35% 10%, 37% 60%, 
+      40% 30%, 42% 85%, 44% 40%, 47% 75%, 50% 25%, 52% 80%, 55% 35%, 57% 65%, 60% 15%, 62% 75%, 
+      65% 40%, 68% 85%, 70% 30%, 73% 65%, 75% 20%, 78% 80%, 80% 45%, 82% 75%, 85% 35%, 87% 85%, 
+      90% 25%, 92% 70%, 95% 40%, 97% 85%, 98% 50%, 100% 80%, 100% 100%
+    );
+    transform-origin: center;
+  }
+  .tear-fibre { 
+    background-color: #9e9485; /* 纤维的深色底层 */
+    filter: url(#tear-edge); 
+    opacity: 0.85;
+    transform: translateY(-8px); /* 形成厚度错位 */
+  }
   .tear-base { 
     background-color: var(--paper-base); 
     filter: url(#tear-edge); 
-    clip-path: polygon(0% 100%, 0% 75%, 4% 60%, 2% 45%, 6% 35%, 3% 20%, 8% 5%, 15% 10%, 20% 0%, 27% 12%, 33% 2%, 40% 15%, 45% 5%, 52% 18%, 60% 0%, 66% 15%, 72% 5%, 78% 20%, 85% 10%, 92% 18%, 98% 5%, 100% 15%, 100% 100%);
+    box-shadow: inset 0 25px 30px -15px rgba(0,0,0,0.15), inset 0 2px 2px -1px rgba(255,255,255,0.6); /* 撕裂处的立体纸质感 */
   }
 
   .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
@@ -273,13 +294,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .p3-inner { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-rows: auto 1fr auto; padding: clamp(24px, 4vw, 56px) clamp(24px, 6vw, 96px) clamp(26px, 6vh, 56px); }
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: var(--ink-soft); padding-bottom: 16px; border-bottom: 4px double rgba(21,18,15,0.6); font-weight: 700; text-transform: uppercase; }
   .p3-cases { position: relative; min-height: 0; }
-  .p3-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 11px; letter-spacing: 0.3em; color: var(--ink-soft); padding-top: 16px; border-top: 2px solid rgba(21,18,15,0.5); font-weight: 700; }
-  .foot-r { text-align: right; }
-  .rail { display: flex; align-items: center; gap: 12px; }
-  .seg { position: relative; display: block; width: clamp(40px, 9vw, 120px); height: 2px; background: rgba(21,18,15,0.2); overflow: hidden; }
-  .seg i { position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform 0.6s cubic-bezier(0.65, 0, 0.15, 1); }
-  .tick { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(21,18,15,0.4); background: transparent; color: var(--ink); font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent; transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease; }
-  .tick.is-on { background: var(--ink); color: var(--paper-light); border-color: var(--ink); }
+  
+  /* 修改了底部的分布，去除了 1-2-3 和横线 */
+  .p3-foot { display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 0.3em; color: var(--ink-soft); padding-top: 16px; border-top: 2px solid rgba(21,18,15,0.5); font-weight: 700; }
   
   .case { position: absolute; inset: 0; display: grid; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, 4vh, 0); transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s; }
   .case.is-past { transform: translate3d(0, -4vh, 0); }
@@ -327,7 +344,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .case.is-active .stamp { opacity: 0.95; transform: rotate(var(--r, -8deg)) scale(1); transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s; }
 
   @media (max-width: 820px) { .case--file { grid-template-columns: 1fr; align-content: center; row-gap: 0; } .case-num { justify-self: start; font-size: min(50vw, 35vh); margin-bottom: -1vh; } .case-body { text-align: left; } }
-  @media (max-width: 700px) { .p3-mast { letter-spacing: 0.2em; } .p3-foot { grid-template-columns: 1fr; justify-items: center; } .foot-l, .foot-r { display: none; } }
+  @media (max-width: 700px) { .p3-mast { letter-spacing: 0.2em; } .p3-foot { flex-direction: column; gap: 10px; justify-content: center; } .foot-l, .foot-r { display: none; } }
   @media (max-height: 620px) { .case-num, .case-sub, .p3-sign { display: none; } .case--file { grid-template-columns: 1fr; } .case-body { font-size: 15px; line-height: 1.6; } }
   @media (max-width: 600px) { .hero-stage { padding: 0 20px; } .letter-body { padding: 20px 0 20px 20px; margin-left: 0; } .content-group { max-width: 100%; } .salutation { font-size: 36px; } .info-section { padding: 80px 20px; border-radius: 40px 40px 0 0; } }
   @media (prefers-reduced-motion: reduce) { .case, .reveal, .case-num, .case-title, .rule, .stamp, .intro-title .line > span, .p3-lantern { transition-duration: 0.01s !important; transition-delay: 0s !important; } .hint i { animation: none; } }
