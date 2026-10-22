@@ -149,7 +149,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   * { -webkit-tap-highlight-color: transparent !important; }
   a, div, button { outline: none !important; }
 
-  /* 彻底锁死横向滚动条，防止页面被往左挤 */
   html { color-scheme: only light; overscroll-behavior-y: none; overflow-x: hidden; }
   body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; width: 100%; max-width: 100%; }
   ::-webkit-scrollbar { display: none; width: 0 !important; }
@@ -193,14 +192,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  /* 核心修复：page-three 铺满纯白底色，彻底掩盖 3D 漏缝 */
-  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: #ffffff; }
+  /* 核心修复：缩短滚动高度至 380vh，让切换更紧凑 */
+  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 380vh; width: 100%; background-color: #ffffff; }
   
   .p3-stage { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
   
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
-  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; }
+  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; min-height: 50vh; }
 
   .case { position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, 4vh, 0); transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s; }
   .case.is-past { transform: translate3d(0, -4vh, 0); }
@@ -308,7 +307,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       if (p3Stage) {
         if (e > 0 && e < 1) {
-          // 移除了作妖的 scaleX，减小了翻转角度，因为底色已经补齐
           const rotateX = (1 - e) * 35; 
           const translateY = (1 - e) * -20;
           p3Stage.style.transform = `perspective(1500px) rotateX(${rotateX}deg) translateY(${translateY}vh)`;
@@ -323,8 +321,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const run = Math.max(1, p3.height - windowHeight);
       const q = clamp(-p3.top / run);
       
+      // 优化滚动映射：把 q 均分为四份进行切页，避免长距离的视觉静止
       if (siteFooter) {
-        if (q > 0.92) siteFooter.style.transform = 'translateY(0)';
+        if (q > 0.88) siteFooter.style.transform = 'translateY(0)';
         else siteFooter.style.transform = 'translateY(100%)';
       }
 
