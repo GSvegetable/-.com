@@ -77,6 +77,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="p2-dwell" id="p2-dwell"></div>
 
   <section class="page-three" id="page-three" aria-label="Case files">
+    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
+      <filter id="tear-edge">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04 0.15" numOctaves="4" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </svg>
+
     <div class="tear-wrap" aria-hidden="true">
       <div class="tear tear-fibre" id="tear-fibre"></div>
       <div class="tear tear-base" id="tear-base"></div>
@@ -202,19 +209,40 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .ink-break { -webkit-mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); filter: blur(0.3px) contrast(1.2); }
   .scroll-spacer { height: 100vh; height: 100lvh; pointer-events: none; }
 
-  /* 修复：删除了原有的 mask-image，解决了纯黑和内容被遮挡的问题 */
   .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; height: 100lvh; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 40px rgba(0,0,0,0.5); overflow: hidden; transform-origin: 50% 35%; will-change: transform; }
-  
-  /* 修复：彻底隐藏这层遮罩，避免纯黑 */
   .info-dim { display: none; }
   
   .p2-dwell { height: 60vh; height: 60lvh; pointer-events: none; }
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
-  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
+  
+  /* 修复文字有概率不显示：强制显示，并使用 CSS 原生滚动动画替代 JS 触发 */
+  .roles-grid { 
+    display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; 
+    opacity: 1 !important; 
+    transform: none !important;
+    animation: fadeUpIn 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; 
+    animation-timeline: view(); 
+    animation-range: entry 5% cover 30%; 
+    will-change: transform, opacity;
+  }
+  .action-area { 
+    text-align: center; margin-top: 80px; 
+    opacity: 1 !important; 
+    transform: none !important;
+    animation: fadeUpIn 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both; 
+    animation-timeline: view(); 
+    animation-range: entry 5% cover 30%; 
+    will-change: transform, opacity;
+  }
+  @keyframes fadeUpIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
-  .action-area { text-align: center; margin-top: 80px; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
+  
   .contact-btn { display: inline-flex; flex-direction: column; align-items: center; text-decoration: none; padding: 16px 40px; position: relative; overflow: hidden; transition: all 0.4s ease; cursor: default; }
   .contact-btn::before, .contact-btn::after { content: ''; position: absolute; left: 0; width: 100%; height: 1px; background: var(--gold); transition: background 0.4s, transform 0.4s; }
   .contact-btn::before { top: 0; }
@@ -224,7 +252,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* 修复：仅修改颜色变量，将原本发黄的 #bca78d 改为冷调高级灰 #d4cfc3，墨色加深 */
+  /* 第三页：高级灰配色 + 极强质感手撕边缘 */
   .page-three { 
     --paper-base: #d4cfc3; 
     --paper-light: #e3ded1;
@@ -240,10 +268,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       var(--grain);
   }
 
-  .tear-wrap { position: absolute; left: 0; right: 0; top: -64px; height: 66px; z-index: 2; pointer-events: none; filter: drop-shadow(0px -4px 12px rgba(0,0,0,0.6)); }
-  .tear { position: absolute; inset: 0; background-image: var(--grain); }
-  .tear-fibre { background-color: #bab4a6; filter: brightness(0.95) contrast(1.1); }
-  .tear-base { background-color: var(--paper-base); box-shadow: inset 0 -20px 20px -20px rgba(0,0,0,0.6); }
+  /* 极具随机感的手撕纸质感 */
+  .tear-wrap { 
+    position: absolute; left: 0; right: 0; top: -80px; height: 82px; 
+    z-index: 2; pointer-events: none; 
+    filter: drop-shadow(0px -8px 16px rgba(0,0,0,0.5)); 
+  }
+  .tear { 
+    position: absolute; inset: -20px 0 0 0; 
+    clip-path: polygon(
+      0% 100%, 0% 60%, 1.5% 40%, 2.5% 55%, 4.5% 25%, 6% 50%, 8.5% 15%, 10% 45%, 
+      13% 20%, 15% 55%, 18% 10%, 20% 40%, 23% 15%, 25.5% 60%, 28% 25%, 30% 55%, 
+      33% 10%, 35.5% 45%, 38% 20%, 40% 65%, 42.5% 15%, 45% 50%, 48% 25%, 50.5% 55%, 
+      53% 15%, 55% 45%, 58% 10%, 60% 60%, 63% 25%, 65.5% 50%, 68% 15%, 70% 55%, 
+      73% 20%, 75% 50%, 78% 10%, 80.5% 45%, 83% 20%, 85% 60%, 88% 15%, 90% 50%, 
+      93% 25%, 95% 55%, 97.5% 15%, 99% 40%, 100% 30%, 100% 100%
+    );
+    transform-origin: center;
+  }
+  .tear-fibre { 
+    background-color: #a89f90; 
+    filter: url(#tear-edge); 
+    opacity: 0.9;
+  }
+  .tear-base { 
+    background-color: var(--paper-base); 
+    filter: url(#tear-edge); 
+    box-shadow: inset 0 20px 20px -10px rgba(255,255,255,0.3); 
+  }
 
   .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
   .p3-grain, .p3-vignette { position: absolute; inset: 0; pointer-events: none; }
