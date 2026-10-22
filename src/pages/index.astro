@@ -149,8 +149,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   * { -webkit-tap-highlight-color: transparent !important; }
   a, div, button { outline: none !important; }
 
-  html { color-scheme: only light; overscroll-behavior-y: none; }
-  body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; overscroll-behavior-y: none; }
+  /* 彻底锁死横向滚动条，防止页面被往左挤 */
+  html { color-scheme: only light; overscroll-behavior-y: none; overflow-x: hidden; }
+  body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; width: 100%; max-width: 100%; }
   ::-webkit-scrollbar { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
   .serif { font-family: 'Playfair Display', serif; }
@@ -184,7 +185,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .scroll-spacer { height: 100vh; pointer-events: none; }
   
-  /* 修复 100vw 导致的右侧黑边，改为 100% */
   .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.9); overflow: hidden; transform-origin: 50% 0%; will-change: transform, opacity; }
   .p2-dwell { height: 60vh; pointer-events: none; }
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
@@ -193,8 +193,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  /* 修复 100vw */
-  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: transparent; }
+  /* 核心修复：page-three 铺满纯白底色，彻底掩盖 3D 漏缝 */
+  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: #ffffff; }
+  
   .p3-stage { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
   
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
@@ -300,7 +301,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const e = smooth(coverProgress);
 
       if (infoSection) {
-        // 去掉 scale 缩放，只做上移，避免两侧漏出底图
         infoSection.style.transform = e > 0 ? `translate3d(0, ${(e * 10).toFixed(2)}vh, 0)` : 'none';
         infoSection.style.opacity = 1 - e;
         infoSection.style.visibility = coverProgress >= 1 ? 'hidden' : 'visible';
@@ -308,13 +308,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       if (p3Stage) {
         if (e > 0 && e < 1) {
-          // 增加 scaleX 补偿，强制撑满屏幕边缘，消除透视黑边
-          const rotateX = (1 - e) * 50; 
-          const scaleY = 1 - (1 - e) * 0.15;
+          // 移除了作妖的 scaleX，减小了翻转角度，因为底色已经补齐
+          const rotateX = (1 - e) * 35; 
           const translateY = (1 - e) * -20;
-          const scaleX = 1 + (1 - e) * 0.15; 
-          
-          p3Stage.style.transform = `perspective(1500px) rotateX(${rotateX}deg) scaleY(${scaleY}) scaleX(${scaleX}) translateY(${translateY}vh)`;
+          p3Stage.style.transform = `perspective(1500px) rotateX(${rotateX}deg) translateY(${translateY}vh)`;
           p3Stage.style.boxShadow = `0 ${(1-e)*50}px ${(1-e)*80}px rgba(0,0,0,${(1-e)*0.5})`;
         } else if (e >= 1) {
           p3Stage.style.transform = 'none';
@@ -336,8 +333,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const stretchY = (1 / Math.cos(heroRotate * Math.PI / 180)) * 1.05; 
       const translateY = -10 + (Math.pow(heroRawProgress, 2) * 8); 
       heroStage.style.transform = `translate3d(0, ${translateY}vh, 0) rotateX(${heroRotate}deg) scaleY(${stretchY})`;
-      
-      // 确保第一页在第二页上升时极速暗化消失，防止漏出底图纹理
       heroStage.style.opacity = Math.max(0, 1 - (heroRawProgress * 0.5) - e * 2);
 
       const dwellH = Math.max(1, dwell.offsetHeight);
