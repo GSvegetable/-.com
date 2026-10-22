@@ -60,7 +60,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
       </div>
       <div class="action-area" id="action-area">
-        <div class="contact-btn" id="suspect-btn" role="button">
+        <div class="contact-btn" id="suspect-btn" role="button" tabindex="0">
           <span class="btn-text mono">
             <span class="btn-letter">S</span><span class="btn-letter">U</span><span class="btn-letter">S</span>
             <span class="btn-letter target-p">P</span>
@@ -154,9 +154,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </div>
   </section>
-
-  <!-- 穿越遮罩：用来掩盖瞬间滚动的黑屏 -->
-  <div class="portal-mask" id="portal-mask"></div>
 </BaseLayout>
 
 <style is:global>
@@ -212,36 +209,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
   .action-area { text-align: center; margin-top: 80px; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
-  .contact-btn { display: inline-flex; padding: 16px 40px; cursor: pointer; position: relative; }
+  
+  /* 修复蓝光高亮 */
+  .contact-btn { display: inline-flex; padding: 16px 40px; cursor: pointer; position: relative; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
   .btn-text { color: #d4af37; font-family: 'Courier Prime', monospace; font-size: 14px; letter-spacing: 0.25em; display: flex; }
   
-  /* --- 穿越动画核心 CSS --- */
   .btn-letter { display: inline-block; transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.6s ease; will-change: transform, opacity; }
-  
-  /* 其他字母瞬间淡出 */
   .contact-btn.is-zooming .btn-letter:not(.target-p) { opacity: 0; transform: scale(0.5); transition-duration: 0.3s; }
-  
-  /* 目标字母 'P' 极速放大穿越 */
-  .contact-btn.is-zooming .target-p { 
-    opacity: 1 !important; 
-    transform: scale(200); 
-    z-index: 9999; 
-  }
+  .contact-btn.is-zooming .target-p { opacity: 1 !important; transform: scale(100); z-index: 9999; }
 
-  /* 穿越黑屏遮罩 */
-  .portal-mask { position: fixed; inset: 0; background-color: #000; z-index: 9998; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; }
-  .portal-mask.active { opacity: 1; }
-
-  /* --- 第三页 --- */
-  .page-three { --paper-base: #fcfcfc; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: transparent; }
+  /* --- 第三页：纯黑底色 --- */
+  .page-three { --paper-base: #fcfcfc; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: #000000; } /* 改成了纯黑 */
   
-  /* 降落后的冲击回弹 */
-  .page-three.is-arriving .p3-stage { transform: scale(1.5); opacity: 0; transition: none; }
+  /* 纸张降临状态 */
+  .page-three.is-arriving .p3-stage { transform: scale(1.3); opacity: 0; transition: none; }
   .page-three.is-settled .p3-stage { transform: scale(1); opacity: 1; transition: transform 1.2s cubic-bezier(0.2, 0.9, 0.2, 1), opacity 0.8s ease; }
 
   .p3-stage { 
     position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: var(--paper-base);
-    transform-origin: center center; /* 改为中心缩放，更有穿梭感 */
+    transform-origin: center center;
     will-change: transform, box-shadow;
     box-shadow: 0 -20px 50px rgba(0,0,0,0.1);
     transform-style: preserve-3d;
@@ -255,7 +241,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; z-index: 1; transform-style: preserve-3d; will-change: transform; }
-  
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; transform: translateZ(20px); }
   .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; perspective: 1200px; transform-style: preserve-3d; }
 
@@ -335,6 +320,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .parallax-layer { transition: transform 0.1s ease-out; }
 
+  /* 动态生成的黑色虫洞遮罩 */
+  .portal-hole { position: fixed; background: #000; border-radius: 50%; transform: translate(-50%, -50%) scale(0); transition: transform 1s cubic-bezier(0.7, 0, 0.3, 1); pointer-events: none; z-index: 9998; }
+
   @media (max-width: 900px) {
     .case--file { flex-direction: column; justify-content: center; }
     .case-num { left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0.1; font-size: 80vw; }
@@ -360,40 +348,59 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const parallaxLayers = Array.from(document.querySelectorAll('.parallax-layer'));
     
     const suspectBtn = document.getElementById('suspect-btn');
-    const portalMask = document.getElementById('portal-mask'); // 新增的穿越黑屏
 
     if (!heroStage || !pageThree) return;
 
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const smooth = (t) => t * t * (3 - 2 * t);
 
-    // --- 核心穿越动画 JS ---
-    if (suspectBtn && portalMask) {
+    // --- 核心穿越动画 ---
+    if (suspectBtn) {
       suspectBtn.addEventListener('click', () => {
-        // 1. 触发字母放大
-        suspectBtn.classList.add('is-zooming');
+        const pLetter = suspectBtn.querySelector('.target-p');
+        
+        // 获取 P 在屏幕上的精确位置
+        const rect = pLetter.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
 
-        // 2. 等待 0.8s 让字母铺满屏幕，此时切入黑屏
+        // 创建动态黑洞
+        const hole = document.createElement('div');
+        hole.className = 'portal-hole';
+        hole.style.width = '20px'; // 初始大小，刚好覆盖 P 的圆孔
+        hole.style.height = '20px';
+        hole.style.left = `${centerX}px`;
+        hole.style.top = `${centerY}px`;
+        document.body.appendChild(hole);
+
+        // 强制重绘，确保过渡生效
+        void hole.offsetWidth;
+
+        // 触发字母放大和黑洞扩散
+        suspectBtn.classList.add('is-zooming');
+        hole.style.transform = 'translate(-50%, -50%) scale(300)'; // 扩散至全屏
+
+        // 等待黑洞铺满屏幕
         setTimeout(() => {
-          portalMask.classList.add('active');
-          
-          // 3. 黑屏瞬间，直接把滚动条瞬移到第三页顶部，并设置第三页为“放大刚落地”的状态
+          // 瞬移到第三页
           pageThree.scrollIntoView({ behavior: 'auto' });
+          
+          // 第三页设为“即将到达”状态（黑底，白纸 opacity: 0）
           pageThree.classList.add('is-arriving');
           
-          // 4. 短暂停顿后，第三页解除黑屏，开始回弹（模拟落到实地）
+          // 延迟一帧后，移除黑洞，白纸浮现
           setTimeout(() => {
-            portalMask.classList.remove('active');
+            hole.style.opacity = '0';
+            hole.style.transition = 'opacity 0.5s ease';
+            
             pageThree.classList.remove('is-arriving');
             pageThree.classList.add('is-settled');
             
-            // 5. 清理按钮状态
+            // 清理现场
+            setTimeout(() => hole.remove(), 500);
             suspectBtn.classList.remove('is-zooming');
-            
-            // 触发一次强制更新，让第三页的视差和卷宗立即对齐
             window.dispatchEvent(new Event('scroll'));
           }, 100);
-          
         }, 800);
       });
     }
