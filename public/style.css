@@ -6,7 +6,22 @@
 .mono { font-family: 'Courier Prime', monospace; }
 .serif { font-family: 'Playfair Display', serif; }
 
-.debug-progress { position: fixed; top: 20px; right: 20px; color: #d4af37; font-size: 14px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(212, 175, 55, 0.3); pointer-events: none; }
+/* 圆环进度条 */
+.progress-ring {
+  position: fixed; top: 20px; right: 20px;
+  z-index: 9999; pointer-events: none;
+}
+.progress-ring svg { display: block; transform: rotate(-90deg); }
+.ring-bg {
+  fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 2;
+}
+.ring-fill {
+  fill: none; stroke: #d4af37; stroke-width: 2;
+  stroke-dasharray: 100.53; /* 2 * PI * 16 = 100.53 */
+  stroke-dashoffset: 100.53;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s ease-out;
+}
 
 .fog { position: fixed; inset: 0; z-index: 35; pointer-events: none; overflow: hidden; }
 .fog-layer { position: absolute; top: -10%; bottom: -10%; left: -60%; width: 220%; opacity: 0; will-change: transform, opacity; }
