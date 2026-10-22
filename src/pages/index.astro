@@ -58,24 +58,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
+  <!-- 占位符 -->
   <div class="scroll-spacer"></div>
 
-  <!-- 第二页：通过 Mask 控制顶部透明度 -->
+  <!-- 第二页 -->
   <section class="info-section" id="info-section">
     <div class="content-block">
-      <h2 class="section-title mono">JOIN THE COMMUNITY</h2>
       
-      <div class="roles-grid">
+      <!-- 三个岗位艺术字 -->
+      <div class="roles-grid" id="roles-grid">
         <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
         <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
         <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
       </div>
       
-      <div class="action-area">
-        <a href="mailto:hi@gongshui.com" class="contact-btn">
-          <span class="btn-text">JOIN THE COMMUNITY</span>
-        </a>
+      <!-- 案发现场 按钮 -->
+      <div class="action-area" id="action-area">
+        <div class="contact-btn" role="button">
+          <span class="btn-text">案发现场</span>
+        </div>
       </div>
+    </div>
+  </section>
+
+  <!-- 第三页：淡褐色简版 -->
+  <section class="page-three">
+    <div class="page-three-content">
+      <h2 class="mono">CASE FILES</h2>
+      <p class="serif">The truth is buried in the mist.</p>
     </div>
   </section>
 
@@ -93,6 +103,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   :global(::-webkit-scrollbar) { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
+  .serif { font-family: 'Playfair Display', serif; }
 
   .debug-progress {
     position: fixed; top: 20px; right: 20px;
@@ -111,20 +122,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .perspective-wrap {
-    perspective: 2500px; 
-    perspective-origin: 50% 0%; 
+    perspective: 2500px; perspective-origin: 50% 0%; 
     width: 100%; height: 100%;
     display: flex; justify-content: center; align-items: center;
   }
 
   .hero-stage {
-    position: relative;
-    width: 100%; max-width: 900px; height: 100vh; height: 100lvh;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 0 40px;
-    transform-origin: center bottom; 
-    will-change: transform, opacity;
-    pointer-events: auto;
+    position: relative; width: 100%; max-width: 900px; height: 100vh; height: 100lvh;
+    display: flex; flex-direction: column; justify-content: center; padding: 0 40px;
+    transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto;
     opacity: 0; transition: opacity 0.3s ease-out;
   }
   .hero-stage.loaded { opacity: 1; }
@@ -171,72 +177,84 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     position: relative; z-index: 20; min-height: 100vh; min-height: 100lvh;
     display: flex; align-items: center; justify-content: center;
     padding: 100px 40px;
-    
-    /* 纯黑底色，完全实心不透底 */
     background-color: #050505;
     border-radius: 60px 60px 0 0;
-    
-    /* 默认开启遮罩，JS 会动态修改它的值。初始顶部 35% 是透明的 */
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%);
     mask-image: linear-gradient(to bottom, transparent 0%, black 35%);
-    
-    /* 加一点极柔和的阴影，强化分界线的立体感 */
     box-shadow: 0 -20px 40px rgba(0,0,0,0.5);
+    overflow: hidden; 
   }
   
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
-  .section-title { font-family: 'Playfair Display', serif; font-size: 16px; letter-spacing: 0.3em; font-weight: 400; color: #d4af37; text-align: center; margin-bottom: 60px; }
   
-  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; }
+  .roles-grid { 
+    display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center;
+    transform: translateY(150px); opacity: 0; will-change: transform, opacity;
+  }
   @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
+  
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
   
-  .action-area { text-align: center; margin-top: 80px; }
+  .action-area { 
+    text-align: center; margin-top: 80px; 
+    transform: translateY(150px); opacity: 0; will-change: transform, opacity;
+  }
 
-  /* 按钮设计 */
   .contact-btn {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    padding: 16px 40px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
+    display: inline-flex; flex-direction: column; align-items: center; text-decoration: none;
+    padding: 16px 40px; position: relative; overflow: hidden; transition: all 0.4s ease;
+    cursor: default; 
   }
   
   .contact-btn::before, .contact-btn::after {
-    content: '';
-    position: absolute;
-    left: 0; width: 100%; height: 1px;
-    background: var(--gold);
-    transition: background 0.4s, transform 0.4s;
+    content: ''; position: absolute; left: 0; width: 100%; height: 1px;
+    background: var(--gold); transition: background 0.4s, transform 0.4s;
   }
   .contact-btn::before { top: 0; }
   .contact-btn::after { bottom: 0; }
 
   .contact-btn .btn-text {
-    color: var(--gold);
-    font-family: 'Courier Prime', monospace;
-    font-size: 14px;
-    letter-spacing: 0.25em;
-    position: relative;
-    z-index: 2;
-    transition: color 0.4s;
-  }
-
-  .contact-btn::before {
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0);
+    color: var(--gold); font-family: 'Courier Prime', monospace;
+    font-size: 14px; letter-spacing: 0.25em; position: relative; z-index: 2; transition: color 0.4s;
   }
 
   .contact-btn:hover { background: rgba(212, 175, 55, 0.05); }
   .contact-btn:hover::before, .contact-btn:hover::after {
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-    background: #fff;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff;
   }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
+  /* ======= 第三页：简简单单的淡褐色 ======= */
+  .page-three {
+    position: relative;
+    z-index: 30; /* 压在第二页上面 */
+    min-height: 100vh;
+    background-color: #cbb89d; /* 淡褐色/羊皮纸色 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 顶部圆角，平滑过渡 */
+    border-radius: 60px 60px 0 0;
+    box-shadow: 0 -20px 40px rgba(0,0,0,0.5);
+  }
+
+  .page-three-content {
+    text-align: center;
+    color: #2b2520; /* 深色文字 */
+  }
+
+  .page-three-content h2 {
+    font-size: 24px;
+    letter-spacing: 0.3em;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  .page-three-content p {
+    font-size: 18px;
+    font-style: italic;
+  }
 
   @media (max-width: 600px) {
     .hero-stage { padding: 0 20px; }
@@ -244,6 +262,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .content-group { max-width: 100%; }
     .salutation { font-size: 36px; }
     .info-section { padding: 80px 20px; border-radius: 40px 40px 0 0; }
+    .page-three { border-radius: 40px 40px 0 0; }
   }
 </style>
 
@@ -254,6 +273,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const fadeMask = document.getElementById('fade-mask');
     const progressIndicator = document.getElementById('progress-indicator');
     const infoSection = document.getElementById('info-section');
+    const rolesGrid = document.getElementById('roles-grid');
+    const actionArea = document.getElementById('action-area');
     
     heroStage.classList.add('loaded');
 
@@ -274,17 +295,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const scrollY = window.scrollY;
           const windowHeight = window.innerHeight;
           
+          // 进度条按整个页面总高度算
           const totalScrollable = document.documentElement.scrollHeight - windowHeight;
           const globalProgress = Math.min(1, Math.max(0, scrollY / totalScrollable));
-          
           progressIndicator.textContent = Math.round(globalProgress * 100) + '%';
 
+          // 第一页动画基于滑动一屏的距离
           const heroProgress = Math.min(1, Math.max(0, scrollY / windowHeight));
-
           const rotateX = heroProgress * 70; 
           const rad = rotateX * Math.PI / 180;
           const stretchY = (1 / Math.cos(rad)) * 1.05; 
-          
           const translateY = -10 + (Math.pow(heroProgress, 2) * 8); 
 
           heroStage.style.transform = `
@@ -296,10 +316,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           heroStage.style.opacity = Math.max(0, 1 - (heroProgress * 0.5));
           fadeMask.style.opacity = Math.max(0, (heroProgress - 0.3) * 1.5);
 
-          // ======= 核心：动态遮罩控制 =======
-          // 当 globalProgress 从 0 到 0.8 时，maskStop 从 35% 逐渐降到 0%
-          // 到 80% 时，maskStop 为 0，彻底变成实心，分界线清晰可见
-          let maskStop = 35 - (globalProgress / 0.8) * 35;
+          // 第二页遮罩：滑动距离超过 1.5 屏之后，开始逐渐消散
+          // 之前用户看到的 80% 大概就是 scrollY 到了 1.6 屏左右
+          let maskStop = 35 - ((scrollY - windowHeight * 0.8) / (windowHeight * 0.8)) * 35;
           maskStop = Math.max(0, maskStop);
           
           if (maskStop > 0.1) {
@@ -308,6 +327,36 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           } else {
             infoSection.style.webkitMaskImage = 'none';
             infoSection.style.maskImage = 'none';
+          }
+
+          // ======= 核心：第二页元素的物理触发距离 =======
+          // 第1页：0 ~ 1vh
+          // 第2页：1vh ~ 2vh
+          // 滑到 1.76 屏的时候开始触发上滑
+          const triggerStart = windowHeight * 1.76;
+          const triggerEnd = windowHeight * 2.0; // 正好是第二页盖满屏幕的时候
+
+          if (scrollY > triggerStart) {
+            // 限制在 0 到 1 之间
+            const p = Math.min(1, (scrollY - triggerStart) / (triggerEnd - triggerStart));
+            const ease = 1 - Math.pow(1 - p, 3);
+
+            // 岗位艺术字
+            rolesGrid.style.transform = `translateY(${150 * (1 - ease)}px)`;
+            rolesGrid.style.opacity = ease;
+
+            // 按钮紧随其后（比岗位慢一点）
+            const pBtn = Math.max(0, (p - 0.2) / 0.8); 
+            const easeBtn = 1 - Math.pow(1 - pBtn, 3);
+            
+            actionArea.style.transform = `translateY(${180 * (1 - easeBtn)}px)`;
+            actionArea.style.opacity = easeBtn;
+
+          } else {
+            rolesGrid.style.transform = `translateY(150px)`;
+            rolesGrid.style.opacity = 0;
+            actionArea.style.transform = `translateY(180px)`;
+            actionArea.style.opacity = 0;
           }
 
           ticking = false;
