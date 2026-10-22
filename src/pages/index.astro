@@ -56,8 +56,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
+  <!-- 给第一页留足拉伸空间 -->
   <div class="scroll-spacer"></div>
 
+  <!-- 第二页 -->
   <section class="info-section" id="info-section">
     <div class="content-block" style="position: relative; z-index: 100;">
       <div class="roles-grid" id="roles-grid">
@@ -73,8 +75,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <div class="p2-dwell" id="p2-dwell" style="height: 100vh;"></div>
+  <!-- 给第二页留足展示空间，不再瞬间被盖 -->
+  <div class="p2-dwell" id="p2-dwell" style="height: 150vh;"></div>
 
+  <!-- 第三页：恢复 400vh 高度，找回章节切换 -->
   <section class="page-three" id="page-three" aria-label="Case files">
     <div class="p3-stage" id="p3-stage">
       <div class="p3-inner">
@@ -138,6 +142,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
           </article>
         </div>
+        <!-- 123底部导航已彻底删除 -->
       </div>
     </div>
   </section>
@@ -236,7 +241,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* ====== 第三页：纯白/米黄底色，去掉了底部栏 ====== */
+  /* ====== 第三页：恢复 400vh 长页面，高质感米黄，无 123 导航 ====== */
   .page-three { 
     --paper-base: #fdfbf7; /* 极品细腻的米白底色 */
     --paper-light: #fdfbf7;
@@ -245,18 +250,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     --oxblood: #7b1e1e; 
     
     position: relative; z-index: 30; 
-    height: 100vh; /* 直接一屏高 */
-    height: 100lvh;
+    height: 400vh; /* 必须够长，才有空间展示 I, II, III 切换 */
+    height: 400lvh;
     width: 100vw; 
     margin-left: 0;
-    
     background-color: var(--paper-base); 
-    
     border-radius: 60px 60px 0 0; 
     box-shadow: 0 -20px 40px rgba(0,0,0,0.1); 
   }
 
-  .p3-stage { position: relative; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
+  .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
   
   .p3-inner { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-rows: auto 1fr; padding: clamp(24px, 4vw, 56px) clamp(24px, 6vw, 96px); }
   
