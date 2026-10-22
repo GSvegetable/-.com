@@ -15,8 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const lantern = document.getElementById('p3-lantern');
   const fogA = document.getElementById('fog-a');
   const fogB = document.getElementById('fog-b');
-  const tearBase = document.getElementById('tear-base');
-  const tearFibre = document.getElementById('tear-fibre');
   const cases = Array.from(document.querySelectorAll('.case'));
   const ticks = Array.from(document.querySelectorAll('.tick'));
   const segFills = Array.from(document.querySelectorAll('.seg i'));
@@ -27,12 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const smooth = (t) => t * t * (3 - 2 * t);
-  const mulberry32 = (a) => () => {
-    a |= 0; a = (a + 0x6D2B79F5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 
   let currentIndex = 0;
   setInterval(() => {
@@ -43,38 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     newBg.style.zIndex = '1';
     newBg.classList.add('active');
   }, 5000);
-
-  const buildTear = () => {
-    const rand = mulberry32(1888);
-    const n = 300; 
-    const base = [];
-    const fibre = [];
-    let drift = 0;
-    
-    for (let i = 0; i <= n; i++) {
-      const t = i / n;
-      drift = drift * 0.8 + (rand() - 0.5) * 6;
-      const wave = Math.sin(t * Math.PI * 18) * 2 + Math.sin(t * Math.PI * 45 + 1.3) * 1.5;
-      const jag = (rand() - 0.5) * 8;
-      let y = clamp(50 + wave + drift + jag, 15, 85);
-      
-      if (rand() > 0.94) {
-        y = clamp(y - (rand() * 15 + 5), 5, 85);
-      }
-      base.push([t * 100, y]);
-      
-      let fY = y - (1 + rand() * 4);
-      if (rand() > 0.9) {
-        fY = fY - (rand() * 10); 
-      }
-      fibre.push([t * 100, Math.max(2, fY)]);
-    }
-    
-    const toPoly = (pts) => 'polygon(0% 100%, ' + pts.map(([x, y]) => x.toFixed(3) + '% ' + y.toFixed(2) + '%').join(', ') + ', 100% 100%)';
-    tearBase.style.clipPath = toPoly(base);
-    tearFibre.style.clipPath = toPoly(fibre);
-  };
-  buildTear();
 
   let step = -2;
   const setStep = (s) => {
@@ -160,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const p = clamp((scrollY - contentTriggerStart) / (contentTriggerEnd - contentTriggerStart));
     const ease = smooth(p);
 
-    // ====== 修复随机闪烁：动画到底时强制清空内联样式，让浏览器按原生静态渲染 ======
     if (ease >= 0.99) {
       rolesGrid.style.transform = 'none';
       rolesGrid.style.opacity = '1';
