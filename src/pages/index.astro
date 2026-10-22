@@ -82,7 +82,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="p3-cases">
           <!-- 卷宗导语页 -->
           <article class="case case--intro">
-            <!-- 巨大的背景水印 -->
             <div class="intro-watermark serif">PROLOGUE</div>
             
             <div class="intro-content">
@@ -163,9 +162,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style is:global>
-  @import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap');
-
-  html { overscroll-behavior-y: none; }
+  /* 强制浏览器使用浅色模式，防止深色模式导致背景变黑、文字截断 */
+  html { color-scheme: only light; overscroll-behavior-y: none; }
   body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; overscroll-behavior-y: none; }
   ::-webkit-scrollbar { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
@@ -215,10 +213,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .btn-text { color: #d4af37; font-family: 'Courier Prime', monospace; font-size: 14px; letter-spacing: 0.25em; display: flex; }
   .btn-letter { display: inline-block; transition: transform 1.5s ease, opacity 1s ease; will-change: transform; }
   .contact-btn.is-zooming .btn-letter { opacity: 0; }
-  .contact-btn.is-zooming .target-p { opacity: 1 !important; transform: scale(800); z-index: 99999; }
+  .contact-btn.is-zooming .target-p { opacity: 1 !important; transform: scale(800); }
 
-  .white-screen { position: fixed; inset: 0; background-color: #ffffff; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 1s ease 1s; }
-  .white-screen.active { opacity: 1; pointer-events: auto; }
+  .white-screen { position: fixed; inset: 0; background-color: #ffffff; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
+  .white-screen.active { opacity: 1; }
 
   /* 第三页 */
   .page-three { --paper-base: #ffffff; --ink: #000000; --ink-soft: #444444; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: #ffffff; }
@@ -227,71 +225,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
   .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
 
+  /* 恢复 absolute 定位 */
   .case { position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, 4vh, 0); transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s; }
   .case.is-past { transform: translate3d(0, -4vh, 0); }
   .case.is-active { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity 0.8s ease 0.15s, transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s, visibility 0s linear 0s; }
   
-  /* ====== 核心：全新设计的卷宗导语页 ====== */
-  .case--intro { flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
+  /* 移除 position: relative，防止布局崩塌 */
+  .case--intro { flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
   
-  /* 巨大水印 */
   .intro-watermark {
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     font-size: clamp(100px, 20vw, 300px);
     font-weight: 900; font-style: italic; letter-spacing: 0.05em;
-    color: rgba(0,0,0,0.03); /* 极淡的黑色 */
+    color: rgba(0,0,0,0.03);
     pointer-events: none; user-select: none; white-space: nowrap;
     z-index: 0;
   }
 
-  .intro-content {
-    position: relative; z-index: 1;
-    display: flex; flex-direction: column; align-items: center;
-  }
-
-  .intro-eyebrow {
-    font-size: 11px; letter-spacing: 0.5em; color: #7b1e1e;
-    margin: 0 0 24px 0; font-weight: 700; text-transform: uppercase;
-  }
-
-  .intro-title {
-    margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px;
-  }
-  
-  .intro-title .line-1 {
-    font-size: clamp(24px, 4vw, 40px);
-    font-style: italic; color: rgba(0,0,0,0.5); font-weight: 400;
-  }
-  
-  .intro-title .line-2 {
-    font-size: clamp(48px, 10vw, 110px);
-    font-weight: 900; font-style: italic; line-height: 1; color: #000;
-  }
-
-  .intro-divider {
-    width: 40px; height: 2px; background: #000; margin: 30px 0;
-    opacity: 0.2;
-  }
-
-  .intro-sub {
-    font-size: clamp(16px, 2vw, 22px);
-    font-style: italic; color: #666; line-height: 1.6; margin: 0;
-  }
-
-  .scroll-hint {
-    margin-top: 50px; display: flex; flex-direction: column; align-items: center; gap: 16px;
-  }
-
-  .scroll-hint span {
-    font-size: 10px; letter-spacing: 0.4em; color: #999;
-  }
-
-  .hint-line {
-    width: 1px; height: 40px;
-    background: linear-gradient(to bottom, #000, transparent);
-    animation: dripDown 2s ease-in-out infinite;
-  }
+  .intro-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+  .intro-eyebrow { font-size: 11px; letter-spacing: 0.5em; color: #7b1e1e; margin: 0 0 24px 0; font-weight: 700; text-transform: uppercase; }
+  .intro-title { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .intro-title .line-1 { font-size: clamp(24px, 4vw, 40px); font-style: italic; color: rgba(0,0,0,0.5); font-weight: 400; }
+  .intro-title .line-2 { font-size: clamp(48px, 10vw, 110px); font-weight: 900; font-style: italic; line-height: 1; color: #000; }
+  .intro-divider { width: 40px; height: 2px; background: #000; margin: 30px 0; opacity: 0.2; }
+  .intro-sub { font-size: clamp(16px, 2vw, 22px); font-style: italic; color: #666; line-height: 1.6; margin: 0; }
+  .scroll-hint { margin-top: 50px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .scroll-hint span { font-size: 10px; letter-spacing: 0.4em; color: #999; }
+  .hint-line { width: 1px; height: 40px; background: linear-gradient(to bottom, #000, transparent); animation: dripDown 2s ease-in-out infinite; }
 
   @keyframes dripDown {
     0% { transform: scaleY(0); opacity: 0; transform-origin: top; }
@@ -299,9 +260,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     51% { transform: scaleY(1); opacity: 1; transform-origin: bottom; }
     100% { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
   }
-  /* ===================================== */
 
-  .case--file { position: relative; align-items: center; width: 100%; }
+  /* 移除 position: relative，防止重叠 */
+  .case--file { align-items: center; width: 100%; }
   
   .case-num { position: absolute; left: -3%; font-size: clamp(200px, 30vw, 500px); font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 2px rgba(0,0,0,0.06); user-select: none; opacity: 0; transform: translateY(-50%) translateX(-50px) scale(1.05); transition: opacity 0.5s ease, transform 0.5s ease; z-index: 1; top: 50%; }
   .case.is-active .case-num { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); transition: opacity 1.4s ease 0.1s, transform 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s; }
@@ -330,9 +291,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .footer-tagline { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 0.15em; color: #888; }
   .footer-bottom { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 10px; color: #999; }
 
+  /* 修复移动端水印偏移 */
   @media (max-width: 900px) {
     .case--file { flex-direction: column; justify-content: center; }
-    .case-num { left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0.1; font-size: 80vw; }
+    .case-num { left: 50%; top: 50%; transform: translate(-50%, -50%) scale(1.05); opacity: 0; font-size: 80vw; }
+    .case.is-active .case-num { transform: translate(-50%, -50%) scale(1); opacity: 0.1; transition: opacity 1.4s ease 0.1s, transform 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s; }
     .case-text { margin-left: 0; max-width: 100%; }
     .stamp-art { right: 0; top: -20px; }
     .intro-title .line-2 { font-size: clamp(40px, 12vw, 80px); }
@@ -357,10 +320,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     const suspectBtn = document.getElementById('suspect-btn');
     const whiteScreen = document.getElementById('white-screen');
+    
+    // 修复白屏卡死：加一个平滑滚动到第三页的效果，随后移除白屏
     if (suspectBtn && whiteScreen) {
       suspectBtn.addEventListener('click', () => {
         suspectBtn.classList.add('is-zooming');
         whiteScreen.classList.add('active');
+        
+        setTimeout(() => {
+          // 滚动到第三页并瞬间切换，伪装成白屏穿透
+          pageThree.scrollIntoView({ behavior: 'auto' });
+        }, 1000);
+
+        setTimeout(() => {
+          whiteScreen.classList.remove('active');
+          suspectBtn.classList.remove('is-zooming');
+        }, 2000);
       });
     }
 
@@ -428,4 +403,3 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     update();
   });
 </script>
-</BaseLayout>
