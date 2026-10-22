@@ -9,7 +9,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="progress-ring" id="progress-ring"></div>
 
-  <!-- 第一页 -->
   <section class="hero-section">
     <div class="perspective-wrap">
       <div class="hero-stage" id="hero-masthead">
@@ -52,7 +51,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="scroll-spacer"></div>
 
-  <!-- 第二页 -->
   <section class="info-section" id="info-section">
     <div class="content-block">
       <div class="roles-grid" id="roles-grid">
@@ -65,7 +63,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="p2-dwell" id="p2-dwell"></div>
 
-  <!-- 第三页 -->
   <section class="page-three" id="page-three">
     <div class="p3-stage" id="p3-stage">
       <div class="p3-inner">
@@ -131,7 +128,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
         </div>
 
-        <!-- 底部页脚（现在默认藏在屏幕下方） -->
         <footer class="site-footer" id="site-footer">
           <div class="footer-main">
             <div class="footer-brand">
@@ -150,7 +146,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style is:global>
-  /* 干掉浏览器原生高亮、蓝光 */
   * { -webkit-tap-highlight-color: transparent !important; }
   a, div, button { outline: none !important; }
 
@@ -166,10 +161,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     z-index: 9999; pointer-events: none; -webkit-mask: radial-gradient(transparent 8px, #000 9px); mask: radial-gradient(transparent 8px, #000 9px);
   }
 
-  /* 第一页 */
   .hero-section { position: fixed; inset: 0; height: 100vh; display: flex; align-items: center; justify-content: center; z-index: 10; overflow: hidden; pointer-events: none; }
   .perspective-wrap { perspective: 2500px; perspective-origin: 50% 0%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-  .hero-stage { position: relative; width: 100%; max-width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto; }
+  .hero-stage { position: relative; width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto; }
   .bg-layer { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
   .bg-image { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: grayscale(100%) contrast(130%) brightness(0.35); opacity: 0; transform: scale(1); transition: opacity 3s ease-in-out, transform 30s linear; }
   .bg-image.active { opacity: 1; transform: scale(1.15); }
@@ -190,8 +184,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .scroll-spacer { height: 100vh; pointer-events: none; }
   
-  /* 第二页 */
-  .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.9); overflow: hidden; transform-origin: 50% 0%; will-change: transform, opacity; }
+  /* 修复 100vw 导致的右侧黑边，改为 100% */
+  .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.9); overflow: hidden; transform-origin: 50% 0%; will-change: transform, opacity; }
   .p2-dwell { height: 60vh; pointer-events: none; }
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
   .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
@@ -199,11 +193,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  /* 第三页 */
-  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: transparent; }
-  .p3-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
+  /* 修复 100vw */
+  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: transparent; }
+  .p3-stage { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
   
-  /* 内层改为 padding-bottom: 0，让内容区更大 */
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
   .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; }
@@ -249,18 +242,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .stamp-art { position: absolute; right: -20px; top: -30px; color: #d4af37; font-family: 'Pinyon Script', cursive; font-size: 44px; pointer-events: none; opacity: 0; transform: rotate(var(--r, -8deg)) scale(2.4); transition: opacity 0.35s ease, transform 0.35s ease; }
   .case.is-active .stamp-art { opacity: 0.9; transform: rotate(var(--r, -8deg)) scale(1); transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s; }
 
-  /* 核心修改：页脚绝对定位，默认藏到下面去 */
-  .site-footer { 
-    position: absolute; bottom: 0; left: 0; width: 100%;
-    padding: 20px 40px 40px; 
-    border-top: 1px solid rgba(0,0,0,0.15); 
-    background-color: var(--paper-base);
-    transform: translateY(100%);
-    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-    will-change: transform;
-    box-sizing: border-box;
-    z-index: 10;
-  }
+  .site-footer { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px 40px 40px; border-top: 1px solid rgba(0,0,0,0.15); background-color: var(--paper-base); transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform; box-sizing: border-box; z-index: 10; }
   .footer-main { display: flex; gap: 40px; }
   .footer-logo { font-size: 20px; font-weight: 700; font-style: italic; color: #000; }
   .footer-tagline { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 0.15em; color: #888; }
@@ -283,7 +265,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const rolesGrid = document.getElementById('roles-grid');
     const pageThree = document.getElementById('page-three');
     const p3Stage = document.getElementById('p3-stage');
-    const siteFooter = document.getElementById('site-footer'); // 新增获取页脚
+    const siteFooter = document.getElementById('site-footer');
     const dwell = document.getElementById('p2-dwell');
     const cases = Array.from(document.querySelectorAll('.case'));
 
@@ -318,20 +300,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const e = smooth(coverProgress);
 
       if (infoSection) {
-        infoSection.style.transform = e > 0 ? `translate3d(0, ${(e * 10).toFixed(2)}vh, 0) scale(${(1 - e * 0.05).toFixed(4)})` : 'none';
+        // 去掉 scale 缩放，只做上移，避免两侧漏出底图
+        infoSection.style.transform = e > 0 ? `translate3d(0, ${(e * 10).toFixed(2)}vh, 0)` : 'none';
         infoSection.style.opacity = 1 - e;
         infoSection.style.visibility = coverProgress >= 1 ? 'hidden' : 'visible';
       }
 
       if (p3Stage) {
         if (e > 0 && e < 1) {
+          // 增加 scaleX 补偿，强制撑满屏幕边缘，消除透视黑边
           const rotateX = (1 - e) * 50; 
           const scaleY = 1 - (1 - e) * 0.15;
           const translateY = (1 - e) * -20;
-          const shadow = `0 ${(1-e)*50}px ${(1-e)*80}px rgba(0,0,0,${(1-e)*0.5})`;
+          const scaleX = 1 + (1 - e) * 0.15; 
           
-          p3Stage.style.transform = `perspective(1500px) rotateX(${rotateX}deg) scaleY(${scaleY}) translateY(${translateY}vh)`;
-          p3Stage.style.boxShadow = shadow;
+          p3Stage.style.transform = `perspective(1500px) rotateX(${rotateX}deg) scaleY(${scaleY}) scaleX(${scaleX}) translateY(${translateY}vh)`;
+          p3Stage.style.boxShadow = `0 ${(1-e)*50}px ${(1-e)*80}px rgba(0,0,0,${(1-e)*0.5})`;
         } else if (e >= 1) {
           p3Stage.style.transform = 'none';
           p3Stage.style.boxShadow = '0 -10px 30px rgba(0,0,0,0.05)';
@@ -340,15 +324,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       const rise = clamp(1 - p3.top / windowHeight); 
       const run = Math.max(1, p3.height - windowHeight);
-      const q = clamp(-p3.top / run); // q 从 0 到 1 控制四个故事的切换
+      const q = clamp(-p3.top / run);
       
-      // 核心修改：当 q > 0.92 时，也就是第三个故事（The City）快要结束时，页脚滑上来
       if (siteFooter) {
-        if (q > 0.92) {
-          siteFooter.style.transform = 'translateY(0)';
-        } else {
-          siteFooter.style.transform = 'translateY(100%)';
-        }
+        if (q > 0.92) siteFooter.style.transform = 'translateY(0)';
+        else siteFooter.style.transform = 'translateY(100%)';
       }
 
       const heroRawProgress = scrollY / windowHeight;
@@ -356,7 +336,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const stretchY = (1 / Math.cos(heroRotate * Math.PI / 180)) * 1.05; 
       const translateY = -10 + (Math.pow(heroRawProgress, 2) * 8); 
       heroStage.style.transform = `translate3d(0, ${translateY}vh, 0) rotateX(${heroRotate}deg) scaleY(${stretchY})`;
-      heroStage.style.opacity = Math.max(0, 1 - (heroRawProgress * 0.3)) * (1 - rise);
+      
+      // 确保第一页在第二页上升时极速暗化消失，防止漏出底图纹理
+      heroStage.style.opacity = Math.max(0, 1 - (heroRawProgress * 0.5) - e * 2);
 
       const dwellH = Math.max(1, dwell.offsetHeight);
       const d = clamp(1 - (p3.top - windowHeight) / dwellH);
