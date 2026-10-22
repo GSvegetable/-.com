@@ -186,12 +186,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   /* --- 第一幕：白纸与黑暗吞噬 --- */
-  /* 核心修复1：增加高度到 650vh，留出巨大缓冲，防止第一页被推走 */
-  .page-three { --paper-base: #fcfcfc; position: relative; z-index: 30; height: 650vh; width: 100vw; background-color: transparent; }
+  /* 核心对齐：总高度 550vh，sticky 范围 450vh。让动画刚好在 sticky 失效前盖满 */
+  .page-three { --paper-base: #fcfcfc; position: relative; z-index: 30; height: 550vh; width: 100vw; background-color: transparent; }
   
   .p3-stage { 
     position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: var(--paper-base);
-    transform-origin: center top; will-change: transform; transform-style: preserve-3d; backface-visibility: hidden;
+    transform-origin: center top; transform-style: preserve-3d; backface-visibility: hidden;
+    /* 背景色将由 JS 控制，彻底杜绝白底漏出 */
   }
 
   .paper-texture {
@@ -200,15 +201,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     mix-blend-mode: multiply; opacity: 0.8;
   }
 
-  /* 核心修复2：非常柔和的渐变，看起来像是深渊吞噬，而不是硬块推挤 */
   .ink-invader {
     position: absolute; inset: 0; z-index: 5; pointer-events: none;
-    background: linear-gradient(to bottom, 
-      transparent 0%, 
-      rgba(3,3,3,0.2) 15%, 
-      rgba(3,3,3,0.8) 35%, 
-      #030303 60%, 
-      #030303 100%);
+    /* 渐变直到底部，顶部透明 */
+    background: linear-gradient(to bottom, rgba(3,3,3,0) 0%, rgba(3,3,3,0.8) 30%, #030303 60%, #030303 100%);
     transform: translateY(100%);
     will-change: transform;
   }
@@ -348,6 +344,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const letterSection = document.getElementById('letter-section');
     const outroSection = document.getElementById('outro-section');
     
+    const p3Stage = document.getElementById('p3-stage');
     const p3Inner = document.getElementById('p3-inner');
     const letterStage = document.getElementById('letter-stage');
     const letterGlowEdge = document.querySelector('.letter-glow-edge');
@@ -420,21 +417,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         progressRing.style.background = `conic-gradient(#d4af37 ${globalProgress * 100}%, rgba(255,255,255,0.1) ${globalProgress * 100}%)`;
       }
 
-      // 1. 卷宗核心逻辑
+      // 1. 卷宗核心逻辑 (完美对齐版)
       const p3 = pageThree.getBoundingClientRect();
-      
-      // 核心修复3：让动画严格在前 450vh 内走完，后续 200vh 保持纯黑屏静止
+      // page-three 高度 550vh，sticky 高度 100vh，可滚动距离 450vh
       const run = windowHeight * 4.5; 
       const q = clamp(-p3.top / run);
       
       const s = Math.min(3, Math.floor(q * 4));
       setStep(s);
 
-      // 核心修复4：前 75% 展示，75% - 100% 黑暗完全吞噬
-      const invadeProgress = clamp((q - 0.75) / 0.25);
+      // 前 80% 展示，80% - 100% 黑暗完全吞噬
+      const invadeProgress = clamp((q - 0.8) / 0.2);
+      const smoothInvade = smooth(invadeProgress); 
+      
       if (inkInvader) {
-        const smoothInvade = smooth(invadeProgress); 
         inkInvader.style.transform = `translateY(${100 - smoothInvade * 100}%)`;
+      }
+      
+      // 【核心修复】当黑潮盖满 80% 时，强制将整个第一页的底色变成黑色
+      // 这样即使页面被往上推，用户看到的也是一整块黑板，绝对不会漏出白底文字
+      if (p3Stage) {
+        const bgColor = q > 0.85 ? '#030303' : '#fcfcfc';
+        p3Stage.style.backgroundColor = bgColor;
       }
 
       // 2. 招募页逻辑
