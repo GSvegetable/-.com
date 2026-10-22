@@ -44,22 +44,42 @@ document.addEventListener('DOMContentLoaded', () => {
     newBg.classList.add('active');
   }, 5000);
 
+  // ======== 全新的高质感撕纸算法 ========
   const buildTear = () => {
     const rand = mulberry32(1888);
-    const n = 150;
+    const n = 300; // 增加点数，让边缘更细密
     const base = [];
     const fibre = [];
     let drift = 0;
+    
     for (let i = 0; i <= n; i++) {
       const t = i / n;
-      drift = drift * 0.86 + (rand() - 0.5) * 9;
-      const wave = Math.sin(t * Math.PI * 6) * 5 + Math.sin(t * Math.PI * 17 + 1.3) * 3;
-      const jag = (rand() - 0.5) * 12;
-      const y = clamp(58 + wave + drift + jag, 22, 94);
+      
+      // 1. 基础缓慢起伏
+      drift = drift * 0.8 + (rand() - 0.5) * 6;
+      // 2. 高频锯齿断裂
+      const wave = Math.sin(t * Math.PI * 18) * 2 + Math.sin(t * Math.PI * 45 + 1.3) * 1.5;
+      // 3. 随机的小碎片
+      const jag = (rand() - 0.5) * 8;
+      
+      let y = clamp(50 + wave + drift + jag, 15, 85);
+      
+      // 模拟拉丝：随机在某些地方产生一条长长的毛边
+      if (rand() > 0.94) {
+        y = clamp(y - (rand() * 15 + 5), 5, 85);
+      }
+      
       base.push([t * 100, y]);
-      fibre.push([t * 100, Math.max(6, y - (3 + rand() * 7))]);
+      
+      // 纤维层比基础层更细碎，且随机向上突出
+      let fY = y - (1 + rand() * 4);
+      if (rand() > 0.9) {
+        fY = fY - (rand() * 10); // 极细的拔丝
+      }
+      fibre.push([t * 100, Math.max(2, fY)]);
     }
-    const toPoly = (pts) => 'polygon(0% 100%, ' + pts.map(([x, y]) => x.toFixed(2) + '% ' + y.toFixed(1) + '%').join(', ') + ', 100% 100%)';
+    
+    const toPoly = (pts) => 'polygon(0% 100%, ' + pts.map(([x, y]) => x.toFixed(3) + '% ' + y.toFixed(2) + '%').join(', ') + ', 100% 100%)';
     tearBase.style.clipPath = toPoly(base);
     tearFibre.style.clipPath = toPoly(fibre);
   };

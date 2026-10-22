@@ -77,6 +77,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="p2-dwell" id="p2-dwell"></div>
 
   <section class="page-three" id="page-three" aria-label="Case files">
+    <!-- 增强的撕纸边缘 -->
     <div class="tear-wrap" aria-hidden="true">
       <div class="tear tear-fibre" id="tear-fibre"></div>
       <div class="tear tear-base" id="tear-base"></div>
@@ -222,10 +223,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
   .page-three { --paper: #cbb89d; --ink: #2b2520; --ink-soft: #4a3e31; --oxblood: #7b1e1e; --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .20 0 0 0 0 .14 0 0 0 0 .08 0 0 0 .32 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E"); position: relative; z-index: 30; height: 400vh; height: 400lvh; background-color: var(--paper); }
-  .tear-wrap { position: absolute; left: 0; right: 0; top: -54px; height: 56px; z-index: 2; pointer-events: none; filter: drop-shadow(0 -5px 10px rgba(0,0,0,0.6)); }
-  .tear { position: absolute; inset: 0; background-image: var(--grain); }
-  .tear-fibre { background-color: #e9dcc0; }
-  .tear-base { background-color: var(--paper); }
+  
+  /* 增强的真实撕纸质感和光影 */
+  .tear-wrap { 
+    position: absolute; left: 0; right: 0; top: -64px; height: 66px; 
+    z-index: 2; pointer-events: none; 
+    /* 加入深度的悬浮阴影，模拟纸张边缘翘起 */
+    filter: drop-shadow(0px -4px 6px rgba(0,0,0,0.6)) drop-shadow(0px -10px 20px rgba(0,0,0,0.3)); 
+  }
+  .tear { 
+    position: absolute; inset: 0; 
+    background-image: var(--grain); 
+    /* 细碎的纸张纤维纹理 */
+    background-size: 200px 200px;
+  }
+  .tear-fibre { 
+    background-color: #ece2cd; /* 稍亮一点的纤维层 */
+    filter: brightness(1.02) contrast(1.1);
+  }
+  .tear-base { 
+    background-color: var(--paper); 
+    /* 在撕口下方加一层暗色内阴影，模拟纸的厚度 */
+    box-shadow: inset 0 -10px 15px -10px rgba(0,0,0,0.4);
+  }
+
   .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
   .p3-grain, .p3-folds, .p3-vignette { position: absolute; inset: 0; pointer-events: none; }
   .p3-grain { background-image: var(--grain); }
