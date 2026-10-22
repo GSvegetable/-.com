@@ -149,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
     heroSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
     fadeMask.style.opacity = Math.max(0, (heroRawProgress - 0.3) * 1.5);
 
-    // ====== 核心修改：到 17% 时彻底变实体 ======
     let maskStop = 35 - (globalProgress / 0.17) * 35;
     maskStop = Math.max(0, maskStop);
     
