@@ -84,12 +84,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </filter>
     </svg>
 
-    <div class="p3-stage" id="p3-stage">
-      <div class="tear-wrap" aria-hidden="true">
-        <div class="tear tear-fibre" id="tear-fibre"></div>
-        <div class="tear tear-base" id="tear-base"></div>
-      </div>
+    <div class="tear-wrap" aria-hidden="true">
+      <div class="tear tear-fibre" id="tear-fibre"></div>
+      <div class="tear tear-base" id="tear-base"></div>
+    </div>
 
+    <div class="p3-stage" id="p3-stage">
       <div class="p3-grain"></div>
       <div class="p3-vignette"></div>
       <div class="p3-lantern" id="p3-lantern"></div>
@@ -231,7 +231,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* 第三页：四周聚拢推镜头 + 高级灰 */
+  /* 第三页：彻底放弃悬空，回归沉浸式铺满全屏 + 高级灰 + 狂野毛边 */
   .page-three { 
     --paper-base: #d4cfc3; 
     --paper-light: #e3ded1;
@@ -240,25 +240,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     --oxblood: #7a2121; 
     --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .06 0 0 0 0 .03 0 0 0 .4 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); 
     position: relative; z-index: 30; height: 400vh; height: 400lvh; 
-    background-color: #030303;
-  }
-
-  /* 将 p3-stage 做成真实的纸张，四周保留暗场 */
-  .p3-stage { 
-    position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); 
     background-color: var(--paper-base);
-    background-image: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.4) 0%, transparent 60%), linear-gradient(to bottom, rgba(0,0,0,0.03) 0%, transparent 10%), var(--grain);
-    transform-origin: center center; will-change: transform, filter, border-radius;
-    box-shadow: 0 30px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
-    border-radius: 20px;
-    transform: scale(0.85);
+    background-image: 
+      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.4) 0%, transparent 60%),
+      linear-gradient(to bottom, rgba(0,0,0,0.03) 0%, transparent 10%),
+      var(--grain);
   }
 
-  /* 双层狂野手撕边，更加有质感 */
+  /* 撕纸质感升级 */
   .tear-wrap { position: absolute; left: 0; right: 0; top: -80px; height: 85px; z-index: 2; pointer-events: none; filter: drop-shadow(0px -8px 16px rgba(0,0,0,0.6)); }
   .tear { position: absolute; inset: -20px 0 0 0; }
   
-  /* 撕纸打底：深褐色纤维毛边，极不规则的路径 */
   .tear-fibre { 
     background-color: #8c816e; 
     filter: url(#tear-edge); 
@@ -266,16 +258,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transform: translateY(4px) scaleX(1.01);
   }
   
-  /* 纸张本体：覆盖在纤维上，稍微抬起，露出下层的毛边 */
   .tear-base { 
     background-color: var(--paper-base); 
     filter: url(#tear-edge); 
     clip-path: polygon(0% 100%, 0% 75%, 4% 60%, 2% 45%, 6% 35%, 3% 20%, 8% 5%, 15% 10%, 20% 0%, 27% 12%, 33% 2%, 40% 15%, 45% 5%, 52% 18%, 60% 0%, 66% 15%, 72% 5%, 78% 20%, 85% 10%, 92% 18%, 98% 5%, 100% 15%, 100% 100%);
   }
 
+  .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
   .p3-grain, .p3-vignette { position: absolute; inset: 0; pointer-events: none; }
   .p3-grain { background-image: var(--grain); opacity: 0.6; mix-blend-mode: multiply; }
-  .p3-vignette { background: radial-gradient(150% 100% at 50% 30%, transparent 40%, rgba(30,20,10,0.6) 100%); }
+  .p3-vignette { background: radial-gradient(150% 100% at 50% 30%, transparent 50%, rgba(30,20,10,0.4) 100%); }
   .p3-lantern { position: absolute; left: 0; top: 0; width: 90vmax; height: 90vmax; margin: -45vmax 0 0 -45vmax; background: radial-gradient(circle, rgba(255,235,180,0.2) 0%, rgba(255,235,180,0.05) 40%, transparent 62%); pointer-events: none; will-change: transform; transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); mix-blend-mode: screen; }
   
   .p3-inner { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-rows: auto 1fr auto; padding: clamp(24px, 4vw, 56px) clamp(24px, 6vw, 96px) clamp(26px, 6vh, 56px); }
@@ -341,51 +333,5 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   @media (prefers-reduced-motion: reduce) { .case, .reveal, .case-num, .case-title, .rule, .stamp, .intro-title .line > span, .p3-lantern { transition-duration: 0.01s !important; transition-delay: 0s !important; } .hint i { animation: none; } }
 </style>
 
-<script>
-  // 独立运镜脚本：只负责让第3页的报纸产生“从四周聚拢推镜头”的高级转场，不干涉原 script.js
-  document.addEventListener('DOMContentLoaded', () => {
-    const pageThree = document.getElementById('page-three');
-    const p3Stage = document.getElementById('p3-stage');
-
-    window.addEventListener('scroll', () => {
-      if (!pageThree || !p3Stage) return;
-      const rect = pageThree.getBoundingClientRect();
-      const vh = window.innerHeight;
-
-      // 当第三页进入视口 (rect.top < vh) 且未完全脱离顶部时
-      if (rect.top < vh && rect.top > -vh) {
-        // 进度：0 到 1
-        let progress = (vh - rect.top) / (vh * 1.2);
-        if (progress < 0) progress = 0;
-        if (progress > 1) progress = 1;
-
-        // 缓动
-        const ease = 1 - Math.pow(1 - progress, 3);
-
-        // 从聚拢 (小、圆角、暗) 到 展开 (大、直角、亮)
-        const scale = 0.85 + (ease * 0.15); // 0.85 -> 1
-        const radius = 30 - (ease * 30); // 30px -> 0px
-        const blur = 8 - (ease * 8); // 8px -> 0px
-        const opacity = 0.6 + (ease * 0.4); // 0.6 -> 1
-
-        p3Stage.style.transform = `scale(${scale})`;
-        p3Stage.style.borderRadius = `${radius}px`;
-        p3Stage.style.filter = `blur(${blur}px)`;
-        p3Stage.style.opacity = opacity;
-      } else if (rect.top <= -vh) {
-        // 完全进入阅读状态
-        p3Stage.style.transform = `scale(1)`;
-        p3Stage.style.borderRadius = `0px`;
-        p3Stage.style.filter = `blur(0px)`;
-        p3Stage.style.opacity = 1;
-      } else if (rect.top >= vh) {
-         // 重置状态（防止快速回滚时卡住）
-         p3Stage.style.transform = `scale(0.85)`;
-         p3Stage.style.borderRadius = `30px`;
-         p3Stage.style.filter = `blur(8px)`;
-         p3Stage.style.opacity = 0.6;
-      }
-    }, { passive: true });
-  });
-</script>
+<script src="/script.js" defer></script>
 </BaseLayout>
