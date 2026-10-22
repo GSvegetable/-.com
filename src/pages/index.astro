@@ -63,7 +63,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="p2-dwell" id="p2-dwell"></div>
 
-  <!-- 第三页 -->
   <section class="page-three" id="page-three">
     <div class="p3-stage" id="p3-stage">
       <div class="p3-inner">
@@ -150,8 +149,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   * { -webkit-tap-highlight-color: transparent !important; }
   a, div, button { outline: none !important; }
 
-  html { color-scheme: only light; overscroll-behavior-y: none; overflow-x: hidden; }
-  body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; width: 100%; max-width: 100%; }
+  html { color-scheme: only light; overscroll-behavior-y: none; }
+  body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; width: 100%; }
   ::-webkit-scrollbar { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
   .serif { font-family: 'Playfair Display', serif; }
@@ -193,11 +192,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  /* 修复纯白屏的核心：高度恢复到 500vh，确保滚动距离充足 */
-  /* 同时背景色恢复为 transparent，如果内容滚完了，底下漏出的是 body 的黑底，不会是一大片白 */
-  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: transparent; }
+  /* 恢复 500vh，背景全黑，只要 sticky 生效，就不会有白屏 */
+  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: #030303; }
   
-  /* 白纸本体：在这里铺满纯白，并且高度固定 100vh，死死贴住屏幕 */
+  /* 恢复 sticky */
   .p3-stage { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
   
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
@@ -324,7 +322,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const run = Math.max(1, p3.height - windowHeight);
       const q = clamp(-p3.top / run);
       
-      // 当滚到最后 5% 的距离时，页脚才升上来
       if (siteFooter) {
         if (q > 0.95) siteFooter.style.transform = 'translateY(0)';
         else siteFooter.style.transform = 'translateY(100%)';
