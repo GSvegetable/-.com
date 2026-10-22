@@ -166,27 +166,23 @@ document.addEventListener('DOMContentLoaded', () => {
     infoDim.style.opacity = (e * 0.9).toFixed(3);
     infoSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
 
+    // ====== 修复黑屏 Bug：不再使用 if/else 临界点硬切 ======
     const contentTriggerStart = windowHeight * 0.5;
     const contentTriggerEnd = windowHeight * 1.0; 
 
-    if (scrollY > contentTriggerStart) {
-      const p = Math.min(1, (scrollY - contentTriggerStart) / (contentTriggerEnd - contentTriggerStart));
-      const ease = 1 - Math.pow(1 - p, 3);
+    // 使用强制范围限制，无论怎么滑，进度永远平滑地在 0 到 1 之间
+    const p = clamp((scrollY - contentTriggerStart) / (contentTriggerEnd - contentTriggerStart));
+    const ease = smooth(p);
 
-      rolesGrid.style.transform = `translateY(${150 * (1 - ease) - lift}px)`;
-      rolesGrid.style.opacity = ease;
+    // 同步计算，彻底避免样式闪现
+    rolesGrid.style.transform = `translateY(${150 * (1 - ease) - lift}px)`;
+    rolesGrid.style.opacity = ease;
 
-      const pBtn = Math.max(0, (p - 0.2) / 0.8); 
-      const easeBtn = 1 - Math.pow(1 - pBtn, 3);
-      
-      actionArea.style.transform = `translateY(${180 * (1 - easeBtn) - lift * 0.6}px)`;
-      actionArea.style.opacity = easeBtn;
-    } else {
-      rolesGrid.style.transform = `translateY(150px)`;
-      rolesGrid.style.opacity = 0;
-      actionArea.style.transform = `translateY(180px)`;
-      actionArea.style.opacity = 0;
-    }
+    const pBtn = clamp((p - 0.2) / 0.8); 
+    const easeBtn = smooth(pBtn);
+    
+    actionArea.style.transform = `translateY(${180 * (1 - easeBtn) - lift * 0.6}px)`;
+    actionArea.style.opacity = easeBtn;
 
     if (!reduceMotion) {
       const env = Math.pow(Math.sin(Math.PI * rise), 1.4);
