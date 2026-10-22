@@ -6,7 +6,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   
   <link rel="stylesheet" href="/style.css">
 
-  <!-- 新的圆环进度条 -->
   <svg class="progress-ring" viewBox="0 0 36 36">
     <circle class="ring-bg" cx="18" cy="18" r="14" fill="none" stroke-width="2" />
     <circle class="ring-fill" id="progress-ring-fill" cx="18" cy="18" r="14" fill="none" stroke-width="2" stroke-dasharray="87.96" stroke-dashoffset="87.96" />
@@ -53,7 +52,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
           </div>
         </div>
+        
         <div class="fade-mask" id="fade-mask"></div>
+
+        <!-- 新增：反向丁达尔深渊提示 -->
+        <div class="abyss-indicator">
+          <div class="abyss-glow"></div>
+          <div class="scroll-hint mono">
+            <span>DESCEND</span>
+            <div class="hint-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>

@@ -6,16 +6,9 @@
 .mono { font-family: 'Courier Prime', monospace; }
 .serif { font-family: 'Playfair Display', serif; }
 
-/* 新的圆环进度条 */
 .progress-ring {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  width: 36px;
-  height: 36px;
-  z-index: 9999;
-  transform: rotate(-90deg);
-  pointer-events: none;
+  position: fixed; top: 24px; right: 24px; width: 36px; height: 36px;
+  z-index: 9999; transform: rotate(-90deg); pointer-events: none;
 }
 .ring-bg { stroke: rgba(255,255,255,0.15); }
 .ring-fill { stroke: #d4af37; transition: stroke-dashoffset 0.1s linear; }
@@ -34,6 +27,92 @@
 .bg-image.active { opacity: 1; transform: scale(1.15); }
 
 .fade-mask { position: absolute; inset: -30% 0 0 0; background: linear-gradient(to bottom, #030303 0%, transparent 60%); opacity: 0; pointer-events: none; z-index: 5; }
+
+/* ====== 新增：反向丁达尔深渊提示 ====== */
+.abyss-indicator {
+  position: absolute;
+  bottom: 0; left: 0; width: 100%; height: 35vh;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 30px;
+}
+
+/* 底部吸光的黑雾与反向微光 */
+.abyss-indicator::before {
+  content: '';
+  position: absolute;
+  bottom: -10%; left: 50%;
+  width: 80vw; height: 100%;
+  transform: translateX(-50%);
+  /* 中心极度深黑，边缘透出一点极暗的深渊灰 */
+  background: radial-gradient(ellipse at bottom, #000000 10%, rgba(5,5,5,0.9) 40%, transparent 70%);
+  filter: blur(15px);
+  animation: abyssBreathe 8s ease-in-out infinite alternate;
+}
+
+/* 反向丁达尔光晕（藏在黑雾里的微光） */
+.abyss-glow {
+  position: absolute;
+  bottom: -20%; left: 50%;
+  width: 40vw; height: 100px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at bottom, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+  filter: blur(20px);
+  animation: abyssBreathe 8s ease-in-out infinite alternate-reverse;
+}
+
+/* 呼吸动画：模拟深渊蠕动 */
+@keyframes abyssBreathe {
+  0% { transform: translateX(-50%) scaleY(1) scaleX(1); opacity: 0.8; }
+  100% { transform: translateX(-50%) scaleY(1.2) scaleX(1.1); opacity: 1; }
+}
+
+/* 文字提示：极度克制 */
+.scroll-hint {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  animation: hintFade 4s ease-in-out infinite;
+}
+
+@keyframes hintFade {
+  0%, 100% { opacity: 0.2; transform: translateY(0); }
+  50% { opacity: 0.8; transform: translateY(5px); }
+}
+
+.hint-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+.hint-line::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: white;
+  transform: translateY(-100%);
+  animation: lineDrop 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+@keyframes lineDrop {
+  0% { transform: translateY(-100%); }
+  60%, 100% { transform: translateY(100%); }
+}
+
+
 .newspaper-masthead { position: relative; z-index: 2; width: 100%; max-width: 900px; margin: 0 auto; padding: 0 40px; display: flex; flex-direction: column; }
 .masthead-top { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 0 0 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #aaa; margin-bottom: 30px; }
 .letter-body { padding: 20px 0; display: flex; flex-direction: column; position: relative; border-left: 1px solid rgba(255,255,255,0.15); padding-left: 30px; margin-left: 10px; margin-top: 10px; }
@@ -75,7 +154,6 @@
 .white-screen { position: fixed; inset: 0; background-color: #ffffff; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 1s ease 1s; }
 .white-screen.active { opacity: 1; pointer-events: auto; }
 
-/* 第三页 */
 .page-three { --paper-base: #ffffff; --ink: #000000; --ink-soft: #444444; --oxblood: #7b1e1e; position: relative; z-index: 30; height: 500vh; height: 500lvh; width: 100vw; background-color: var(--paper-base); border-radius: 0; box-shadow: 0 -20px 40px rgba(0,0,0,0.1); }
 .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); background-color: #ffffff; }
 .p3-lantern { position: absolute; left: 0; top: 0; width: 90vmax; height: 90vmax; margin: -45vmax 0 0 -45vmax; background: radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 60%); pointer-events: none; will-change: transform; transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
