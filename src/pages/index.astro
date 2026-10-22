@@ -128,15 +128,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
         </div>
 
+        <!-- 重新设计的页尾 -->
         <footer class="site-footer" id="site-footer">
-          <div class="footer-main">
-            <div class="footer-brand">
+          <div class="footer-top">
+            <div class="footer-col left">
               <span class="footer-logo serif">宫水</span>
-              <p class="footer-tagline mono">THE BLANK FRONT PAGE · EST. 1888</p>
+              <span class="footer-sub mono">STUDIO</span>
+            </div>
+            <div class="footer-col center">
+              <div class="footer-line"></div>
+              <span class="mono footer-quote">"THE TRUTH IS BURIED IN THE MIST"</span>
+              <div class="footer-line"></div>
+            </div>
+            <div class="footer-col right">
+              <span class="mono">LONDON · SHANGHAI · TORONTO</span>
+              <span class="mono footer-confidential">CONFIDENTIAL</span>
             </div>
           </div>
           <div class="footer-bottom">
-            <span class="mono">© 2026 宫水工作室</span><span class="mono">LONDON · SHANGHAI · TORONTO</span>
+            <span class="mono">© 2026 宫水工作室</span>
+            <span class="mono">END OF FILE.</span>
+            <span class="mono">CASE NO. 001</span>
           </div>
         </footer>
       </div>
@@ -192,12 +204,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  /* 恢复 500vh，背景全黑，只要 sticky 生效，就不会有白屏 */
   .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: #030303; }
-  
-  /* 恢复 sticky */
   .p3-stage { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
-  
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
   .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; }
@@ -243,18 +251,94 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .stamp-art { position: absolute; right: -20px; top: -30px; color: #d4af37; font-family: 'Pinyon Script', cursive; font-size: 44px; pointer-events: none; opacity: 0; transform: rotate(var(--r, -8deg)) scale(2.4); transition: opacity 0.35s ease, transform 0.35s ease; }
   .case.is-active .stamp-art { opacity: 0.9; transform: rotate(var(--r, -8deg)) scale(1); transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s; }
 
-  .site-footer { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px 40px 40px; border-top: 1px solid rgba(0,0,0,0.15); background-color: var(--paper-base); transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform; box-sizing: border-box; z-index: 10; }
-  .footer-main { display: flex; gap: 40px; }
-  .footer-logo { font-size: 20px; font-weight: 700; font-style: italic; color: #000; }
-  .footer-tagline { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 0.15em; color: #888; }
-  .footer-bottom { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 10px; color: #999; }
+  /* ====== 全新设计的报纸风页尾 ====== */
+  .site-footer { 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    padding: 30px 40px 30px; 
+    background-color: var(--paper-base); 
+    transform: translateY(100%); 
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); 
+    will-change: transform; 
+    box-sizing: border-box; 
+    z-index: 10;
+    /* 顶部经典的双线分割 */
+    border-top: 4px double #000;
+  }
 
-  @media (max-width: 900px) {
-    .case--file { flex-direction: column; justify-content: center; }
-    .case-num { left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0.1; font-size: 80vw; }
-    .case-text { margin-left: 0; max-width: 100%; }
-    .stamp-art { right: 0; top: -20px; }
-    .intro-title .line-2 { font-size: clamp(40px, 12vw, 80px); }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .footer-col.left { align-items: flex-start; }
+  .footer-col.center { align-items: center; text-align: center; }
+  .footer-col.right { align-items: flex-end; text-align: right; }
+
+  .footer-logo {
+    font-size: 32px;
+    font-weight: 700;
+    font-style: italic;
+    color: #000;
+    line-height: 1;
+  }
+  .footer-sub {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: #666;
+  }
+
+  .footer-quote {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: #000;
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  .footer-line {
+    width: 40px;
+    height: 1px;
+    background: #000;
+    opacity: 0.3;
+  }
+
+  .footer-col.right .mono {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #444;
+  }
+  .footer-confidential {
+    color: #7b1e1e !important;
+    font-weight: 700;
+    letter-spacing: 0.2em !important;
+    margin-top: 4px;
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 768px) {
+    .footer-top { grid-template-columns: 1fr; gap: 24px; }
+    .footer-col.left, .footer-col.center, .footer-col.right { align-items: center; text-align: center; }
+    .footer-bottom { flex-direction: column; gap: 10px; }
   }
 </style>
 
@@ -322,6 +406,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const run = Math.max(1, p3.height - windowHeight);
       const q = clamp(-p3.top / run);
       
+      // 页尾滑出逻辑：当滚动到最后一个故事的尾声时滑出
       if (siteFooter) {
         if (q > 0.95) siteFooter.style.transform = 'translateY(0)';
         else siteFooter.style.transform = 'translateY(100%)';
