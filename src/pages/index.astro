@@ -6,13 +6,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   
   <link rel="stylesheet" href="/style.css">
 
-  <!-- 替换为圆环进度条 -->
-  <div class="progress-ring">
-    <svg width="40" height="40" viewBox="0 0 40 40">
-      <circle class="ring-bg" cx="20" cy="20" r="16" />
-      <circle class="ring-fill" id="progress-ring-fill" cx="20" cy="20" r="16" />
-    </svg>
-  </div>
+  <!-- 纯 CSS 画的圆环进度条 -->
+  <div class="progress-ring"></div>
 
   <div class="fog" aria-hidden="true">
     <div class="fog-layer fog-a" id="fog-a"></div>
