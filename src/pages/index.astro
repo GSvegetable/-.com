@@ -6,7 +6,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   
   <link rel="stylesheet" href="/style.css">
 
-  <div class="debug-progress mono" id="progress-indicator">0%</div>
+  <!-- 替换为圆环进度条 -->
+  <div class="progress-ring">
+    <svg width="40" height="40" viewBox="0 0 40 40">
+      <circle class="ring-bg" cx="20" cy="20" r="16" />
+      <circle class="ring-fill" id="progress-ring-fill" cx="20" cy="20" r="16" />
+    </svg>
+  </div>
 
   <div class="fog" aria-hidden="true">
     <div class="fog-layer fog-a" id="fog-a"></div>
@@ -144,10 +150,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               </div>
               <i class="rule" style="--i:2"></i>
               <p class="case-body serif dropcap reveal" style="--i:4">We are building it in Unreal Engine 5, from London, Shanghai and Toronto. The case is open, and it needs Architects, Illustrators and Chroniclers.</p>
-              <div class="p3-sign reveal" style="--i:6">
-                <p class="p3-sign-off serif">Yours in the mist,</p>
-                <p class="p3-signature">Gong Shui.</p>
-              </div>
               <div class="stamp-art mono" style="--r:-5deg" aria-hidden="true">Open</div>
             </div>
           </article>
