@@ -10,16 +10,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="noise-overlay"></div>
   <div class="progress-ring" id="progress-ring"></div>
 
-  <!-- 第一幕：卷宗档案 -->
+  <!-- 第一幕：白纸卷宗 -->
   <section class="page-three" id="page-three">
     <div class="p3-stage" id="p3-stage">
       <div class="paper-texture"></div>
+      
+      <!-- 黑暗吞噬层：随着滚动从底部覆盖上来 -->
+      <div class="ink-invader" id="ink-invader"></div>
+
       <div class="p3-inner" id="p3-inner">
         <header class="p3-mast mono">
           <span>NO. 001</span><span>THE BLANK FRONT PAGE</span><span>ONE PENNY</span>
         </header>
 
         <div class="p3-cases">
+          <!-- 卷宗内容保持不变 -->
           <article class="case case--intro">
             <div class="intro-watermark serif parallax-layer" data-depth="0.2">PROLOGUE</div>
             <div class="intro-content parallax-layer" data-depth="1">
@@ -92,10 +97,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 转场占位 -->
-  <div class="scroll-transition"></div>
-
-  <!-- 第二幕：招募页 -->
+  <!-- 第二幕：招募页（无缝黑底） -->
   <section class="recruit-section" id="recruit-section">
     <div class="content-block">
       <div class="roles-grid" id="roles-grid">
@@ -115,17 +117,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- 转场占位 -->
-  <div class="scroll-transition"></div>
-
   <!-- 第三幕：信件 -->
   <section class="letter-section" id="letter-section">
     <div class="perspective-wrap">
       <div class="letter-stage" id="letter-stage">
+        <!-- 信纸的金色光边 -->
+        <div class="letter-glow-edge"></div>
+        
         <div class="bg-layer">
           <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
           <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
-          <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
         </div>
         <div class="newspaper-masthead">
           <div class="masthead-top mono">
@@ -158,7 +159,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <!-- 第四幕：极简结尾 -->
   <section class="outro-section" id="outro-section">
-    <div class="outro-content">
+    <div class="outro-content" id="outro-content">
       <h2 class="outro-text mono">THE CASE IS STILL OPEN.</h2>
       <a href="mailto:hello@blankshui.com" class="outro-email mono">hello@blankshui.com</a>
     </div>
@@ -186,19 +187,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     z-index: 9999; pointer-events: none; -webkit-mask: radial-gradient(transparent 8px, #000 9px); mask: radial-gradient(transparent 8px, #000 9px);
   }
 
-  /* --- 第一幕：卷宗档案 --- */
-  .page-three { --paper-base: #fcfcfc; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: transparent; }
+  /* --- 第一幕：白纸与黑暗吞噬 --- */
+  .page-three { --paper-base: #fcfcfc; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: transparent; }
   
   .p3-stage { 
     position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: var(--paper-base);
-    transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1);
-    transform-style: preserve-3d; backface-visibility: hidden;
+    transform-origin: center top; will-change: transform; transform-style: preserve-3d; backface-visibility: hidden;
   }
 
   .paper-texture {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
     background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.015) 1px, rgba(0,0,0,0.015) 2px);
     mix-blend-mode: multiply; opacity: 0.8;
+  }
+
+  /* 核心：黑暗吞噬遮罩 */
+  .ink-invader {
+    position: absolute; inset: 0; z-index: 5; pointer-events: none;
+    background: linear-gradient(to bottom, transparent 0%, #030303 40%, #030303 100%);
+    /* 初始完全在底部之外 */
+    transform: translateY(100%);
+    will-change: transform;
   }
 
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; z-index: 1; transform-style: preserve-3d; will-change: transform; }
@@ -255,18 +264,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .parallax-layer { transition: transform 0.1s ease-out; }
 
-  /* --- 转场占位 --- */
-  .scroll-transition { height: 15vh; background: #030303; pointer-events: none; }
-
   /* --- 第二幕：招募页 --- */
   .recruit-section { position: relative; z-index: 20; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #030303; overflow: hidden; }
+  /* 实现文字从黑暗中浮现 */
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
-  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
+  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(40px); opacity: 0; will-change: transform, opacity; }
   @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  .action-area { text-align: center; margin-top: 80px; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
+  .action-area { text-align: center; margin-top: 80px; transform: translateY(40px); opacity: 0; will-change: transform, opacity; }
   .contact-btn { display: inline-flex; padding: 16px 40px; cursor: pointer; position: relative; }
   .btn-text { color: #d4af37; font-family: 'Courier Prime', monospace; font-size: 14px; letter-spacing: 0.25em; display: flex; }
   .btn-letter { display: inline-block; transition: transform 1.5s ease, opacity 1s ease; will-change: transform; }
@@ -277,10 +284,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .letter-section { position: relative; z-index: 10; height: 150vh; width: 100%; background: #030303; display: flex; justify-content: center; }
   
   .perspective-wrap { position: sticky; top: 0; height: 100vh; width: 100%; perspective: 2500px; perspective-origin: 50% 0%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+  
   .letter-stage { 
     position: relative; width: 100%; max-width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; 
-    transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto; 
-    background: #0a0a0a; /* 给信件一点底色，防止透视穿帮 */
+    transform-origin: center bottom; will-change: transform; pointer-events: auto; 
+    background: #0a0a0a;
+  }
+
+  /* 金色光影勾边 */
+  .letter-glow-edge {
+    position: absolute; top: 0; left: 0; width: 100%; height: 10px; 
+    background: linear-gradient(to bottom, rgba(212,175,55,0.8), transparent);
+    z-index: 10; pointer-events: none;
+    opacity: 0; transition: opacity 0.5s ease;
   }
 
   .bg-layer { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
@@ -326,12 +342,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const pageThree = document.getElementById('page-three');
+    const inkInvader = document.getElementById('ink-invader');
     const recruitSection = document.getElementById('recruit-section');
     const letterSection = document.getElementById('letter-section');
     const outroSection = document.getElementById('outro-section');
     
     const p3Inner = document.getElementById('p3-inner');
     const letterStage = document.getElementById('letter-stage');
+    const letterGlowEdge = document.querySelector('.letter-glow-edge');
     const rolesGrid = document.getElementById('roles-grid');
     const actionArea = document.getElementById('action-area');
     const cases = Array.from(document.querySelectorAll('.case'));
@@ -346,25 +364,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const smooth = (t) => t * t * (3 - 2 * t);
 
-    // SUSPECT 按钮跳转逻辑
-    if (suspectBtn && whiteScreen && letterSection) {
+    if (suspectBtn && whiteScreen) {
       suspectBtn.addEventListener('click', () => {
         suspectBtn.classList.add('is-zooming');
         whiteScreen.classList.add('active');
-        
-        setTimeout(() => {
-          const targetY = letterSection.offsetTop;
-          window.scrollTo({ top: targetY, behavior: 'auto' });
-        }, 1000);
-
-        setTimeout(() => { 
-          whiteScreen.classList.remove('active'); 
-          suspectBtn.classList.remove('is-zooming'); 
-        }, 2000);
+        setTimeout(() => { window.scrollTo({ top: letterSection.offsetTop, behavior: 'auto' }); }, 1000);
+        setTimeout(() => { whiteScreen.classList.remove('active'); suspectBtn.classList.remove('is-zooming'); }, 2000);
       });
     }
 
-    // 卷宗切换逻辑
     let step = -2;
     const setStep = (s) => {
       if (s === step) return;
@@ -375,7 +383,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       });
     };
 
-    // 鼠标视差
     let mouseX = 0, mouseY = 0;
     let targetX = 0, targetY = 0;
 
@@ -412,7 +419,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         progressRing.style.background = `conic-gradient(#d4af37 ${globalProgress * 100}%, rgba(255,255,255,0.1) ${globalProgress * 100}%)`;
       }
 
-      // --- 1. 卷宗逻辑 ---
+      // 1. 卷宗核心逻辑
       const p3 = pageThree.getBoundingClientRect();
       const riseP3 = clamp(1 - p3.top / windowHeight); 
       const run = Math.max(1, p3.height - windowHeight);
@@ -421,45 +428,50 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const s = riseP3 > 0.1 ? Math.min(3, Math.floor(q * 4)) : -1;
       setStep(s);
 
-      // --- 2. 招募页逻辑 ---
-      const recruitRect = recruitSection.getBoundingClientRect();
-      const recruitProgress = clamp(1 - recruitRect.top / windowHeight); // 0 (进入) -> 1 (完全离开)
-      
-      const p2 = clamp((scrollY - pageThree.offsetHeight) / (windowHeight * 0.5));
-      const easeP2 = smooth(p2);
-      
-      if (easeP2 >= 0.99) {
-        if (rolesGrid) { rolesGrid.style.transform = 'none'; rolesGrid.style.opacity = '1'; }
-        if (actionArea) { actionArea.style.transform = 'none'; actionArea.style.opacity = '1'; }
-      } else {
-        if (rolesGrid) { rolesGrid.style.transform = `translate3d(0, ${150 * (1 - easeP2)}px, 0)`; rolesGrid.style.opacity = easeP2; }
-        if (actionArea) { actionArea.style.transform = `translate3d(0, ${180 * (1 - easeP2)}px, 0)`; actionArea.style.opacity = easeP2; }
+      // 核心改进：计算黑暗吞噬进度 (最后 20% 的滚动时间用来转场)
+      const invadeProgress = clamp((q - 0.8) / 0.2);
+      if (inkInvader) {
+        // 从底部 100% 移到 0%
+        inkInvader.style.transform = `translateY(${100 - invadeProgress * 100}%)`;
       }
 
-      // --- 3. 信件盖入逻辑 ---
+      // 2. 招募页逻辑
+      const recruitRect = recruitSection.getBoundingClientRect();
+      // 当黑色遮罩盖满时，招募页文字渐渐浮现
+      const p2 = clamp((scrollY - pageThree.offsetHeight + windowHeight) / (windowHeight * 0.8));
+      const easeP2 = smooth(p2);
+      
+      if (rolesGrid) { 
+        rolesGrid.style.transform = `translate3d(0, ${40 * (1 - easeP2)}px, 0)`; 
+        rolesGrid.style.opacity = easeP2; 
+      }
+      if (actionArea) { 
+        actionArea.style.transform = `translate3d(0, ${40 * (1 - easeP2)}px, 0)`; 
+        actionArea.style.opacity = easeP2; 
+      }
+
+      // 3. 信件盖入逻辑
       const letterRect = letterSection.getBoundingClientRect();
       const coverProgress = clamp(1 - letterRect.top / windowHeight); 
       const e = smooth(coverProgress);
 
       if (letterStage) {
         if (e > 0 && e < 1) {
-          // 信件作为最后一张纸，从下方盖上来的 3D 效果
           const rotateX = (1 - e) * 50; 
           const scaleY = 1 - (1 - e) * 0.15;
           const translateY = (1 - e) * -20;
-          const shadow = `0 ${(1-e)*50}px ${(1-e)*80}px rgba(0,0,0,${(1-e)*0.6})`;
           
           letterStage.style.transform = `perspective(1500px) rotateX(${rotateX}deg) scaleY(${scaleY}) translateY(${translateY}vh)`;
-          letterStage.style.boxShadow = shadow;
+          if (letterGlowEdge) letterGlowEdge.style.opacity = 1; // 展开时显示金边
         } else if (e >= 1) {
           letterStage.style.transform = 'none';
-          letterStage.style.boxShadow = '0 -10px 30px rgba(0,0,0,0.05)';
+          if (letterGlowEdge) letterGlowEdge.style.opacity = 0; // 盖好后金边消失
         }
       }
 
-      // --- 4. 极简结尾淡入 ---
+      // 4. 极简结尾淡入
       const outroRect = outroSection.getBoundingClientRect();
-      const outroContent = document.querySelector('.outro-content');
+      const outroContent = document.getElementById('outro-content');
       if (outroRect.top < windowHeight * 0.8) {
         outroContent.classList.add('is-visible');
       } else {
