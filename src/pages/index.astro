@@ -58,6 +58,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="scroll-spacer"></div>
 
+  <!-- 第二页：彻底移除了 info-dim -->
   <section class="info-section" id="info-section">
     <div class="content-block">
       <div class="roles-grid" id="roles-grid">
@@ -71,16 +72,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
       </div>
     </div>
-    <div class="info-dim" id="info-dim"></div>
   </section>
 
-  <!-- 核心修改：给第二页留足 150vh 展示距离 -->
   <div class="p2-dwell" id="p2-dwell" style="height: 150vh;"></div>
 
   <section class="page-three" id="page-three" aria-label="Case files">
     <div class="p3-stage" id="p3-stage">
-      <!-- 确保上面只有白色遮罩 -->
-      <div class="p3-white-mask"></div>
+      <!-- 彻底移除了 p3-white-mask -->
       
       <div class="p3-inner">
         <header class="p3-mast mono">
@@ -237,7 +235,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transform-origin: 50% 35%; 
     will-change: transform; 
   }
-  .info-dim { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 30%, rgba(3,3,3,0.6), #030303 85%); }
   
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
   
@@ -256,7 +253,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* ====== 第三页：白底白图 ====== */
+  /* ====== 第三页：无任何遮罩，原图直出 ====== */
   .page-three { 
     --paper-base: #ffffff; 
     --paper-light: #ffffff;
@@ -269,27 +266,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     width: 100vw; 
     margin-left: 0;
     
-    /* 强制白底兜底 */
+    /* 如果你想要纯白，这里背景填 #fff 即可；如果想让图显示原色，保留 url */
     background-color: #ffffff; 
     background-image: url('/bg-p3.jpg');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed; 
     
     border-radius: 60px 60px 0 0; 
     box-shadow: 0 -20px 40px rgba(0,0,0,0.1); 
   }
 
   .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
-
-  /* 纯白遮罩层，让福尔摩斯透出，但总体维持纯白 */
-  .p3-white-mask {
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.88); /* 保持极高的白色占比 */
-    z-index: 1;
-    pointer-events: none;
-  }
   
   .p3-inner { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-rows: auto 1fr auto; padding: clamp(24px, 4vw, 56px) clamp(24px, 6vw, 96px) clamp(26px, 6vh, 56px); }
   

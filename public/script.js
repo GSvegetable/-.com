@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const fadeMask = document.getElementById('fade-mask');
   const progressIndicator = document.getElementById('progress-indicator');
   const infoSection = document.getElementById('info-section');
-  const infoDim = document.getElementById('info-dim');
   const rolesGrid = document.getElementById('roles-grid');
   const actionArea = document.getElementById('action-area');
 
@@ -112,11 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
     infoSection.style.transform = e > 0
       ? `translate3d(0, ${(-e * 4).toFixed(3)}vh, 0) scale(${(1 - e * 0.08).toFixed(4)})`
       : 'none';
-    infoDim.style.opacity = (e * 0.9).toFixed(3);
     infoSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
 
-    // ====== 修复第二页内容不显示：极快触发，并牢固锁定 ======
-    const contentTriggerStart = windowHeight * 0.2; // 提前触发
+    const contentTriggerStart = windowHeight * 0.2;
     const contentTriggerEnd = windowHeight * 0.8; 
     const p = clamp((scrollY - contentTriggerStart) / (contentTriggerEnd - contentTriggerStart));
     const ease = smooth(p);
