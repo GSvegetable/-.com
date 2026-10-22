@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const smooth = (t) => t * t * (3 - 2 * t);
 
   let currentIndex = 0;
+  // 修改：30秒（30000毫秒）才切换一次
   setInterval(() => {
     bgImages[currentIndex].classList.remove('active');
     bgImages[currentIndex].style.zIndex = '0';
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newBg = bgImages[currentIndex];
     newBg.style.zIndex = '1';
     newBg.classList.add('active');
-  }, 5000);
+  }, 30000);
 
   let step = -2;
   const setStep = (s) => {

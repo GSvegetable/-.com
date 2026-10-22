@@ -76,13 +76,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="p2-dwell" id="p2-dwell"></div>
 
-  <!-- 第三页：彻底移除毛刺，改为平滑白底 -->
   <section class="page-three" id="page-three" aria-label="Case files">
     <div class="p3-stage" id="p3-stage">
-      <div class="p3-grain"></div>
-      <div class="p3-vignette"></div>
-      <div class="p3-lantern" id="p3-lantern"></div>
-
+      <!-- 白色遮罩层，保证背景图上的文字清晰 -->
+      <div class="p3-white-mask"></div>
+      
       <div class="p3-inner">
         <header class="p3-mast mono">
           <span>NO. 001</span>
@@ -187,8 +185,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .hero-stage.loaded { opacity: 1; }
   
   .bg-layer { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
-  .bg-image { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: grayscale(100%) contrast(130%) brightness(0.35); opacity: 0; transition: opacity 3s ease-in-out; }
-  .bg-image.active { opacity: 1; }
+  
+  .bg-image { 
+    position: absolute; inset: 0; width: 100%; height: 100%; 
+    background-size: cover; background-position: center; 
+    filter: grayscale(100%) contrast(130%) brightness(0.35); 
+    opacity: 0; 
+    transform: scale(1); 
+    transition: opacity 3s ease-in-out, transform 30s linear; 
+  }
+  .bg-image.active { 
+    opacity: 1; 
+    transform: scale(1.15); 
+  }
 
   .fade-mask { position: absolute; inset: -30% 0 0 0; background: linear-gradient(to bottom, #030303 0%, transparent 60%); opacity: 0; pointer-events: none; z-index: 5; }
   
@@ -217,7 +226,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .info-section { 
     position: sticky; top: 0; z-index: 20; 
     height: 100vh; height: 100lvh; 
-    width: 100vw; /* 强制撑满宽度，修复左边距 */
+    width: 100vw; 
     display: flex; align-items: center; justify-content: center; 
     padding: 100px 40px; 
     background-color: #050505; 
@@ -246,33 +255,42 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* ====== 彻底重构成白底黑字的第三页 ====== */
+  /* ====== 第三页：把背景图放上去 ====== */
   .page-three { 
-    --paper-base: #ffffff; /* 白底 */
+    --paper-base: #ffffff; 
     --paper-light: #ffffff;
-    --ink: #000000; /* 黑字 */
-    --ink-soft: #333333; /* 深灰辅助字 */
-    --oxblood: #7b1e1e; /* 保留暗红强调色 */
-    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .1 0 0 0 0 .1 0 0 0 .15 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); 
+    --ink: #000000; 
+    --ink-soft: #333333; 
+    --oxblood: #7b1e1e; 
     
     position: relative; z-index: 30; 
     height: 400vh; height: 400lvh; 
-    width: 100vw; /* 修复左侧留空 */
+    width: 100vw; 
     margin-left: 0;
-    background-color: var(--paper-base);
-    background-image: var(--grain);
-    /* 顶部干净的圆角，不再有毛刺 */
+    
+    /* 将图片作为第三页的背景 */
+    background-image: url('/bg-p3.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* 确保滑动时背景相对视口固定 */
+    
     border-radius: 60px 60px 0 0; 
-    box-shadow: 0 -20px 40px rgba(0,0,0,0.1); /* 微弱的光影让它和白纸更贴合 */
+    box-shadow: 0 -20px 40px rgba(0,0,0,0.1); 
   }
 
   .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
-  .p3-grain, .p3-vignette { position: absolute; inset: 0; pointer-events: none; }
-  .p3-grain { background-image: var(--grain); opacity: 0.5; mix-blend-mode: multiply; }
-  .p3-vignette { background: radial-gradient(150% 100% at 50% 30%, transparent 60%, rgba(0,0,0,0.1) 100%); }
-  .p3-lantern { position: absolute; left: 0; top: 0; width: 90vmax; height: 90vmax; margin: -45vmax 0 0 -45vmax; background: radial-gradient(circle, rgba(255,222,150,0.15) 0%, rgba(255,222,150,0.05) 35%, transparent 62%); pointer-events: none; will-change: transform; transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); mix-blend-mode: multiply; }
+
+  /* 纯白遮罩层，让底部的福尔摩斯剪影隐约透出来，但不影响黑字阅读 */
+  .p3-white-mask {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.9); /* 90%的不透明白色 */
+    z-index: 1;
+    pointer-events: none;
+  }
   
   .p3-inner { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-rows: auto 1fr auto; padding: clamp(24px, 4vw, 56px) clamp(24px, 6vw, 96px) clamp(26px, 6vh, 56px); }
+  
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: var(--ink-soft); padding-bottom: 16px; border-bottom: 4px double rgba(0,0,0,0.8); font-weight: 700; text-transform: uppercase; }
   .p3-cases { position: relative; min-height: 0; }
   .p3-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 11px; letter-spacing: 0.3em; color: var(--ink-soft); padding-top: 16px; border-top: 2px solid rgba(0,0,0,0.6); font-weight: 700; }
