@@ -74,11 +74,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="info-dim" id="info-dim"></div>
   </section>
 
-  <div class="p2-dwell" id="p2-dwell"></div>
+  <!-- 核心修改：给第二页留足 150vh 展示距离 -->
+  <div class="p2-dwell" id="p2-dwell" style="height: 150vh;"></div>
 
   <section class="page-three" id="page-three" aria-label="Case files">
     <div class="p3-stage" id="p3-stage">
-      <!-- 白色遮罩层，保证背景图上的文字清晰 -->
+      <!-- 确保上面只有白色遮罩 -->
       <div class="p3-white-mask"></div>
       
       <div class="p3-inner">
@@ -237,7 +238,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     will-change: transform; 
   }
   .info-dim { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 30%, rgba(3,3,3,0.6), #030303 85%); }
-  .p2-dwell { height: 60vh; height: 60lvh; pointer-events: none; }
+  
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
   
   .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(150px); opacity: 0; transform: translateZ(0); backface-visibility: hidden; }
@@ -255,7 +256,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* ====== 第三页：把背景图放上去 ====== */
+  /* ====== 第三页：白底白图 ====== */
   .page-three { 
     --paper-base: #ffffff; 
     --paper-light: #ffffff;
@@ -268,11 +269,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     width: 100vw; 
     margin-left: 0;
     
-    /* 将图片作为第三页的背景 */
+    /* 强制白底兜底 */
+    background-color: #ffffff; 
     background-image: url('/bg-p3.jpg');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed; /* 确保滑动时背景相对视口固定 */
+    background-attachment: fixed; 
     
     border-radius: 60px 60px 0 0; 
     box-shadow: 0 -20px 40px rgba(0,0,0,0.1); 
@@ -280,11 +282,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
 
-  /* 纯白遮罩层，让底部的福尔摩斯剪影隐约透出来，但不影响黑字阅读 */
+  /* 纯白遮罩层，让福尔摩斯透出，但总体维持纯白 */
   .p3-white-mask {
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.9); /* 90%的不透明白色 */
+    background: rgba(255, 255, 255, 0.88); /* 保持极高的白色占比 */
     z-index: 1;
     pointer-events: none;
   }

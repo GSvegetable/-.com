@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const smooth = (t) => t * t * (3 - 2 * t);
 
   let currentIndex = 0;
-  // 修改：30秒（30000毫秒）才切换一次
   setInterval(() => {
     bgImages[currentIndex].classList.remove('active');
     bgImages[currentIndex].style.zIndex = '0';
@@ -116,8 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
     infoDim.style.opacity = (e * 0.9).toFixed(3);
     infoSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
 
-    const contentTriggerStart = windowHeight * 0.5;
-    const contentTriggerEnd = windowHeight * 1.0; 
+    // ====== 修复第二页内容不显示：极快触发，并牢固锁定 ======
+    const contentTriggerStart = windowHeight * 0.2; // 提前触发
+    const contentTriggerEnd = windowHeight * 0.8; 
     const p = clamp((scrollY - contentTriggerStart) / (contentTriggerEnd - contentTriggerStart));
     const ease = smooth(p);
 
