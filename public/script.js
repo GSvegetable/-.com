@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const fogA = document.getElementById('fog-a');
   const fogB = document.getElementById('fog-b');
   const cases = Array.from(document.querySelectorAll('.case'));
+  const ticks = Array.from(document.querySelectorAll('.tick'));
+  const segFills = Array.from(document.querySelectorAll('.seg i'));
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -34,6 +36,18 @@ document.addEventListener('DOMContentLoaded', () => {
     newBg.classList.add('active');
   }, 30000);
 
+  // 点击 SUSPECT 放大 P 并纯白穿透
+  const suspectBtn = document.getElementById('suspect-btn');
+  const whiteScreen = document.getElementById('white-screen');
+
+  if (suspectBtn) {
+    suspectBtn.addEventListener('click', () => {
+      if (suspectBtn.classList.contains('is-zooming')) return;
+      suspectBtn.classList.add('is-zooming');
+      whiteScreen.classList.add('active');
+    });
+  }
+
   let step = -2;
   const setStep = (s) => {
     if (s === step) return;
@@ -42,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.toggle('is-active', i === s);
       el.classList.toggle('is-past', i < s);
     });
+    ticks.forEach((t, i) => t.classList.toggle('is-on', s >= i + 1));
   };
 
   let ptr = null;
@@ -62,6 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
   stage.addEventListener('pointerleave', clearPtr);
   stage.addEventListener('pointercancel', clearPtr);
   stage.addEventListener('pointerup', (ev) => { if (ev.pointerType !== 'mouse') clearPtr(); });
+
+  ticks.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const k = Number(btn.dataset.k);
+      const r = pageThree.getBoundingClientRect();
+      const absTop = r.top + window.scrollY;
+      const run = Math.max(1, r.height - stage.offsetHeight);
+      window.scrollTo({ top: absTop + run * (0.25 * (k + 1) + 0.04), behavior: 'smooth' });
+    });
+  });
 
   const update = () => {
     const scrollY = window.scrollY;
@@ -132,6 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const s = rise > 0.2 ? Math.min(3, Math.floor(q * 4)) : -1;
     setStep(s);
+    segFills[0].style.transform = `scaleX(${clamp((q - 0.25) / 0.25).toFixed(3)})`;
+    segFills[1].style.transform = `scaleX(${clamp((q - 0.5) / 0.25).toFixed(3)})`;
     if (!reduceMotion) placeLantern(q);
   };
 
