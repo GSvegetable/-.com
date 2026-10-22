@@ -7,7 +7,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- 修改后的进度圈，包含文字 -->
   <div class="progress-ring" id="progress-ring">
     <span id="progress-text" class="mono">0%</span>
   </div>
@@ -131,7 +130,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
         </div>
 
-        <!-- 页尾，已删掉 footer-bottom -->
         <footer class="site-footer" id="site-footer">
           <div class="footer-top">
             <div class="footer-col left">
@@ -159,26 +157,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   * { -webkit-tap-highlight-color: transparent !important; }
   a, div, button { outline: none !important; }
 
-  html { color-scheme: only light; overscroll-behavior-y: none; }
-  body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; width: 100%; }
+  /* 使用 overflow-x: clip 替代 hidden，这是现代浏览器解决 3D 撑开的神器 */
+  html { color-scheme: only light; overscroll-behavior-y: none; overflow-x: clip; max-width: 100vw; }
+  body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; width: 100%; overflow-x: clip; max-width: 100vw; }
   ::-webkit-scrollbar { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
   .serif { font-family: 'Playfair Display', serif; }
 
-  /* ====== 优化后的进度圈：带文字居中 ====== */
   .progress-ring {
     position: fixed; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%;
     background: conic-gradient(#d4af37 0%, rgba(255,255,255,0.1) 0%);
     z-index: 9999; pointer-events: none;
     display: flex; align-items: center; justify-content: center;
   }
-  /* 用一个内圆把中间挖空，并展示文字 */
-  .progress-ring::before {
-    content: ''; position: absolute; inset: 4px; border-radius: 50%; background-color: #030303;
-  }
-  .progress-ring span {
-    position: relative; font-size: 10px; color: #d4af37; font-weight: 700; letter-spacing: -0.5px;
-  }
+  .progress-ring::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background-color: #030303; }
+  .progress-ring span { position: relative; font-size: 10px; color: #d4af37; font-weight: 700; letter-spacing: -0.5px; }
 
   .hero-section { position: fixed; inset: 0; height: 100vh; display: flex; align-items: center; justify-content: center; z-index: 10; overflow: hidden; pointer-events: none; }
   .perspective-wrap { perspective: 2500px; perspective-origin: 50% 0%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
@@ -211,7 +204,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: #030303; }
+  /* page-three 强制截断所有横向溢出 */
+  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: #030303; overflow-x: clip; }
   .p3-stage { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
@@ -262,9 +256,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 40px 40px; background-color: var(--paper-base); transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform; box-sizing: border-box; z-index: 10; border-top: 4px double #000;
   }
 
-  .footer-top {
-    display: grid; grid-template-columns: 1fr 1.5fr 1fr; align-items: center; gap: 20px;
-  }
+  .footer-top { display: grid; grid-template-columns: 1fr 1.5fr 1fr; align-items: center; gap: 20px; }
 
   .footer-col { display: flex; flex-direction: column; gap: 6px; }
   .footer-col.left { align-items: flex-start; }
@@ -321,7 +313,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const totalScrollable = Math.max(1, document.documentElement.scrollHeight - windowHeight);
       const globalProgress = clamp(scrollY / totalScrollable);
       
-      // 更新进度圈与百分比文字
       if (progressRing && progressText) {
         const percent = Math.round(globalProgress * 100);
         progressRing.style.background = `conic-gradient(#d4af37 ${percent}%, rgba(255,255,255,0.1) ${percent}%)`;
@@ -335,7 +326,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (infoSection) {
         infoSection.style.transform = e > 0 ? `translate3d(0, ${(e * 10).toFixed(2)}vh, 0)` : 'none';
         infoSection.style.opacity = 1 - e;
-        infoSection.style.visibility = coverProgress >= 1 ? 'hidden' : 'visible';
+        // 使用 opacity 控制不可见性，而不是 visibility:hidden，避免回滚时重排撑开页面
+        infoSection.style.pointerEvents = coverProgress >= 1 ? 'none' : 'auto';
       }
 
       if (p3Stage) {
