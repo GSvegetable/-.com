@@ -66,9 +66,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
       </div>
       <div class="action-area" id="action-area">
-        <div class="contact-btn" role="button">
-          <span class="btn-text">CRIME SCENE</span>
-        </div>
+        <!-- 全新的卷宗解封按钮 -->
+        <button class="classified-btn" type="button">
+          <span class="btn-glow"></span>
+          <span class="btn-content">
+            <span class="btn-icon">✦</span>
+            <span class="btn-text">CRIME SCENE</span>
+            <span class="btn-sub">ENTER THE CASE</span>
+          </span>
+        </button>
       </div>
     </div>
     <div class="info-dim" id="info-dim"></div>
@@ -76,7 +82,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="p2-dwell" id="p2-dwell"></div>
 
-  <!-- 将原来 400vh 改为 500vh，拉长滑动距离 -->
   <section class="page-three" id="page-three" aria-label="Case files">
     <div class="p3-stage" id="p3-stage">
       <div class="p3-lantern" id="p3-lantern"></div>
@@ -253,15 +258,102 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
   
-  .action-area { text-align: center; margin-top: 80px; transform: translateY(150px); opacity: 0; transform: translateZ(0); backface-visibility: hidden; }
-  .contact-btn { display: inline-flex; flex-direction: column; align-items: center; text-decoration: none; padding: 16px 40px; position: relative; overflow: hidden; transition: all 0.4s ease; cursor: default; }
-  .contact-btn::before, .contact-btn::after { content: ''; position: absolute; left: 0; width: 100%; height: 1px; background: var(--gold); transition: background 0.4s, transform 0.4s; }
-  .contact-btn::before { top: 0; }
-  .contact-btn::after { bottom: 0; }
-  .contact-btn .btn-text { color: var(--gold); font-family: 'Courier Prime', monospace; font-size: 14px; letter-spacing: 0.25em; position: relative; z-index: 2; transition: color 0.4s; }
-  .contact-btn:hover { background: rgba(212, 175, 55, 0.05); }
-  .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
-  .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+  .action-area { text-align: center; margin-top: 80px; transform: translateY(150px); opacity: 0; transform: translateZ(0); backface-visibility: hidden; display: flex; justify-content: center; }
+
+  /* ====== 惊艳的机密档案按钮 ====== */
+  .classified-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 60px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    /* 切角设计 */
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* 按钮的底层边框 */
+  .classified-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(212, 175, 55, 0.1); /* 极弱的暗金底 */
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    clip-path: inherit;
+    transition: all 0.4s ease;
+  }
+
+  /* 呼吸光晕 */
+  .btn-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .btn-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-icon {
+    color: #d4af37;
+    font-size: 14px;
+    animation: pulseIcon 2s infinite ease-in-out;
+  }
+
+  .btn-text {
+    color: #f4eee0;
+    font-family: 'Courier Prime', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    margin-left: 0.3em; /* 修正字距导致的视觉偏移 */
+    transition: color 0.4s ease, text-shadow 0.4s ease;
+  }
+
+  .btn-sub {
+    color: rgba(212, 175, 55, 0.6);
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    margin-left: 0.2em;
+    transition: color 0.4s ease;
+  }
+
+  /* Hover 物理反馈 */
+  .classified-btn:hover::before {
+    border-color: #d4af37;
+    background: rgba(212, 175, 55, 0.05);
+    box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1);
+  }
+
+  .classified-btn:hover .btn-glow {
+    opacity: 1;
+  }
+
+  .classified-btn:hover .btn-text {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+  }
+
+  .classified-btn:hover .btn-sub {
+    color: #d4af37;
+  }
+
+  @keyframes pulseIcon {
+    0%, 100% { opacity: 0.4; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
 
   /* ====== 第三页：拉长到 500vh ====== */
   .page-three { 
@@ -271,7 +363,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     --oxblood: #7b1e1e; 
     
     position: relative; z-index: 30; 
-    height: 500vh; height: 500lvh; /* 加长滑动距离 */
+    height: 500vh; height: 500lvh; 
     width: 100vw; 
     background-color: var(--paper-base); 
     border-radius: 0; 
@@ -297,7 +389,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .case.is-active .intro-title .line > span { transform: none; transition: transform 1.3s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.3s + var(--i, 0) * 0.14s); }
   .case.is-past .intro-title .line > span { transform: translate3d(0, -115%, 0); }
 
-  /* 倾斜笔尖扫描 */
   .handwritten-area { display: flex; flex-direction: column; align-items: center; margin-top: 40px; }
   .handwritten-text {
     font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(18px, 2.2vw, 28px);
@@ -330,7 +421,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .case.is-active .scribble-arrow { animation: fadeInArrow 0.4s ease 5.6s forwards; }
   @keyframes fadeInArrow { to { opacity: 0.6; } }
 
-  /* ====== 常规文件排版 ====== */
   .case--file { position: relative; align-items: center; width: 100%; }
   .case-num { position: absolute; left: -5%; top: 50%; font-style: italic; font-weight: 900; line-height: 0.8; letter-spacing: -0.06em; font-size: clamp(240px, 35vw, 600px); color: transparent; -webkit-text-stroke: 2px rgba(0,0,0,0.08); user-select: none; opacity: 0; transform: translateY(-50%) translateX(-50px) scale(1.05); transition: opacity 0.5s ease, transform 0.5s ease; z-index: 1; }
   .case.is-active .case-num { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); transition: opacity 1.4s ease 0.1s, transform 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s; }
