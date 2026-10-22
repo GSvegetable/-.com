@@ -149,40 +149,32 @@ document.addEventListener('DOMContentLoaded', () => {
     heroSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
     fadeMask.style.opacity = Math.max(0, (heroRawProgress - 0.3) * 1.5);
 
-    let maskStop = 35 - (globalProgress / 0.17) * 35;
-    maskStop = Math.max(0, maskStop);
-    
-    if (maskStop > 0.1) {
-      infoSection.style.webkitMaskImage = `linear-gradient(to bottom, transparent 0%, black ${maskStop}%)`;
-      infoSection.style.maskImage = `linear-gradient(to bottom, transparent 0%, black ${maskStop}%)`;
-    } else {
-      infoSection.style.webkitMaskImage = 'none';
-      infoSection.style.maskImage = 'none';
-    }
-
     infoSection.style.transform = e > 0
       ? `translate3d(0, ${(-e * 4).toFixed(3)}vh, 0) scale(${(1 - e * 0.08).toFixed(4)})`
       : 'none';
     infoDim.style.opacity = (e * 0.9).toFixed(3);
     infoSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
 
-    // ====== 修复黑屏 Bug：不再使用 if/else 临界点硬切 ======
     const contentTriggerStart = windowHeight * 0.5;
     const contentTriggerEnd = windowHeight * 1.0; 
-
-    // 使用强制范围限制，无论怎么滑，进度永远平滑地在 0 到 1 之间
     const p = clamp((scrollY - contentTriggerStart) / (contentTriggerEnd - contentTriggerStart));
     const ease = smooth(p);
 
-    // 同步计算，彻底避免样式闪现
-    rolesGrid.style.transform = `translateY(${150 * (1 - ease) - lift}px)`;
-    rolesGrid.style.opacity = ease;
-
-    const pBtn = clamp((p - 0.2) / 0.8); 
-    const easeBtn = smooth(pBtn);
-    
-    actionArea.style.transform = `translateY(${180 * (1 - easeBtn) - lift * 0.6}px)`;
-    actionArea.style.opacity = easeBtn;
+    // ====== 修复随机闪烁：动画到底时强制清空内联样式，让浏览器按原生静态渲染 ======
+    if (ease >= 0.99) {
+      rolesGrid.style.transform = 'none';
+      rolesGrid.style.opacity = '1';
+      actionArea.style.transform = 'none';
+      actionArea.style.opacity = '1';
+    } else {
+      rolesGrid.style.transform = `translate3d(0, ${150 * (1 - ease) - lift}px, 0)`;
+      rolesGrid.style.opacity = ease;
+      
+      const pBtn = clamp((p - 0.2) / 0.8); 
+      const easeBtn = smooth(pBtn);
+      actionArea.style.transform = `translate3d(0, ${180 * (1 - easeBtn) - lift * 0.6}px, 0)`;
+      actionArea.style.opacity = easeBtn;
+    }
 
     if (!reduceMotion) {
       const env = Math.pow(Math.sin(Math.PI * rise), 1.4);
