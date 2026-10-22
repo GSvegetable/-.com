@@ -7,9 +7,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
-  <div class="noise-overlay"></div>
   <div class="progress-ring" id="progress-ring"></div>
 
+  <!-- 第一页 -->
   <section class="hero-section">
     <div class="perspective-wrap">
       <div class="hero-stage" id="hero-masthead">
@@ -52,6 +52,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <div class="scroll-spacer"></div>
 
+  <!-- 第二页 (去掉了按钮和所有交互) -->
   <section class="info-section" id="info-section">
     <div class="content-block">
       <div class="roles-grid" id="roles-grid">
@@ -59,33 +60,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
         <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
       </div>
-      <div class="action-area" id="action-area">
-        <div class="contact-btn" id="suspect-btn" role="button" tabindex="0">
-          <span class="btn-text mono">
-            <span class="btn-letter">S</span><span class="btn-letter">U</span><span class="btn-letter">S</span>
-            <span class="btn-letter target-p">P</span>
-            <span class="btn-letter">E</span><span class="btn-letter">C</span><span class="btn-letter">T</span>
-          </span>
-        </div>
-      </div>
     </div>
   </section>
 
   <div class="p2-dwell" id="p2-dwell"></div>
 
+  <!-- 第三页 -->
   <section class="page-three" id="page-three">
     <div class="p3-stage" id="p3-stage">
-      <div class="paper-texture"></div>
-
-      <div class="p3-inner" id="p3-inner">
+      <div class="p3-inner">
         <header class="p3-mast mono">
           <span>NO. 001</span><span>THE BLANK FRONT PAGE</span><span>ONE PENNY</span>
         </header>
 
-        <div class="p3-cases" id="p3-cases-container">
+        <div class="p3-cases">
           <article class="case case--intro">
-            <div class="intro-watermark serif parallax-layer" data-depth="0.2">PROLOGUE</div>
-            <div class="intro-content parallax-layer" data-depth="1">
+            <div class="intro-watermark serif">PROLOGUE</div>
+            <div class="intro-content">
               <p class="intro-eyebrow mono">THE CASE FILES</p>
               <h2 class="intro-title serif">
                 <span class="line-1">The truth is</span>
@@ -101,8 +92,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
 
           <article class="case case--file">
-            <div class="case-num serif parallax-layer" data-depth="0.5">I</div>
-            <div class="case-text parallax-layer" data-depth="1.5">
+            <div class="case-num serif">I</div>
+            <div class="case-text">
               <div class="case-header-group">
                 <h3 class="case-title serif">The Penny-a-Liner</h3>
                 <p class="case-sub serif">Paid by the line. Loyal to no paper.</p>
@@ -114,8 +105,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
 
           <article class="case case--file">
-            <div class="case-num serif parallax-layer" data-depth="0.5">II</div>
-            <div class="case-text parallax-layer" data-depth="1.5">
+            <div class="case-num serif">II</div>
+            <div class="case-text">
               <div class="case-header-group">
                 <h3 class="case-title serif">The Maid</h3>
                 <p class="case-sub serif">To high society, servants are air.</p>
@@ -127,8 +118,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
 
           <article class="case case--file">
-            <div class="case-num serif parallax-layer" data-depth="0.5">III</div>
-            <div class="case-text parallax-layer" data-depth="1.5">
+            <div class="case-num serif">III</div>
+            <div class="case-text">
               <div class="case-header-group">
                 <h3 class="case-title serif">The City</h3>
                 <p class="case-sub serif">1888. Fog, gaslight, and a great many closed doors.</p>
@@ -140,7 +131,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
         </div>
 
-        <footer class="site-footer parallax-layer" data-depth="0.8">
+        <footer class="site-footer">
           <div class="footer-main">
             <div class="footer-brand">
               <span class="footer-logo serif">宫水</span>
@@ -154,20 +145,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </div>
   </section>
+
 </BaseLayout>
 
 <style is:global>
-  html { color-scheme: only light; overscroll-behavior-y: none; background: #030303; }
+  /* 干掉浏览器原生高亮、蓝光 */
+  * { -webkit-tap-highlight-color: transparent !important; }
+  a, div, button { outline: none !important; }
+
+  html { color-scheme: only light; overscroll-behavior-y: none; }
   body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; overflow-x: hidden; overscroll-behavior-y: none; }
   ::-webkit-scrollbar { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
   .serif { font-family: 'Playfair Display', serif; }
-
-  .noise-overlay {
-    position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0.06;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
-  }
 
   .progress-ring {
     position: fixed; top: 20px; right: 20px; width: 24px; height: 24px; border-radius: 50%;
@@ -175,7 +165,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     z-index: 9999; pointer-events: none; -webkit-mask: radial-gradient(transparent 8px, #000 9px); mask: radial-gradient(transparent 8px, #000 9px);
   }
 
-  /* --- 第一页 --- */
+  /* 第一页 */
   .hero-section { position: fixed; inset: 0; height: 100vh; display: flex; align-items: center; justify-content: center; z-index: 10; overflow: hidden; pointer-events: none; }
   .perspective-wrap { perspective: 2500px; perspective-origin: 50% 0%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
   .hero-stage { position: relative; width: 100%; max-width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto; }
@@ -199,7 +189,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .scroll-spacer { height: 100vh; pointer-events: none; }
   
-  /* --- 第二页 --- */
+  /* 第二页 */
   .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.9); overflow: hidden; transform-origin: 50% 0%; will-change: transform, opacity; }
   .p2-dwell { height: 60vh; pointer-events: none; }
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
@@ -208,76 +198,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  .action-area { text-align: center; margin-top: 80px; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
-  
-  /* 修复蓝光高亮 */
-  .contact-btn { display: inline-flex; padding: 16px 40px; cursor: pointer; position: relative; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
-  .btn-text { color: #d4af37; font-family: 'Courier Prime', monospace; font-size: 14px; letter-spacing: 0.25em; display: flex; }
-  
-  .btn-letter { display: inline-block; transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.6s ease; will-change: transform, opacity; }
-  .contact-btn.is-zooming .btn-letter:not(.target-p) { opacity: 0; transform: scale(0.5); transition-duration: 0.3s; }
-  .contact-btn.is-zooming .target-p { opacity: 1 !important; transform: scale(100); z-index: 9999; }
+  /* 第三页 */
+  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: transparent; }
+  .p3-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
+  .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; z-index: 1; }
+  .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
+  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
 
-  /* --- 第三页：纯黑底色 --- */
-  .page-three { --paper-base: #fcfcfc; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: #000000; } /* 改成了纯黑 */
-  
-  /* 纸张降临状态 */
-  .page-three.is-arriving .p3-stage { transform: scale(1.3); opacity: 0; transition: none; }
-  .page-three.is-settled .p3-stage { transform: scale(1); opacity: 1; transition: transform 1.2s cubic-bezier(0.2, 0.9, 0.2, 1), opacity 0.8s ease; }
-
-  .p3-stage { 
-    position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: var(--paper-base);
-    transform-origin: center center;
-    will-change: transform, box-shadow;
-    box-shadow: 0 -20px 50px rgba(0,0,0,0.1);
-    transform-style: preserve-3d;
-    backface-visibility: hidden;
-  }
-
-  .paper-texture {
-    position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.015) 1px, rgba(0,0,0,0.015) 2px);
-    mix-blend-mode: multiply; opacity: 0.8;
-  }
-
-  .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; z-index: 1; transform-style: preserve-3d; will-change: transform; }
-  .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; transform: translateZ(20px); }
-  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; perspective: 1200px; transform-style: preserve-3d; }
-
-  .case { 
-    position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; 
-    transform: translate3d(0, 0, -300px) rotateY(10deg); 
-    transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.8s ease, visibility 0s linear 1.2s; 
-    filter: blur(4px);
-    will-change: transform, opacity, filter;
-    backface-visibility: hidden;
-  }
-  .case.is-past { transform: translate3d(0, 0, 200px) rotateY(-15deg); opacity: 0; filter: blur(8px); }
-  .case.is-active { 
-    opacity: 1; visibility: visible; pointer-events: auto; 
-    transform: translate3d(0, 0, 0) rotateY(0deg); filter: blur(0); 
-    transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.8s ease, visibility 0s linear 0s; 
-  }
+  .case { position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, 4vh, 0); transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s; }
+  .case.is-past { transform: translate3d(0, -4vh, 0); }
+  .case.is-active { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity 0.8s ease 0.15s, transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s, visibility 0s linear 0s; }
   
   .case--intro { flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
-  
-  .intro-watermark {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: clamp(100px, 25vw, 400px);
-    font-weight: 900; font-style: italic; letter-spacing: 0.05em;
-    color: rgba(0,0,0,0.025);
-    pointer-events: none; user-select: none; white-space: nowrap; z-index: 0;
-    filter: blur(10px); opacity: 0;
-    transition: filter 2s ease, opacity 2s ease;
-  }
-  .case.is-active .intro-watermark { filter: blur(0px); opacity: 1; }
-
-  .intro-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; transform-style: preserve-3d; }
+  .intro-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(100px, 20vw, 300px); font-weight: 900; font-style: italic; letter-spacing: 0.05em; color: rgba(0,0,0,0.03); pointer-events: none; user-select: none; white-space: nowrap; z-index: 0; }
+  .intro-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
   .intro-eyebrow { font-size: 11px; letter-spacing: 0.5em; color: #7b1e1e; margin: 0 0 24px 0; font-weight: 700; text-transform: uppercase; }
   .intro-title { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .intro-title .line-1 { font-size: clamp(24px, 4vw, 40px); font-style: italic; color: rgba(0,0,0,0.5); font-weight: 400; }
-  .intro-title .line-2 { font-size: clamp(48px, 10vw, 120px); font-weight: 900; font-style: italic; line-height: 1; color: #000; }
+  .intro-title .line-2 { font-size: clamp(48px, 10vw, 110px); font-weight: 900; font-style: italic; line-height: 1; color: #000; }
   .intro-divider { width: 40px; height: 2px; background: #000; margin: 30px 0; opacity: 0.2; }
   .intro-sub { font-size: clamp(16px, 2vw, 22px); font-style: italic; color: #666; line-height: 1.6; margin: 0; }
   .scroll-hint { margin-top: 50px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
@@ -292,36 +230,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .case--file { align-items: center; width: 100%; }
-  .case-num { position: absolute; left: -3%; font-size: clamp(200px, 30vw, 500px); font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 2px rgba(0,0,0,0.06); user-select: none; z-index: 1; top: 50%; transform: translateY(-50%) translateZ(10px); }
-  
-  .case-text { position: relative; z-index: 2; width: 100%; max-width: 680px; margin-left: 15%; display: flex; flex-direction: column; justify-content: center; transform: translateZ(50px); }
+  .case-num { position: absolute; left: -3%; font-size: clamp(200px, 30vw, 500px); font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 2px rgba(0,0,0,0.06); user-select: none; opacity: 0; transform: translateY(-50%) translateX(-50px) scale(1.05); transition: opacity 0.5s ease, transform 0.5s ease; z-index: 1; top: 50%; }
+  .case.is-active .case-num { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); transition: opacity 1.4s ease 0.1s, transform 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s; }
+
+  .case-text { position: relative; z-index: 2; width: 100%; max-width: 680px; margin-left: 15%; display: flex; flex-direction: column; justify-content: center; }
   .case-header-group { margin-bottom: 24px; }
-  
-  .case-title { display: block; margin: 0; font-size: clamp(32px, 4vw, 56px); font-weight: 900; font-style: italic; line-height: 1.1; color: #000; clip-path: inset(-12% 100% -12% 0); transition: clip-path 0.5s ease; filter: blur(4px); }
-  .case.is-active .case-title { clip-path: inset(-12% 0 -12% 0); filter: blur(0); transition: clip-path 1.4s cubic-bezier(0.65, 0, 0.15, 1) 0.3s, filter 1s ease 0.3s; }
-  
+  .case-title { display: block; margin: 0; font-size: clamp(32px, 4vw, 56px); font-weight: 900; font-style: italic; line-height: 1.1; color: #000; clip-path: inset(-12% 100% -12% 0); transition: clip-path 0.5s ease; }
+  .case.is-active .case-title { clip-path: inset(-12% 0 -12% 0); transition: clip-path 1.3s cubic-bezier(0.65, 0, 0.15, 1) 0.3s; }
   .case-sub { font-size: clamp(16px, 1.8vw, 22px); font-style: italic; color: rgba(0,0,0,0.6); margin-top: 12px; opacity: 0; transform: translate3d(0, 24px, 0); filter: blur(6px); transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease; }
   .case.is-active .case-sub { opacity: 1; transform: none; filter: none; transition: opacity 1.1s ease 0.4s, transform 1.1s ease 0.4s, filter 1.1s ease 0.4s; }
-  
   .rule { display: block; width: 64px; height: 3px; margin: 16px 0; background: #7b1e1e; transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
   .case.is-active .rule { transform: scaleX(1); transition: transform 1s cubic-bezier(0.65, 0, 0.15, 1) 0.5s; }
-  
   .case-body { font-size: clamp(14px, 1.2vw + 2px, 17px); line-height: 1.9; color: #444; text-align: justify; opacity: 0; transform: translate3d(0, 24px, 0); filter: blur(6px); transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease; }
   .case.is-active .case-body { opacity: 1; transform: none; filter: none; transition: opacity 1.1s ease 0.6s, transform 1.1s ease 0.6s, filter 1.1s ease 0.6s; }
-  
   .stamp-art { position: absolute; right: -20px; top: -30px; color: #d4af37; font-family: 'Pinyon Script', cursive; font-size: 44px; pointer-events: none; opacity: 0; transform: rotate(var(--r, -8deg)) scale(2.4); transition: opacity 0.35s ease, transform 0.35s ease; }
   .case.is-active .stamp-art { opacity: 0.9; transform: rotate(var(--r, -8deg)) scale(1); transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s; }
 
-  .site-footer { border-top: 1px solid rgba(0,0,0,0.15); padding-top: 20px; font-size: 13px; color: #444; flex-shrink: 0; transform: translateZ(30px); }
+  .site-footer { border-top: 1px solid rgba(0,0,0,0.15); padding-top: 20px; font-size: 13px; color: #444; flex-shrink: 0; }
   .footer-main { display: flex; gap: 40px; }
   .footer-logo { font-size: 20px; font-weight: 700; font-style: italic; color: #000; }
   .footer-tagline { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 0.15em; color: #888; }
   .footer-bottom { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 10px; color: #999; }
-
-  .parallax-layer { transition: transform 0.1s ease-out; }
-
-  /* 动态生成的黑色虫洞遮罩 */
-  .portal-hole { position: fixed; background: #000; border-radius: 50%; transform: translate(-50%, -50%) scale(0); transition: transform 1s cubic-bezier(0.7, 0, 0.3, 1); pointer-events: none; z-index: 9998; }
 
   @media (max-width: 900px) {
     .case--file { flex-direction: column; justify-content: center; }
@@ -329,7 +258,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .case-text { margin-left: 0; max-width: 100%; }
     .stamp-art { right: 0; top: -20px; }
     .intro-title .line-2 { font-size: clamp(40px, 12vw, 80px); }
-    .parallax-layer { transition: none; transform: none !important; }
   }
 </style>
 
@@ -339,71 +267,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const progressRing = document.getElementById('progress-ring');
     const infoSection = document.getElementById('info-section');
     const rolesGrid = document.getElementById('roles-grid');
-    const actionArea = document.getElementById('action-area');
     const pageThree = document.getElementById('page-three');
     const p3Stage = document.getElementById('p3-stage');
-    const p3Inner = document.getElementById('p3-inner');
     const dwell = document.getElementById('p2-dwell');
     const cases = Array.from(document.querySelectorAll('.case'));
-    const parallaxLayers = Array.from(document.querySelectorAll('.parallax-layer'));
-    
-    const suspectBtn = document.getElementById('suspect-btn');
 
     if (!heroStage || !pageThree) return;
 
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const smooth = (t) => t * t * (3 - 2 * t);
-
-    // --- 核心穿越动画 ---
-    if (suspectBtn) {
-      suspectBtn.addEventListener('click', () => {
-        const pLetter = suspectBtn.querySelector('.target-p');
-        
-        // 获取 P 在屏幕上的精确位置
-        const rect = pLetter.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        // 创建动态黑洞
-        const hole = document.createElement('div');
-        hole.className = 'portal-hole';
-        hole.style.width = '20px'; // 初始大小，刚好覆盖 P 的圆孔
-        hole.style.height = '20px';
-        hole.style.left = `${centerX}px`;
-        hole.style.top = `${centerY}px`;
-        document.body.appendChild(hole);
-
-        // 强制重绘，确保过渡生效
-        void hole.offsetWidth;
-
-        // 触发字母放大和黑洞扩散
-        suspectBtn.classList.add('is-zooming');
-        hole.style.transform = 'translate(-50%, -50%) scale(300)'; // 扩散至全屏
-
-        // 等待黑洞铺满屏幕
-        setTimeout(() => {
-          // 瞬移到第三页
-          pageThree.scrollIntoView({ behavior: 'auto' });
-          
-          // 第三页设为“即将到达”状态（黑底，白纸 opacity: 0）
-          pageThree.classList.add('is-arriving');
-          
-          // 延迟一帧后，移除黑洞，白纸浮现
-          setTimeout(() => {
-            hole.style.opacity = '0';
-            hole.style.transition = 'opacity 0.5s ease';
-            
-            pageThree.classList.remove('is-arriving');
-            pageThree.classList.add('is-settled');
-            
-            // 清理现场
-            setTimeout(() => hole.remove(), 500);
-            suspectBtn.classList.remove('is-zooming');
-            window.dispatchEvent(new Event('scroll'));
-          }, 100);
-        }, 800);
-      });
-    }
 
     let step = -2;
     const setStep = (s) => {
@@ -414,34 +286,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         el.classList.toggle('is-past', i < s);
       });
     };
-
-    // --- 鼠标视差 ---
-    let mouseX = 0, mouseY = 0;
-    let targetX = 0, targetY = 0;
-
-    document.addEventListener('mousemove', (e) => {
-      targetX = (e.clientX / window.innerWidth - 0.5) * 2;
-      targetY = (e.clientY / window.innerHeight - 0.5) * 2;
-    });
-
-    const updateParallax = () => {
-      mouseX += (targetX - mouseX) * 0.05;
-      mouseY += (targetY - mouseY) * 0.05;
-
-      if (p3Inner) {
-        p3Inner.style.transform = `perspective(1500px) rotateX(${mouseY * 2}deg) rotateY(${-mouseX * 2}deg)`;
-      }
-
-      parallaxLayers.forEach(layer => {
-        const depth = parseFloat(layer.dataset.depth) || 1;
-        const moveX = -mouseX * 20 * depth;
-        const moveY = -mouseY * 20 * depth;
-        layer.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
-      });
-
-      requestAnimationFrame(updateParallax);
-    };
-    updateParallax();
 
     let ticking = false;
     const update = () => {
@@ -464,9 +308,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         infoSection.style.visibility = coverProgress >= 1 ? 'hidden' : 'visible';
       }
 
-      // 常规滚动时的 3D 倾斜盖入逻辑（如果用户不点按钮，纯手滑时的效果）
       if (p3Stage) {
-        if (e > 0 && e < 1 && !pageThree.classList.contains('is-settled')) {
+        if (e > 0 && e < 1) {
           const rotateX = (1 - e) * 50; 
           const scaleY = 1 - (1 - e) * 0.15;
           const translateY = (1 - e) * -20;
@@ -497,12 +340,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       const p2 = clamp((scrollY - windowHeight * 0.5) / (windowHeight * 0.5));
       const easeP2 = smooth(p2);
-      if (easeP2 >= 0.99) {
-        if (rolesGrid) { rolesGrid.style.transform = 'none'; rolesGrid.style.opacity = '1'; }
-        if (actionArea) { actionArea.style.transform = 'none'; actionArea.style.opacity = '1'; }
-      } else {
-        if (rolesGrid) { rolesGrid.style.transform = `translate3d(0, ${150 * (1 - easeP2) - lift}px, 0)`; rolesGrid.style.opacity = easeP2; }
-        if (actionArea) { actionArea.style.transform = `translate3d(0, ${180 * (1 - easeP2) - lift * 0.6}px, 0)`; actionArea.style.opacity = easeP2; }
+      if (rolesGrid) {
+        if (easeP2 >= 0.99) {
+          rolesGrid.style.transform = 'none'; rolesGrid.style.opacity = '1';
+        } else {
+          rolesGrid.style.transform = `translate3d(0, ${150 * (1 - easeP2) - lift}px, 0)`; rolesGrid.style.opacity = easeP2;
+        }
       }
 
       const s = rise > 0.2 ? Math.min(3, Math.floor(q * 4)) : -1;
