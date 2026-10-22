@@ -6,56 +6,11 @@
 .mono { font-family: 'Courier Prime', monospace; }
 .serif { font-family: 'Playfair Display', serif; }
 
-/* ====== 核心：焦糖融化动画 ====== */
-.melting {
-  /* 应用 SVG 滤镜 */
-  filter: url('#caramel-melt');
-  transform-origin: top center;
-  /* 整体微微下沉和拉长，模拟液体下坠 */
-  animation: meltDown 5s cubic-bezier(0.5, 0, 0.8, 0.2) forwards;
-}
-
-@keyframes meltDown {
-  0% {
-    transform: translateY(0) scaleY(1);
-    opacity: 1;
-  }
-  60% {
-    transform: translateY(2vh) scaleY(1.05);
-  }
-  100% {
-    transform: translateY(12vh) scaleY(1.2);
-    opacity: 0; /* 最终融化滴落消失 */
-  }
-}
-
-/* 控制 SVG 滤镜中的参数随时间变化 */
-#melt-displace {
-  animation: meltDisplace 5s linear forwards;
-}
-#melt-blur {
-  animation: meltBlur 5s linear forwards;
-}
-
-@keyframes meltDisplace {
-  0% { scale: 0; }
-  100% { scale: 30; } /* 扭曲程度急剧变大，拉出丝 */
-}
-@keyframes meltBlur {
-  0% { stdDeviation: 0; }
-  100% { stdDeviation: 1.5; } /* 边缘模糊，模拟粘稠感 */
-}
-
-/* 新的圆环进度条 */
+/* 圆环进度条 */
 .progress-ring {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  width: 36px;
-  height: 36px;
-  z-index: 9999;
-  transform: rotate(-90deg);
-  pointer-events: none;
+  position: fixed; top: 24px; right: 24px;
+  width: 36px; height: 36px; z-index: 9999;
+  transform: rotate(-90deg); pointer-events: none;
 }
 .ring-bg { stroke: rgba(255,255,255,0.15); }
 .ring-fill { stroke: #d4af37; transition: stroke-dashoffset 0.1s linear; }
@@ -87,6 +42,23 @@
 .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #888; margin: 0; }
 .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 .ink-break { -webkit-mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); filter: blur(0.3px) contrast(1.2); }
+
+/* ======== 液体融化动画核心 ======== */
+.melt-item {
+  display: inline-block;
+  transform-origin: top center;
+  will-change: transform, filter, opacity;
+}
+.melt-active .melt-item {
+  animation: meltDown 3.5s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+}
+@keyframes meltDown {
+  0% { transform: translateY(0) scaleY(1); filter: url(#melt-filter) blur(0px); opacity: 1; color: inherit; }
+  30% { transform: translateY(5px) scaleY(1.1); filter: url(#melt-filter) blur(1px); opacity: 0.9; color: #d4af37; }
+  70% { transform: translateY(30px) scaleY(1.4); filter: url(#melt-filter) blur(3px); opacity: 0.5; color: #7b1e1e; }
+  100% { transform: translateY(80px) scaleY(1.8); filter: url(#melt-filter) blur(8px); opacity: 0; color: #030303; }
+}
+/* ================================= */
 
 .scroll-spacer { height: 100vh; height: 100lvh; pointer-events: none; }
 .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; height: 100lvh; width: 100vw; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.9); overflow: hidden; transform-origin: 50% 35%; will-change: transform; }

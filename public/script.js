@@ -18,13 +18,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const ticks = Array.from(document.querySelectorAll('.tick'));
   const segFills = Array.from(document.querySelectorAll('.seg i'));
   
-  // 获取新的圆环进度条
   const progressRingFill = document.getElementById('progress-ring-fill');
-  const ringCircumference = 87.96; // 2 * PI * 14 (半径)
+  const ringCircumference = 87.96;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   heroStage.classList.add('loaded');
+
+  // ====== 5秒融化计时器 ======
+  let meltTimer = null;
+  const meltTarget = document.getElementById('melt-target');
+  
+  if (meltTarget) {
+    meltTimer = setTimeout(() => {
+      // 触发融化动画
+      meltTarget.classList.add('melt-active');
+    }, 5000); // 5秒后触发
+  }
+
+  // 如果用户滚动了页面，取消融化（或者你也可以让它继续融化，看你想怎么设计）
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50 && meltTimer) {
+      clearTimeout(meltTimer);
+      meltTimer = null;
+      if (meltTarget) meltTarget.classList.remove('melt-active');
+    }
+  }, { passive: true });
+  // ===========================
 
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const smooth = (t) => t * t * (3 - 2 * t);
@@ -39,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     newBg.classList.add('active');
   }, 30000);
 
-  // 点击 SUSPECT 放大 P 并纯白穿透
   const suspectBtn = document.getElementById('suspect-btn');
   const whiteScreen = document.getElementById('white-screen');
 
@@ -98,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalScrollable = Math.max(1, document.documentElement.scrollHeight - windowHeight);
     const globalProgress = clamp(scrollY / totalScrollable);
     
-    // 更新圆环进度
     if (progressRingFill) {
       const offset = ringCircumference - (globalProgress * ringCircumference);
       progressRingFill.style.strokeDashoffset = offset;

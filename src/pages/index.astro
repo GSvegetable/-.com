@@ -6,17 +6,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   
   <link rel="stylesheet" href="/style.css">
 
-  <!-- SVG 滤镜熔炉：用于模拟焦糖融化与拉丝 -->
-  <svg style="width: 0; height: 0; position: absolute;" aria-hidden="true">
+  <!-- SVG 液体融化滤镜 -->
+  <svg style="position: absolute; width: 0; height: 0;">
     <defs>
-      <filter id="caramel-melt" x="-20%" y="-20%" width="140%" height="140%">
-        <feTurbulence id="melt-noise" type="fractalNoise" baseFrequency="0.01 0.08" numOctaves="3" result="noise" />
-        <feDisplacementMap id="melt-displace" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-        <feGaussianBlur id="melt-blur" in="displaced" stdDeviation="0" result="blurred" />
-        <feMerge>
-          <feMergeNode in="blurred" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
+      <filter id="melt-filter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.01 0.1" numOctaves="3" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" />
       </filter>
     </defs>
   </svg>
@@ -43,27 +38,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
           <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
         </div>
-        <!-- 加上 melting 类 -->
-        <div class="newspaper-masthead melting" id="letter-content">
-          <div class="masthead-top mono">
+        <div class="newspaper-masthead" id="melt-target">
+          <div class="masthead-top mono melt-item">
             <span>VOL. I</span>
             <span>LONDON GAZETTE</span>
             <span>EST. 1888</span>
           </div>
           <div class="letter-body">
-            <div class="header-group">
+            <div class="header-group melt-item">
               <p class="salutation">To the Esteemed Visionaries,</p>
             </div>
             <div class="content-group">
-              <p class="greeting">Dear Partner,</p>
-              <p class="body-text">
+              <p class="greeting melt-item">Dear Partner,</p>
+              <p class="body-text melt-item" style="animation-delay: 0.5s;">
                 The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
               </p>
-              <p class="body-text">
+              <p class="body-text melt-item" style="animation-delay: 1s;">
                 We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Toronto</span>.
               </p>
             </div>
-            <div class="signature-group">
+            <div class="signature-group melt-item" style="animation-delay: 1.8s;">
               <p class="sign-off">Yours in the mist,</p>
               <p class="signature ink-break">Gong Shui.</p>
             </div>
@@ -105,6 +99,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="page-three" id="page-three" aria-label="Case files">
     <div class="p3-stage" id="p3-stage">
       <div class="p3-lantern" id="p3-lantern"></div>
+
       <div class="p3-inner">
         <header class="p3-mast mono">
           <span>NO. 001</span>
@@ -118,6 +113,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <span class="line"><span style="--i:1">The truth is</span></span>
               <span class="line"><span style="--i:2">buried in the mist.</span></span>
             </h2>
+            
             <div class="handwritten-area reveal" style="--i:4">
               <p class="handwritten-text">Three files. One city. Open them in order.</p>
               <div class="handwritten-hint">
@@ -183,11 +179,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <span class="mono">LONDON · SHANGHAI · TORONTO</span>
           </div>
         </footer>
+
       </div>
     </div>
   </section>
 
   <div class="white-screen" id="white-screen"></div>
+
 </BaseLayout>
 
 <script src="/script.js" defer></script>
