@@ -67,6 +67,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <section class="page-three" id="page-three">
     <div class="p3-stage" id="p3-stage">
+      
+      <!-- 新增：动态光晕与暗角背景 -->
+      <div class="p3-bg-glow" id="p3-glow"></div>
+      <div class="p3-vignette"></div>
+
       <div class="p3-inner">
         <header class="p3-mast mono">
           <span>NO. 001</span><span>THE BLANK FRONT PAGE</span><span>ONE PENNY</span>
@@ -157,7 +162,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   * { -webkit-tap-highlight-color: transparent !important; }
   a, div, button { outline: none !important; }
 
-  /* 使用 overflow-x: clip 替代 hidden，这是现代浏览器解决 3D 撑开的神器 */
   html { color-scheme: only light; overscroll-behavior-y: none; overflow-x: clip; max-width: 100vw; }
   body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; width: 100%; overflow-x: clip; max-width: 100vw; }
   ::-webkit-scrollbar { display: none; width: 0 !important; }
@@ -204,9 +208,38 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
 
-  /* page-three 强制截断所有横向溢出 */
-  .page-three { --paper-base: #ffffff; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100%; background-color: #030303; overflow-x: clip; }
-  .p3-stage { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; background-color: var(--paper-base); transform-origin: center top; will-change: transform, box-shadow; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
+  /* ====== 第三页：迷雾档案与动态煤气灯 ====== */
+  .page-three { 
+    --paper-base: #f2efe9; /* 复古羊皮纸色 */
+    --ink: #000000; 
+    position: relative; z-index: 30; height: 500vh; width: 100%; background-color: #030303; overflow-x: clip; 
+  }
+  
+  .p3-stage { 
+    position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; 
+    background-color: var(--paper-base); 
+    transform-origin: center top; will-change: transform, box-shadow; 
+    box-shadow: 0 -20px 50px rgba(0,0,0,0.1); 
+  }
+
+  /* 动态光晕层 */
+  .p3-bg-glow {
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(circle at center, rgba(255, 245, 220, 0.9) 0%, rgba(255, 245, 220, 0.4) 20%, transparent 60%);
+    will-change: transform;
+    transition: transform 0.1s linear;
+  }
+
+  /* 暗角，增强复古感 */
+  .p3-vignette {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    box-shadow: inset 0 0 150px rgba(60, 40, 20, 0.15);
+  }
+
   .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
   .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; }
@@ -247,17 +280,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .case.is-active .case-sub { opacity: 1; transform: none; filter: none; transition: opacity 1.1s ease 0.4s, transform 1.1s ease 0.4s, filter 1.1s ease 0.4s; }
   .rule { display: block; width: 64px; height: 3px; margin: 16px 0; background: #7b1e1e; transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
   .case.is-active .rule { transform: scaleX(1); transition: transform 1s cubic-bezier(0.65, 0, 0.15, 1) 0.5s; }
-  .case-body { font-size: clamp(14px, 1.2vw + 2px, 17px); line-height: 1.9; color: #444; text-align: justify; opacity: 0; transform: translate3d(0, 24px, 0); filter: blur(6px); transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease; }
+  .case-body { font-size: clamp(14px, 1.2vw + 2px, 17px); line-height: 1.9; color: #333; text-align: justify; opacity: 0; transform: translate3d(0, 24px, 0); filter: blur(6px); transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease; }
   .case.is-active .case-body { opacity: 1; transform: none; filter: none; transition: opacity 1.1s ease 0.6s, transform 1.1s ease 0.6s, filter 1.1s ease 0.6s; }
   .stamp-art { position: absolute; right: -20px; top: -30px; color: #d4af37; font-family: 'Pinyon Script', cursive; font-size: 44px; pointer-events: none; opacity: 0; transform: rotate(var(--r, -8deg)) scale(2.4); transition: opacity 0.35s ease, transform 0.35s ease; }
   .case.is-active .stamp-art { opacity: 0.9; transform: rotate(var(--r, -8deg)) scale(1); transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s; }
 
   .site-footer { 
-    position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 40px 40px; background-color: var(--paper-base); transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform; box-sizing: border-box; z-index: 10; border-top: 4px double #000;
+    position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 40px 40px; 
+    background-color: var(--paper-base); 
+    transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); 
+    will-change: transform; box-sizing: border-box; z-index: 10; border-top: 4px double #000;
   }
 
   .footer-top { display: grid; grid-template-columns: 1fr 1.5fr 1fr; align-items: center; gap: 20px; }
-
   .footer-col { display: flex; flex-direction: column; gap: 6px; }
   .footer-col.left { align-items: flex-start; }
   .footer-col.center { align-items: center; text-align: center; }
@@ -265,10 +300,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .footer-logo { font-size: 32px; font-weight: 700; font-style: italic; color: #000; line-height: 1; }
   .footer-sub { font-size: 9px; letter-spacing: 0.3em; color: #666; }
-
   .footer-quote { font-size: 12px; letter-spacing: 0.1em; color: #000; font-weight: 700; margin: 8px 0; }
   .footer-line { width: 40px; height: 1px; background: #000; opacity: 0.3; }
-
   .footer-col.right .mono { font-size: 10px; letter-spacing: 0.15em; color: #444; }
   .footer-confidential { color: #7b1e1e !important; font-weight: 700; letter-spacing: 0.2em !important; margin-top: 4px; }
 
@@ -287,6 +320,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const rolesGrid = document.getElementById('roles-grid');
     const pageThree = document.getElementById('page-three');
     const p3Stage = document.getElementById('p3-stage');
+    const p3Glow = document.getElementById('p3-glow'); // 获取光晕 DOM
     const siteFooter = document.getElementById('site-footer');
     const dwell = document.getElementById('p2-dwell');
     const cases = Array.from(document.querySelectorAll('.case'));
@@ -326,7 +360,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (infoSection) {
         infoSection.style.transform = e > 0 ? `translate3d(0, ${(e * 10).toFixed(2)}vh, 0)` : 'none';
         infoSection.style.opacity = 1 - e;
-        // 使用 opacity 控制不可见性，而不是 visibility:hidden，避免回滚时重排撑开页面
         infoSection.style.pointerEvents = coverProgress >= 1 ? 'none' : 'auto';
       }
 
@@ -346,6 +379,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const run = Math.max(1, p3.height - windowHeight);
       const q = clamp(-p3.top / run);
       
+      // ====== 光晕跟随滚动移动 ======
+      if (p3Glow) {
+        // 利用正弦余弦让光晕在屏幕内游走，模拟提灯阅读
+        // 当 q 从 0 到 1 时，光晕在 X 轴走一个完整的来回，Y 轴缓慢下移
+        const glowX = Math.sin(q * Math.PI * 1.5) * 40; // 左右摆动幅度
+        const glowY = Math.cos(q * Math.PI * 1.5) * 20 + (q * 30); // 上下摆动并缓慢下沉
+        
+        // 使用 translate3d 触发 GPU 加速，不消耗 CPU
+        p3Glow.style.transform = `translate3d(${glowX}%, ${glowY}%, 0)`;
+      }
+
       if (siteFooter) {
         if (q > 0.95) siteFooter.style.transform = 'translateY(0)';
         else siteFooter.style.transform = 'translateY(100%)';
