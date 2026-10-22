@@ -195,9 +195,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
   .ink-break { -webkit-mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); filter: blur(0.3px) contrast(1.2); }
+  
   .scroll-spacer { height: 100vh; height: 100lvh; pointer-events: none; }
 
-  /* 修复纯黑：去除原来的 mask-image，改用圆角和阴影 */
   .info-section { position: relative; z-index: 20; min-height: 100vh; min-height: 100lvh; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 40px rgba(0,0,0,0.8); overflow: hidden; }
   .p2-dwell { height: 60vh; height: 60lvh; pointer-events: none; }
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
@@ -220,11 +220,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* 第三页：优化配色，去掉脏黄感 */
   .page-three { 
-    --paper-base: #d4cfc3; /* 更灰的复古纸色 */
+    --paper-base: #d4cfc3;
     --paper-light: #e3ded1;
-    --ink: #1a1714; /* 更深的墨黑 */
+    --ink: #1a1714;
     --ink-soft: #363028; 
     --oxblood: #7a2121; 
     --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .08 0 0 0 0 .05 0 0 0 .4 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); 
@@ -310,126 +309,5 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   @media (prefers-reduced-motion: reduce) { .case, .reveal, .case-num, .case-title, .rule, .stamp, .intro-title .line > span, .p3-lantern { transition-duration: 0.01s !important; transition-delay: 0s !important; } .hint i { animation: none; } }
 </style>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const heroStage = document.getElementById('hero-masthead');
-    const infoSection = document.getElementById('info-section');
-    const rolesGrid = document.getElementById('roles-grid');
-    const actionArea = document.getElementById('action-area');
-    
-    const pageThree = document.getElementById('page-three');
-    const cases = Array.from(document.querySelectorAll('.case'));
-    const ticks = Array.from(document.querySelectorAll('.tick'));
-    const segFills = Array.from(document.querySelectorAll('.seg i'));
-    const lantern = document.getElementById('p3-lantern');
-    const fogA = document.getElementById('fog-a');
-    const fogB = document.getElementById('fog-b');
-    const bgImages = document.querySelectorAll('.bg-image');
-
-    heroStage.classList.add('loaded');
-
-    let scrollY = 0;
-    let vh = window.innerHeight;
-    
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let lanternX = mouseX;
-    let lanternY = mouseY;
-
-    window.addEventListener('resize', () => { vh = window.innerHeight; });
-
-    window.addEventListener('scroll', () => {
-      scrollY = window.scrollY;
-    }, { passive: true });
-
-    window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    function tick() {
-      // 1. 第一页退场 3D
-      const heroProgress = Math.max(0, Math.min(scrollY / vh, 1));
-      if (heroProgress < 1.2) {
-        heroStage.style.transform = `translate3d(0, ${-10 - heroProgress * 20}vh, 0) rotateX(${heroProgress * 25}deg) scaleY(${1 - heroProgress * 0.1})`;
-        heroStage.style.opacity = 1 - heroProgress;
-      }
-
-      // 2. 第二页内容显现
-      const infoRect = infoSection.getBoundingClientRect();
-      if (infoRect.top < vh * 0.8) {
-        rolesGrid.classList.add('show');
-        actionArea.classList.add('show');
-      } else {
-        rolesGrid.classList.remove('show');
-        actionArea.classList.remove('show');
-      }
-
-      // 3. 第三页 滚动切卡逻辑
-      const p3Rect = pageThree.getBoundingClientRect();
-      const p3Height = pageThree.offsetHeight;
-      const maxScroll = p3Height - vh;
-      const p3Scroll = Math.max(0, Math.min(-p3Rect.top, maxScroll));
-      
-      let activeIndex = -1;
-      if (p3Rect.top <= vh && p3Rect.bottom >= 0) {
-        // 根据滚动进度分配 (4段)
-        activeIndex = Math.floor((p3Scroll / maxScroll) * 4);
-        if (activeIndex > 3) activeIndex = 3;
-      }
-
-      cases.forEach((c, i) => {
-        c.classList.remove('is-active', 'is-past');
-        if (activeIndex === i) {
-          c.classList.add('is-active');
-        } else if (activeIndex > i) {
-          c.classList.add('is-past');
-        }
-      });
-
-      ticks.forEach((t, i) => {
-        if (i === activeIndex) t.classList.add('is-on');
-        else t.classList.remove('is-on');
-      });
-
-      // 底部进度条连动
-      segFills.forEach((seg, i) => {
-        if (activeIndex > i) {
-          seg.style.transform = 'scaleX(1)';
-        } else if (activeIndex === i) {
-          const localProgress = (p3Scroll / maxScroll - (i * 0.25)) / 0.25;
-          seg.style.transform = `scaleX(${Math.max(0, Math.min(1, localProgress))})`;
-        } else {
-          seg.style.transform = 'scaleX(0)';
-        }
-      });
-
-      // 4. 灯笼跟随鼠标缓动
-      lanternX += (mouseX - lanternX) * 0.08;
-      lanternY += (mouseY - lanternY) * 0.08;
-      if (lantern) {
-        lantern.style.transform = `translate(${lanternX}px, ${lanternY}px)`;
-      }
-
-      // 5. 雾气漂移
-      if (fogA && fogB) {
-        const time = Date.now() * 0.0001;
-        fogA.style.transform = `translateX(${Math.sin(time) * 60}px)`;
-        fogB.style.transform = `translateX(${Math.cos(time) * 80}px)`;
-      }
-
-      // 6. 背景图轮换
-      if (bgImages.length > 0) {
-        const imgIndex = Math.floor(heroProgress * bgImages.length) % bgImages.length;
-        bgImages.forEach((img, idx) => {
-          if (idx === imgIndex) img.classList.add('active');
-          else img.classList.remove('active');
-        });
-      }
-
-      requestAnimationFrame(tick);
-    }
-
-    requestAnimationFrame(tick);
-  });
-</script>
+<script src="/script.js" defer></script>
+</BaseLayout>
