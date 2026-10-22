@@ -4,13 +4,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="The Blank Front Page">
   
-  <style is:global>
-    /* 强制锁定浏览器为浅色模式，禁止自动反色 */
-    html, body {
-      color-scheme: only light !important;
-    }
-  </style>
-
   <link rel="stylesheet" href="/style.css">
 
   <!-- 新的圆环进度条 -->
@@ -35,26 +28,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
           <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
         </div>
-        <div class="newspaper-masthead" id="melt-target">
-          <div class="masthead-top mono melt-item">
+        <div class="newspaper-masthead">
+          <div class="masthead-top mono">
             <span>VOL. I</span>
             <span>LONDON GAZETTE</span>
             <span>EST. 1888</span>
           </div>
           <div class="letter-body">
-            <div class="header-group melt-item">
+            <div class="header-group">
               <p class="salutation">To the Esteemed Visionaries,</p>
             </div>
             <div class="content-group">
-              <p class="greeting melt-item">Dear Partner,</p>
-              <p class="body-text melt-item" style="animation-delay: 0.5s;">
+              <p class="greeting">Dear Partner,</p>
+              <p class="body-text">
                 The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
               </p>
-              <p class="body-text melt-item" style="animation-delay: 1s;">
+              <p class="body-text">
                 We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Toronto</span>.
               </p>
             </div>
-            <div class="signature-group melt-item" style="animation-delay: 1.8s;">
+            <div class="signature-group">
               <p class="sign-off">Yours in the mist,</p>
               <p class="signature ink-break">Gong Shui.</p>
             </div>

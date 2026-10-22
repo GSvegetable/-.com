@@ -15,30 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const fogA = document.getElementById('fog-a');
   const fogB = document.getElementById('fog-b');
   const cases = Array.from(document.querySelectorAll('.case'));
+  const ticks = Array.from(document.querySelectorAll('.tick'));
+  const segFills = Array.from(document.querySelectorAll('.seg i'));
   
+  // 获取新的圆环进度条
   const progressRingFill = document.getElementById('progress-ring-fill');
-  const ringCircumference = 87.96;
+  const ringCircumference = 87.96; // 2 * PI * 14 (半径)
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   heroStage.classList.add('loaded');
-
-  // 融化计时器
-  let meltTimer = null;
-  const meltTarget = document.getElementById('melt-target');
-  if (meltTarget) {
-    meltTimer = setTimeout(() => {
-      meltTarget.classList.add('melt-active');
-    }, 5000);
-  }
-
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50 && meltTimer) {
-      clearTimeout(meltTimer);
-      meltTimer = null;
-      if (meltTarget) meltTarget.classList.remove('melt-active');
-    }
-  }, { passive: true });
 
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const smooth = (t) => t * t * (3 - 2 * t);
@@ -53,8 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
     newBg.classList.add('active');
   }, 30000);
 
+  // 点击 SUSPECT 放大 P 并纯白穿透
   const suspectBtn = document.getElementById('suspect-btn');
   const whiteScreen = document.getElementById('white-screen');
+
   if (suspectBtn) {
     suspectBtn.addEventListener('click', () => {
       if (suspectBtn.classList.contains('is-zooming')) return;
@@ -71,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.toggle('is-active', i === s);
       el.classList.toggle('is-past', i < s);
     });
+    ticks.forEach((t, i) => t.classList.toggle('is-on', s >= i + 1));
   };
 
   let ptr = null;
@@ -92,6 +81,16 @@ document.addEventListener('DOMContentLoaded', () => {
   stage.addEventListener('pointercancel', clearPtr);
   stage.addEventListener('pointerup', (ev) => { if (ev.pointerType !== 'mouse') clearPtr(); });
 
+  ticks.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const k = Number(btn.dataset.k);
+      const r = pageThree.getBoundingClientRect();
+      const absTop = r.top + window.scrollY;
+      const run = Math.max(1, r.height - stage.offsetHeight);
+      window.scrollTo({ top: absTop + run * (0.25 * (k + 1) + 0.04), behavior: 'smooth' });
+    });
+  });
+
   const update = () => {
     const scrollY = window.scrollY;
     const windowHeight = window.innerHeight;
@@ -99,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalScrollable = Math.max(1, document.documentElement.scrollHeight - windowHeight);
     const globalProgress = clamp(scrollY / totalScrollable);
     
+    // 更新圆环进度
     if (progressRingFill) {
       const offset = ringCircumference - (globalProgress * ringCircumference);
       progressRingFill.style.strokeDashoffset = offset;
@@ -165,6 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const s = rise > 0.2 ? Math.min(3, Math.floor(q * 4)) : -1;
     setStep(s);
+    segFills[0].style.transform = `scaleX(${clamp((q - 0.25) / 0.25).toFixed(3)})`;
+    segFills[1].style.transform = `scaleX(${clamp((q - 0.5) / 0.25).toFixed(3)})`;
     if (!reduceMotion) placeLantern(q);
   };
 
