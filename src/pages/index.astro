@@ -100,8 +100,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </div>
           </article>
 
-          <!-- File I -->
-          <article class="case case--file">
+          <!-- File I: 添加特殊类名 case--first，保留遮罩拉开 -->
+          <article class="case case--file case--first">
             <div class="case-num serif" aria-hidden="true">I</div>
             <div class="case-text">
               <div class="case-header-group">
@@ -261,7 +261,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-  /* ====== 第三页：极简白底、叠印排版 ====== */
+  /* ====== 第三页 ====== */
   .page-three { 
     --paper-base: #ffffff; 
     --ink: #000000; 
@@ -281,17 +281,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   
   .p3-inner { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; padding: clamp(24px, 4vw, 56px) clamp(24px, 5vw, 80px) clamp(24px, 4vh, 48px); }
   
-  /* 顶栏收紧 */
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: var(--ink-soft); padding-bottom: 16px; border-bottom: 4px double rgba(0,0,0,0.8); font-weight: 700; text-transform: uppercase; flex-shrink: 0; }
   
-  /* 内容区撑满 */
-  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
+  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; overflow: hidden; /* 防止横向滑出撑开滚动条 */ }
 
-  /* 动画基本保留，只修改布局 */
-  .case { position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, 4vh, 0); transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s; }
-  .case.is-past { transform: translate3d(0, -4vh, 0); }
-  .case.is-active { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity 0.8s ease 0.15s, transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s, visibility 0s linear 0s; }
-  
+  /* 基础 case 隐藏逻辑 */
+  .case { position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; }
+  .case.is-past { visibility: hidden; pointer-events: none; }
+  .case.is-active { opacity: 1; visibility: visible; pointer-events: auto; }
+
   /* Intro 页 */
   .case--intro { flex-direction: column; align-items: center; justify-content: center; text-align: center; }
   .intro-title { margin: 0; font-weight: 900; font-style: italic; font-size: clamp(42px, 9vw, 130px); line-height: 0.95; text-wrap: balance; color: var(--ink); }
@@ -305,14 +303,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .hint i { display: block; width: 2px; height: 48px; background: linear-gradient(var(--ink), transparent); transform-origin: top; animation: drip 2.4s ease-in-out infinite; }
   @keyframes drip { 0% { transform: scaleY(0); opacity: 0; } 40% { opacity: 1; } 70% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
 
-  /* ====== 叠印图文排版核心 ====== */
+  /* ====== 横向滑轨 & 叠印 ====== */
   .case--file { 
     position: relative;
     align-items: center;
     width: 100%;
   }
 
-  /* 巨大的空心罗马数字作为背景 */
+  /* 巨大的空心数字：原地淡入淡出，不横向滑动 */
   .case-num { 
     position: absolute;
     left: -5%; 
@@ -321,97 +319,70 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-weight: 900;
     line-height: 0.8;
     letter-spacing: -0.06em;
-    font-size: clamp(240px, 35vw, 600px); /* 极其巨大 */
+    font-size: clamp(240px, 35vw, 600px); 
     color: transparent;
-    -webkit-text-stroke: 2px rgba(0,0,0,0.08); /* 颜色非常淡 */
+    -webkit-text-stroke: 2px rgba(0,0,0,0.08); 
     user-select: none;
     opacity: 0;
-    transform: translateY(-50%) translateX(-50px) scale(1.05);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: translateY(-50%) scale(1.05);
+    transition: opacity 0.6s ease, transform 0.6s ease;
     z-index: 1;
+    pointer-events: none;
   }
   .case.is-active .case-num {
     opacity: 1;
-    transform: translateY(-50%) translateX(0) scale(1);
-    transition: opacity 1.4s ease 0.1s, transform 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s;
+    transform: translateY(-50%) scale(1);
+    transition: opacity 1s ease 0.1s, transform 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s;
+  }
+  .case.is-past .case-num {
+    opacity: 0;
   }
 
-  /* 文本层向右偏移，压住数字的右侧 */
+  /* 文字层：核心横向移动 */
   .case-text { 
     position: relative;
     z-index: 2;
     width: 100%;
     max-width: 580px;
-    margin-left: 20%; /* 向右推，产生叠印感 */
+    margin-left: 20%; 
     display: flex;
     flex-direction: column;
     justify-content: center;
+    
+    /* 基础状态（未来要进入的）：在右侧隐藏，透明 */
+    transform: translateX(150px); 
+    opacity: 0;
+    transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.8s ease;
   }
-  
-  /* 拉大标题与正文间距 */
-  .case-header-group { margin-bottom: 40px; }
-  
-  .case-title { 
-    display: block; margin: 0; 
-    font-weight: 900; font-style: italic;
-    font-size: clamp(40px, 5.5vw, 80px); 
-    line-height: 1.05;
-    color: var(--ink); 
-    clip-path: inset(-12% 100% -12% 0);
-    transition: clip-path 0.5s ease;
+
+  /* 当前激活的：在正中间 */
+  .case.is-active .case-text {
+    transform: translateX(0);
+    opacity: 1;
+    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s, opacity 0.9s ease 0.1s;
   }
-  .case.is-active .case-title { 
-    clip-path: inset(-12% 0 -12% 0); 
+
+  /* 过去的（被划走的）：滑到左边并消失 */
+  .case.is-past .case-text {
+    transform: translateX(-150px);
+    opacity: 0;
+    transition: transform 0.8s cubic-bezier(0.5, 0, 0.2, 1), opacity 0.8s ease;
+  }
+
+  /* 处理第一页的“遮罩拉开”特殊出场 */
+  .case--first.is-active .case-title {
+    clip-path: inset(-12% 0 -12% 0);
     transition: clip-path 1.3s cubic-bezier(0.65, 0, 0.15, 1) calc(0.3s + var(--i, 0) * 0.12s); 
   }
-  
-  .case-sub { 
-    font-style: italic; 
-    font-size: clamp(18px, 2vw, 26px); 
-    color: rgba(0,0,0,0.5); /* 字重变轻，不抢戏 */
-    margin: 16px 0 0 0; 
+  .case--first .case-title {
+    clip-path: inset(-12% 100% -12% 0); 
   }
-  
-  /* 红色分割线 */
-  .rule { 
-    display: block; 
-    width: 80px; 
-    height: 3px; 
-    margin: 0 0 32px 0; 
-    background: var(--oxblood); 
-    transform: scaleX(0); 
-    transform-origin: left; 
-    transition: transform 0.4s ease; 
+  /* 其他页的标题不需要遮罩，直接随文字平移 */
+  .case:not(.case--first) .case-title {
+    clip-path: inset(-12% 0 -12% 0);
   }
-  .case.is-active .rule { 
-    transform: scaleX(1); 
-    transition: transform 1s cubic-bezier(0.65, 0, 0.15, 1) calc(0.5s + var(--i, 0) * 0.12s); 
-  }
-  
-  /* 正文：巨大的行高与字间距，拉满呼吸感 */
-  .case-body { 
-    font-size: clamp(16px, 1.4vw + 2px, 18px); 
-    line-height: 2.1; /* 这里行高从 1.8 提到了 2.1 */
-    color: var(--ink-soft); 
-    margin: 0; 
-    max-width: 48em; 
-    text-align: justify; 
-  }
-  .case-body.dropcap::first-letter { 
-    float: left; 
-    font-weight: 900; 
-    font-size: 4.5em; 
-    line-height: 0.75; 
-    padding: 0.1em 0.1em 0 0; 
-    color: #d4af37; /* 金色首字 */
-    font-style: italic; 
-  }
-  
-  .p3-sign { margin-top: 40px; }
-  .p3-sign-off { font-style: italic; font-size: 16px; color: var(--ink-soft); margin: 0; }
-  .p3-signature { font-family: 'Pinyon Script', cursive; font-size: clamp(54px, 6vw, 84px); color: var(--ink); margin: -6px 0 0; line-height: 1; display: inline-block; transform: rotate(-5deg); transform-origin: left center; }
-  
-  /* 金色印章，稍微向右上角移一点，不挡住文字 */
+
+  /* 印章：原地缩放弹入，不横向滑动 */
   .stamp-art { 
     position: absolute; right: 0; top: -50px; 
     color: #d4af37; 
@@ -431,15 +402,70 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transform: rotate(var(--r, -8deg)) scale(1); 
     transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s; 
   }
+  .case.is-past .stamp-art {
+    opacity: 0; 
+    transition: opacity 0.3s ease;
+  }
+  
+  .case-header-group { margin-bottom: 40px; }
+  
+  .case-title { 
+    display: block; margin: 0; 
+    font-weight: 900; font-style: italic;
+    font-size: clamp(40px, 5.5vw, 80px); 
+    line-height: 1.05;
+    color: var(--ink); 
+  }
+  
+  .case-sub { 
+    font-style: italic; 
+    font-size: clamp(18px, 2vw, 26px); 
+    color: rgba(0,0,0,0.5); 
+    margin: 16px 0 0 0; 
+  }
+  
+  .rule { 
+    display: block; width: 80px; height: 3px; margin: 0 0 32px 0; 
+    background: var(--oxblood); 
+    transform: scaleX(0); transform-origin: left; 
+    transition: transform 0.4s ease; 
+  }
+  .case.is-active .rule { 
+    transform: scaleX(1); 
+    transition: transform 1s cubic-bezier(0.65, 0, 0.15, 1) calc(0.5s + var(--i, 0) * 0.12s); 
+  }
+  .case.is-past .rule { transform: scaleX(0); }
+
+  .case-body { 
+    font-size: clamp(16px, 1.4vw + 2px, 18px); 
+    line-height: 2.1; 
+    color: var(--ink-soft); 
+    margin: 0; 
+    max-width: 48em; 
+    text-align: justify; 
+  }
+  .case-body.dropcap::first-letter { 
+    float: left; font-weight: 900; font-size: 4.5em; line-height: 0.75; 
+    padding: 0.1em 0.1em 0 0; color: #d4af37; font-style: italic; 
+  }
+  
+  .p3-sign { margin-top: 40px; }
+  .p3-sign-off { font-style: italic; font-size: 16px; color: var(--ink-soft); margin: 0; }
+  .p3-signature { font-family: 'Pinyon Script', cursive; font-size: clamp(54px, 6vw, 84px); color: var(--ink); margin: -6px 0 0; line-height: 1; display: inline-block; transform: rotate(-5deg); transform-origin: left center; }
+
+  /* 出场动画（淡化+模糊） */
+  .reveal { opacity: 0; transform: translateY(24px); filter: blur(6px); transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease; }
+  .case.is-active .reveal { 
+    opacity: 1; transform: none; filter: none; 
+    transition: opacity 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.3s + var(--i, 0) * 0.12s), transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.3s + var(--i, 0) * 0.12s), filter 1.1s ease calc(0.3s + var(--i, 0) * 0.12s); 
+  }
+  .case.is-past .reveal { opacity: 0; transform: translateY(-24px); }
 
   /* 底部页脚 */
   .site-footer {
     border-top: 1px solid rgba(0,0,0,0.15);
-    padding-top: 20px;
-    font-size: 13px;
-    color: var(--ink-soft);
-    flex-shrink: 0;
-    z-index: 4;
+    padding-top: 20px; font-size: 13px; color: var(--ink-soft);
+    flex-shrink: 0; z-index: 4;
   }
   .footer-main { display: flex; justify-content: flex-start; align-items: flex-start; gap: 40px; }
   .footer-brand { flex: 1; min-width: 160px; }
@@ -447,41 +473,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .footer-tagline { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 0.15em; color: #888; text-transform: uppercase; }
   .footer-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 10px; letter-spacing: 0.08em; color: #999; flex-wrap: wrap; gap: 8px; }
 
-  /* 动画出场 */
-  .reveal { opacity: 0; transform: translate3d(0, 24px, 0); filter: blur(6px); transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease; }
-  .case.is-past .reveal { transform: translate3d(0, -24px, 0); }
-  .case.is-active .reveal { opacity: 1; transform: none; filter: none; transition: opacity 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.3s + var(--i, 0) * 0.12s), transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.3s + var(--i, 0) * 0.12s), filter 1.1s ease calc(0.3s + var(--i, 0) * 0.12s); }
-
-  /* ====== 平板/手机端适配（取消叠印，防止文字重叠） ====== */
+  /* 移动端适配 */
   @media (max-width: 900px) {
     .case--file {
-      flex-direction: column;
-      justify-content: center;
-      padding: 20px 0;
+      flex-direction: column; justify-content: center; padding: 20px 0;
     }
-    /* 数字移到背后正中央，极度淡化 */
     .case-num {
-      left: 50%;
-      top: 50%;
-      font-size: 80vw;
-      opacity: 0.4;
-      transform: translate(-50%, -50%);
+      left: 50%; top: 50%; font-size: 80vw;
+      opacity: 0.4; transform: translate(-50%, -50%);
       -webkit-text-stroke: 2px rgba(0,0,0,0.05);
     }
-    .case.is-active .case-num {
-      transform: translate(-50%, -50%) scale(1.05); /* 稍微放大 */
-      opacity: 0.6;
-    }
-    /* 文本收回正中 */
+    .case.is-active .case-num { transform: translate(-50%, -50%) scale(1.05); opacity: 0.6; }
+    
     .case-text {
-      margin-left: 0;
-      padding: 0;
-      max-width: 100%;
+      margin-left: 0; padding: 0; max-width: 100%;
     }
-    .case-body {
-      line-height: 1.9;
-      text-align: left;
-    }
+    .case-body { line-height: 1.9; text-align: left; }
     .case-header-group { margin-bottom: 24px; }
     .p3-sign { margin-top: 32px; }
     .stamp-art { top: -40px; right: 10px; }
@@ -497,7 +504,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .salutation { font-size: 36px; } 
     .info-section { padding: 80px 20px; border-radius: 40px 40px 0 0; }
   }
-  @media (prefers-reduced-motion: reduce) { .case, .reveal, .case-num, .case-title, .rule, .stamp-art, .intro-title .line > span, .p3-lantern { transition-duration: 0.01s !important; transition-delay: 0s !important; } .hint i { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { 
+    .case, .reveal, .case-num, .case-title, .rule, .stamp-art, .intro-title .line > span, .p3-lantern, .case-text { 
+      transition-duration: 0.01s !important; transition-delay: 0s !important; 
+    } 
+    .hint i { animation: none; } 
+  }
 </style>
 
 <script src="/script.js" defer></script>
