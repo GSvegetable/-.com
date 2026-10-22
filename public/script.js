@@ -134,10 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const d = clamp(1 - (p3.top - windowHeight) / dwellH);
     const lift = d * 18 + e * 30;
 
-    // --- 解决第一页不拉伸的BUG ---
-    // 解除限制，让进度随着滚动一直增加
     const heroRawProgress = scrollY / windowHeight;
-    // 最大倾斜 89 度（极度拉长，填满屏幕）
     const rotateX = Math.min(89, heroRawProgress * 70); 
     const rad = rotateX * Math.PI / 180;
     const stretchY = (1 / Math.cos(rad)) * 1.05; 
@@ -148,12 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
       rotateX(${rotateX}deg) 
       scaleY(${stretchY})
     `;
-    // 透明度根据无限拉长的进度来计算
     heroStage.style.opacity = Math.max(0, 1 - (heroRawProgress * 0.3)) * (1 - rise);
     heroSection.style.visibility = rise >= 1 ? 'hidden' : 'visible';
     fadeMask.style.opacity = Math.max(0, (heroRawProgress - 0.3) * 1.5);
 
-    let maskStop = 35 - ((scrollY - windowHeight * 0.8) / (windowHeight * 0.8)) * 35;
+    // ====== 核心修改：到 17% 时彻底变实体 ======
+    let maskStop = 35 - (globalProgress / 0.17) * 35;
     maskStop = Math.max(0, maskStop);
     
     if (maskStop > 0.1) {
