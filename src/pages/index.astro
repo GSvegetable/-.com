@@ -15,7 +15,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="p3-stage" id="p3-stage">
       <div class="paper-texture"></div>
       
-      <!-- 黑暗吞噬层：随着滚动从底部覆盖上来 -->
+      <!-- 黑暗吞噬层 -->
       <div class="ink-invader" id="ink-invader"></div>
 
       <div class="p3-inner" id="p3-inner">
@@ -24,7 +24,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </header>
 
         <div class="p3-cases">
-          <!-- 卷宗内容保持不变 -->
           <article class="case case--intro">
             <div class="intro-watermark serif parallax-layer" data-depth="0.2">PROLOGUE</div>
             <div class="intro-content parallax-layer" data-depth="1">
@@ -121,7 +120,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="letter-section" id="letter-section">
     <div class="perspective-wrap">
       <div class="letter-stage" id="letter-stage">
-        <!-- 信纸的金色光边 -->
         <div class="letter-glow-edge"></div>
         
         <div class="bg-layer">
@@ -188,7 +186,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   /* --- 第一幕：白纸与黑暗吞噬 --- */
-  .page-three { --paper-base: #fcfcfc; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: transparent; }
+  /* 核心修复1：增加高度到 650vh，留出巨大缓冲，防止第一页被推走 */
+  .page-three { --paper-base: #fcfcfc; position: relative; z-index: 30; height: 650vh; width: 100vw; background-color: transparent; }
   
   .p3-stage { 
     position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: var(--paper-base);
@@ -201,11 +200,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     mix-blend-mode: multiply; opacity: 0.8;
   }
 
-  /* 核心：黑暗吞噬遮罩 */
+  /* 核心修复2：非常柔和的渐变，看起来像是深渊吞噬，而不是硬块推挤 */
   .ink-invader {
     position: absolute; inset: 0; z-index: 5; pointer-events: none;
-    background: linear-gradient(to bottom, transparent 0%, #030303 40%, #030303 100%);
-    /* 初始完全在底部之外 */
+    background: linear-gradient(to bottom, 
+      transparent 0%, 
+      rgba(3,3,3,0.2) 15%, 
+      rgba(3,3,3,0.8) 35%, 
+      #030303 60%, 
+      #030303 100%);
     transform: translateY(100%);
     will-change: transform;
   }
@@ -266,7 +269,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   /* --- 第二幕：招募页 --- */
   .recruit-section { position: relative; z-index: 20; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #030303; overflow: hidden; }
-  /* 实现文字从黑暗中浮现 */
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
   .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(40px); opacity: 0; will-change: transform, opacity; }
   @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -291,7 +293,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     background: #0a0a0a;
   }
 
-  /* 金色光影勾边 */
   .letter-glow-edge {
     position: absolute; top: 0; left: 0; width: 100%; height: 10px; 
     background: linear-gradient(to bottom, rgba(212,175,55,0.8), transparent);
@@ -421,23 +422,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       // 1. 卷宗核心逻辑
       const p3 = pageThree.getBoundingClientRect();
-      const riseP3 = clamp(1 - p3.top / windowHeight); 
-      const run = Math.max(1, p3.height - windowHeight);
+      
+      // 核心修复3：让动画严格在前 450vh 内走完，后续 200vh 保持纯黑屏静止
+      const run = windowHeight * 4.5; 
       const q = clamp(-p3.top / run);
       
-      const s = riseP3 > 0.1 ? Math.min(3, Math.floor(q * 4)) : -1;
+      const s = Math.min(3, Math.floor(q * 4));
       setStep(s);
 
-      // 核心改进：计算黑暗吞噬进度 (最后 20% 的滚动时间用来转场)
-      const invadeProgress = clamp((q - 0.8) / 0.2);
+      // 核心修复4：前 75% 展示，75% - 100% 黑暗完全吞噬
+      const invadeProgress = clamp((q - 0.75) / 0.25);
       if (inkInvader) {
-        // 从底部 100% 移到 0%
-        inkInvader.style.transform = `translateY(${100 - invadeProgress * 100}%)`;
+        const smoothInvade = smooth(invadeProgress); 
+        inkInvader.style.transform = `translateY(${100 - smoothInvade * 100}%)`;
       }
 
       // 2. 招募页逻辑
       const recruitRect = recruitSection.getBoundingClientRect();
-      // 当黑色遮罩盖满时，招募页文字渐渐浮现
       const p2 = clamp((scrollY - pageThree.offsetHeight + windowHeight) / (windowHeight * 0.8));
       const easeP2 = smooth(p2);
       
@@ -462,10 +463,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           const translateY = (1 - e) * -20;
           
           letterStage.style.transform = `perspective(1500px) rotateX(${rotateX}deg) scaleY(${scaleY}) translateY(${translateY}vh)`;
-          if (letterGlowEdge) letterGlowEdge.style.opacity = 1; // 展开时显示金边
+          if (letterGlowEdge) letterGlowEdge.style.opacity = 1;
         } else if (e >= 1) {
           letterStage.style.transform = 'none';
-          if (letterGlowEdge) letterGlowEdge.style.opacity = 0; // 盖好后金边消失
+          if (letterGlowEdge) letterGlowEdge.style.opacity = 0;
         }
       }
 
