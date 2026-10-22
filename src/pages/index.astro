@@ -7,7 +7,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- 全局噪点遮罩 -->
   <div class="noise-overlay"></div>
   <div class="progress-ring" id="progress-ring"></div>
 
@@ -76,11 +75,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <section class="page-three" id="page-three">
     <div class="p3-stage" id="p3-stage">
-      
-      <!-- 纸张纹理叠加 -->
       <div class="paper-texture"></div>
 
-      <div class="p3-inner">
+      <!-- 给内层加上 ID，专门用来处理鼠标视差，与外层滚动隔离 -->
+      <div class="p3-inner" id="p3-inner">
         <header class="p3-mast mono">
           <span>NO. 001</span><span>THE BLANK FRONT PAGE</span><span>ONE PENNY</span>
         </header>
@@ -168,7 +166,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .mono { font-family: 'Courier Prime', monospace; }
   .serif { font-family: 'Playfair Display', serif; }
 
-  /* --- 全局噪点与进度环 --- */
   .noise-overlay {
     position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0.06;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
@@ -184,7 +181,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   /* --- 第一页 --- */
   .hero-section { position: fixed; inset: 0; height: 100vh; display: flex; align-items: center; justify-content: center; z-index: 10; overflow: hidden; pointer-events: none; }
   .perspective-wrap { perspective: 2500px; perspective-origin: 50% 0%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-  .hero-stage { position: relative; width: 100%; max-width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; transform-origin: center bottom; will-change: transform, opacity, filter; pointer-events: auto; }
+  .hero-stage { position: relative; width: 100%; max-width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto; }
   .bg-layer { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
   .bg-image { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: grayscale(100%) contrast(130%) brightness(0.35); opacity: 0; transform: scale(1); transition: opacity 3s ease-in-out, transform 30s linear; }
   .bg-image.active { opacity: 1; transform: scale(1.15); }
@@ -206,7 +203,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .scroll-spacer { height: 100vh; pointer-events: none; }
   
   /* --- 第二页 --- */
-  .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.9); overflow: hidden; transform-origin: 50% 0%; will-change: transform, filter; }
+  .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.9); overflow: hidden; transform-origin: 50% 0%; will-change: transform, opacity; }
   .p2-dwell { height: 60vh; pointer-events: none; }
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
   .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
@@ -224,38 +221,41 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .white-screen { position: fixed; inset: 0; background-color: #ffffff; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
   .white-screen.active { opacity: 1; }
 
-  /* --- 第三页：深渊档案 --- */
+  /* --- 第三页：修复后的架构 --- */
   .page-three { --paper-base: #fcfcfc; --ink: #000000; position: relative; z-index: 30; height: 500vh; width: 100vw; background-color: transparent; }
   
-  /* 弧形纸张盖入 (Curved Paper Drop) */
+  /* 外层：只管滚动盖入和阴影 */
   .p3-stage { 
     position: sticky; top: 0; height: 100vh; overflow: hidden; color: #000; background-color: var(--paper-base);
     transform-origin: center top;
-    will-change: transform, box-shadow, border-radius;
+    will-change: transform, box-shadow;
     box-shadow: 0 -20px 50px rgba(0,0,0,0.1);
-    border-radius: 0;
     transform-style: preserve-3d;
+    backface-visibility: hidden;
   }
 
-  /* 纸张质感叠加 */
   .paper-texture {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
     background-image: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.015) 1px, rgba(0,0,0,0.015) 2px);
     mix-blend-mode: multiply; opacity: 0.8;
   }
 
-  .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; z-index: 1; transform-style: preserve-3d; }
+  /* 中层：只管鼠标视差旋转 */
+  .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; z-index: 1; transform-style: preserve-3d; will-change: transform; }
+  
   .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; transform: translateZ(20px); }
   .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; perspective: 1200px; transform-style: preserve-3d; }
 
-  /* 3D 抽屉式切换 */
+  /* 卡片：3D 抽屉式切换 */
   .case { 
     position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; 
     transform: translate3d(0, 0, -300px) rotateY(10deg); 
     transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.8s ease, visibility 0s linear 1.2s; 
-    filter: blur(10px);
+    filter: blur(4px);
+    will-change: transform, opacity, filter;
+    backface-visibility: hidden;
   }
-  .case.is-past { transform: translate3d(0, 0, 200px) rotateY(-15deg); opacity: 0; filter: blur(15px); }
+  .case.is-past { transform: translate3d(0, 0, 200px) rotateY(-15deg); opacity: 0; filter: blur(8px); }
   .case.is-active { 
     opacity: 1; visibility: visible; pointer-events: auto; 
     transform: translate3d(0, 0, 0) rotateY(0deg); filter: blur(0); 
@@ -300,7 +300,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .case-text { position: relative; z-index: 2; width: 100%; max-width: 680px; margin-left: 15%; display: flex; flex-direction: column; justify-content: center; transform: translateZ(50px); }
   .case-header-group { margin-bottom: 24px; }
   
-  /* 墨迹显影 */
   .case-title { display: block; margin: 0; font-size: clamp(32px, 4vw, 56px); font-weight: 900; font-style: italic; line-height: 1.1; color: #000; clip-path: inset(-12% 100% -12% 0); transition: clip-path 0.5s ease; filter: blur(4px); }
   .case.is-active .case-title { clip-path: inset(-12% 0 -12% 0); filter: blur(0); transition: clip-path 1.4s cubic-bezier(0.65, 0, 0.15, 1) 0.3s, filter 1s ease 0.3s; }
   
@@ -322,7 +321,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .footer-tagline { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 0.15em; color: #888; }
   .footer-bottom { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 10px; color: #999; }
 
-  /* 鼠标视差层 */
   .parallax-layer { transition: transform 0.1s ease-out; }
 
   @media (max-width: 900px) {
@@ -331,7 +329,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .case-text { margin-left: 0; max-width: 100%; }
     .stamp-art { right: 0; top: -20px; }
     .intro-title .line-2 { font-size: clamp(40px, 12vw, 80px); }
-    .parallax-layer { transition: none; transform: none !important; } /* 移动端禁用视差 */
+    .parallax-layer { transition: none; transform: none !important; }
   }
 </style>
 
@@ -344,6 +342,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const actionArea = document.getElementById('action-area');
     const pageThree = document.getElementById('page-three');
     const p3Stage = document.getElementById('p3-stage');
+    const p3Inner = document.getElementById('p3-inner'); // 新增：用于视差
     const dwell = document.getElementById('p2-dwell');
     const cases = Array.from(document.querySelectorAll('.case'));
     const parallaxLayers = Array.from(document.querySelectorAll('.parallax-layer'));
@@ -375,28 +374,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       });
     };
 
-    // --- 鼠标 3D 视差引擎 ---
+    // --- 鼠标 3D 视差引擎（仅控制内层 p3Inner） ---
     let mouseX = 0, mouseY = 0;
     let targetX = 0, targetY = 0;
-    const maxTilt = 15; // 最大倾斜角
 
     document.addEventListener('mousemove', (e) => {
-      // 归一化坐标 (-1 到 1)
       targetX = (e.clientX / window.innerWidth - 0.5) * 2;
       targetY = (e.clientY / window.innerHeight - 0.5) * 2;
     });
 
     const updateParallax = () => {
-      // 惯性平滑
       mouseX += (targetX - mouseX) * 0.05;
       mouseY += (targetY - mouseY) * 0.05;
 
-      // 整体纸张微小倾斜
-      if (p3Stage) {
-        p3Stage.style.transform = `perspective(1500px) rotateX(${mouseY * 2}deg) rotateY(${-mouseX * 2}deg)`;
+      // 控制内层容器进行微小旋转，不再和外层打架
+      if (p3Inner) {
+        p3Inner.style.transform = `perspective(1500px) rotateX(${mouseY * 2}deg) rotateY(${-mouseX * 2}deg)`;
       }
 
-      // 内部层级偏移
+      // 控制内部元素的 Z 轴偏移
       parallaxLayers.forEach(layer => {
         const depth = parseFloat(layer.dataset.depth) || 1;
         const moveX = -mouseX * 20 * depth;
@@ -425,29 +421,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const coverProgress = clamp(1 - p3.top / windowHeight); 
       const e = smooth(coverProgress);
 
-      // 第二页退场（下沉 + 变暗模糊）
+      // 第二页退场（去掉高消耗的 blur，改为纯透明度和轻微下移）
       if (infoSection) {
-        infoSection.style.transform = e > 0 ? `translate3d(0, ${(e * 15).toFixed(2)}vh, 0) scale(${(1 - e * 0.05).toFixed(4)})` : 'none';
-        infoSection.style.filter = `blur(${e * 15}px) brightness(${1 - e * 0.5})`;
+        infoSection.style.transform = e > 0 ? `translate3d(0, ${(e * 10).toFixed(2)}vh, 0) scale(${(1 - e * 0.05).toFixed(4)})` : 'none';
+        infoSection.style.opacity = 1 - e; // 纯透明度更顺滑
         infoSection.style.visibility = coverProgress >= 1 ? 'hidden' : 'visible';
       }
 
-      // 第三页弧形盖入 (Curved Paper Drop)
+      // 第三页弧形盖入 (外层仅负责滚动，去掉了 border-radius 防止重绘闪烁)
       if (p3Stage) {
         if (e > 0 && e < 1) {
-          // 使用 scaleY 和 rotateX 组合出纸张卷曲的错觉
-          const rotateX = (1 - e) * 60; 
-          const scaleY = 1 - (1 - e) * 0.2;
-          const translateY = (1 - e) * -30;
-          const borderRadius = (1 - e) * 50; // 边缘卷曲
-          const shadow = `0 ${(1-e)*60}px ${(1-e)*100}px rgba(0,0,0,${(1-e)*0.6})`;
+          const rotateX = (1 - e) * 50; 
+          const scaleY = 1 - (1 - e) * 0.15;
+          const translateY = (1 - e) * -20;
+          const shadow = `0 ${(1-e)*50}px ${(1-e)*80}px rgba(0,0,0,${(1-e)*0.5})`;
           
           p3Stage.style.transform = `perspective(1500px) rotateX(${rotateX}deg) scaleY(${scaleY}) translateY(${translateY}vh)`;
-          p3Stage.style.borderRadius = `0 0 ${borderRadius}px ${borderRadius}px`;
           p3Stage.style.boxShadow = shadow;
         } else if (e >= 1) {
-          p3Stage.style.borderRadius = '0';
-          p3Stage.style.boxShadow = 'none';
+          p3Stage.style.transform = 'none';
+          p3Stage.style.boxShadow = '0 -10px 30px rgba(0,0,0,0.05)';
         }
       }
 
@@ -463,7 +456,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const translateY = -10 + (Math.pow(heroRawProgress, 2) * 8); 
       heroStage.style.transform = `translate3d(0, ${translateY}vh, 0) rotateX(${heroRotate}deg) scaleY(${stretchY})`;
       heroStage.style.opacity = Math.max(0, 1 - (heroRawProgress * 0.3)) * (1 - rise);
-      heroStage.style.filter = `blur(${heroRawProgress * 8}px)`; // 第一页模糊退场
 
       // 第二页内部元素
       const dwellH = Math.max(1, dwell.offsetHeight);
