@@ -8,16 +8,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
-  <div class="debug-progress mono" id="progress-indicator">0%</div>
-
   <div class="fog" aria-hidden="true">
     <div class="fog-layer fog-a" id="fog-a"></div>
     <div class="fog-layer fog-b" id="fog-b"></div>
   </div>
 
-  <section class="hero-section">
+  <section class="hero-section" id="hero-section">
     <div class="perspective-wrap">
-      <div class="hero-stage" id="hero-masthead" style="transform: translate3d(0, -10vh, 0) rotateX(0deg) scaleY(1);">
+      <div class="hero-stage" id="hero-masthead">
         <div class="bg-layer">
           <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
           <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
@@ -71,7 +69,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
       </div>
     </div>
-    <div class="info-dim" id="info-dim"></div>
   </section>
 
   <div class="p2-dwell" id="p2-dwell"></div>
@@ -95,7 +92,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </header>
 
         <div class="p3-cases">
-          <article class="case case--intro">
+          <article class="case case--intro is-active">
             <p class="eyebrow mono reveal" style="--i:0">CASE FILES</p>
             <h2 class="intro-title serif">
               <span class="line"><span style="--i:1">The truth is</span></span>
@@ -152,7 +149,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <footer class="p3-foot mono">
           <span class="foot-l">LONDON · SHANGHAI · TORONTO</span>
           <nav class="rail" aria-label="Case files">
-            <button class="tick" type="button" data-k="0" aria-label="Open file I">I</button>
+            <button class="tick is-on" type="button" data-k="0" aria-label="Open file I">I</button>
             <span class="seg"><i></i></span>
             <button class="tick" type="button" data-k="1" aria-label="Open file II">II</button>
             <span class="seg"><i></i></span>
@@ -172,13 +169,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .mono { font-family: 'Courier Prime', monospace; }
   .serif { font-family: 'Playfair Display', serif; }
 
-  .debug-progress { position: fixed; top: 20px; right: 20px; color: #d4af37; font-size: 14px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(212, 175, 55, 0.3); pointer-events: none; }
-
   .fog { position: fixed; inset: 0; z-index: 35; pointer-events: none; overflow: hidden; }
   .fog-layer { position: absolute; top: -10%; bottom: -10%; left: -60%; width: 220%; opacity: 0; will-change: transform, opacity; }
   .fog-a { background: radial-gradient(40% 55% at 22% 58%, rgba(220,214,200,0.50), transparent 70%), radial-gradient(35% 50% at 62% 40%, rgba(220,214,200,0.38), transparent 70%), radial-gradient(30% 45% at 90% 65%, rgba(220,214,200,0.42), transparent 70%); }
   .fog-b { background: radial-gradient(45% 50% at 40% 45%, rgba(190,186,176,0.40), transparent 70%), radial-gradient(35% 55% at 78% 62%, rgba(190,186,176,0.36), transparent 70%), radial-gradient(30% 45% at 8% 35%, rgba(190,186,176,0.34), transparent 70%); }
 
+  /* 第1章：固定背景层 */
   .hero-section { position: fixed; inset: 0; height: 100vh; height: 100lvh; display: flex; align-items: center; justify-content: center; z-index: 10; overflow: hidden; pointer-events: none; }
   .perspective-wrap { perspective: 2500px; perspective-origin: 50% 0%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
   .hero-stage { position: relative; width: 100%; max-width: 900px; height: 100vh; height: 100lvh; display: flex; flex-direction: column; justify-content: center; padding: 0 40px; transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto; opacity: 0; transition: opacity 0.3s ease-out; }
@@ -200,71 +196,70 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #777; margin: 0; }
   .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
   .ink-break { -webkit-mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); filter: blur(0.3px) contrast(1.2); }
+  
   .scroll-spacer { height: 100vh; height: 100lvh; pointer-events: none; }
 
-  .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; height: 100lvh; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%); mask-image: linear-gradient(to bottom, transparent 0%, black 35%); box-shadow: 0 -20px 40px rgba(0,0,0,0.5); overflow: hidden; transform-origin: 50% 35%; will-change: transform; }
-  .info-dim { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 30%, rgba(3,3,3,0.6), #030303 85%); }
+  /* 第2章：修复了纯黑和过渡生硬 */
+  .info-section { position: relative; z-index: 20; min-height: 100vh; min-height: 100lvh; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 40px rgba(0,0,0,0.8); overflow: hidden; will-change: transform; }
+  
   .p2-dwell { height: 60vh; height: 60lvh; pointer-events: none; }
   .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
-  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
-  @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
+  
+  /* 改用固定的 transitional 类来触发，不再依赖易出错的遮罩 */
+  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(30px); opacity: 0; transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 1s ease; will-change: transform, opacity; }
+  .roles-grid.show { transform: translateY(0); opacity: 1; }
+  
   .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
   .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
-  .action-area { text-align: center; margin-top: 80px; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
+  
+  .action-area { text-align: center; margin-top: 80px; transform: translateY(30px); opacity: 0; transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s, opacity 1s ease 0.2s; will-change: transform, opacity; }
+  .action-area.show { transform: translateY(0); opacity: 1; }
+
   .contact-btn { display: inline-flex; flex-direction: column; align-items: center; text-decoration: none; padding: 16px 40px; position: relative; overflow: hidden; transition: all 0.4s ease; cursor: default; }
-  .contact-btn::before, .contact-btn::after { content: ''; position: absolute; left: 0; width: 100%; height: 1px; background: var(--gold); transition: background 0.4s, transform 0.4s; }
+  .contact-btn::before, .contact-btn::after { content: ''; position: absolute; left: 0; width: 100%; height: 1px; background: var(--gold, #d4af37); transition: background 0.4s, transform 0.4s; }
   .contact-btn::before { top: 0; }
   .contact-btn::after { bottom: 0; }
-  .contact-btn .btn-text { color: var(--gold); font-family: 'Courier Prime', monospace; font-size: 14px; letter-spacing: 0.25em; position: relative; z-index: 2; transition: color 0.4s; }
+  .contact-btn .btn-text { color: var(--gold, #d4af37); font-family: 'Courier Prime', monospace; font-size: 14px; letter-spacing: 0.25em; position: relative; z-index: 2; transition: color 0.4s; }
   .contact-btn:hover { background: rgba(212, 175, 55, 0.05); }
   .contact-btn:hover::before, .contact-btn:hover::after { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); background: #fff; }
   .contact-btn:hover .btn-text { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
+  /* 第3章：调整颜色与质感 */
   .page-three { 
-    /* 重新设计的旧报纸质感配色 */
-    --paper-base: #bca78d; 
-    --paper-light: #cbb89d;
-    --ink: #1c1814; 
-    --ink-soft: #3b3227; 
-    --oxblood: #822222; 
-    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .08 0 0 0 0 .05 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); 
+    --paper-base: #d2ccbf; /* 更灰、更冷的复古纸色，去掉了发黄感 */
+    --paper-light: #e0dacb;
+    --ink: #15120f; /* 更深的墨黑 */
+    --ink-soft: #3a3227; 
+    --oxblood: #7a1f1f; /* 更沉稳的暗红 */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .06 0 0 0 0 .03 0 0 0 .4 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); 
     position: relative; z-index: 30; height: 400vh; height: 400lvh; 
     background-color: var(--paper-base);
     background-image: 
-      radial-gradient(ellipse at 50% 0%, rgba(255,250,240,0.2) 0%, transparent 70%),
-      linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 10%),
+      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.4) 0%, transparent 60%),
+      linear-gradient(to bottom, rgba(0,0,0,0.03) 0%, transparent 10%),
       var(--grain);
   }
 
-  .tear-wrap { 
-    position: absolute; left: 0; right: 0; top: -64px; height: 66px; 
-    z-index: 2; pointer-events: none; 
-    /* 去掉泛白，改用真实的深度阴影 */
-    filter: drop-shadow(0px -4px 12px rgba(0,0,0,0.8)); 
-  }
+  .tear-wrap { position: absolute; left: 0; right: 0; top: -64px; height: 66px; z-index: 2; pointer-events: none; filter: drop-shadow(0px -4px 12px rgba(0,0,0,0.6)); }
   .tear { position: absolute; inset: 0; background-image: var(--grain); }
-  /* 纤维边缘加深，不再发光 */
-  .tear-fibre { background-color: #a38c70; filter: brightness(0.9) contrast(1.2); }
-  .tear-base { 
-    background-color: var(--paper-base); 
-    box-shadow: inset 0 -20px 20px -20px rgba(0,0,0,0.8);
-  }
+  .tear-fibre { background-color: #b5ae9f; filter: brightness(0.95) contrast(1.1); }
+  .tear-base { background-color: var(--paper-base); box-shadow: inset 0 -20px 20px -20px rgba(0,0,0,0.6); }
 
   .p3-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; color: var(--ink); }
   .p3-grain, .p3-vignette { position: absolute; inset: 0; pointer-events: none; }
-  .p3-grain { background-image: var(--grain); opacity: 0.7; mix-blend-mode: multiply; }
-  .p3-vignette { background: radial-gradient(150% 100% at 50% 30%, transparent 50%, rgba(30,20,10,0.6) 100%); }
-  .p3-lantern { position: absolute; left: 0; top: 0; width: 90vmax; height: 90vmax; margin: -45vmax 0 0 -45vmax; background: radial-gradient(circle, rgba(255,222,150,0.3) 0%, rgba(255,222,150,0.1) 35%, transparent 62%); pointer-events: none; will-change: transform; transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); mix-blend-mode: screen; }
+  .p3-grain { background-image: var(--grain); opacity: 0.6; mix-blend-mode: multiply; }
+  .p3-vignette { background: radial-gradient(140% 100% at 50% 30%, transparent 60%, rgba(20,10,5,0.4) 100%); } /* 减弱暗角，不显得脏 */
+  .p3-lantern { position: absolute; left: 0; top: 0; width: 90vmax; height: 90vmax; margin: -45vmax 0 0 -45vmax; background: radial-gradient(circle, rgba(255,235,180,0.2) 0%, rgba(255,235,180,0.05) 40%, transparent 65%); pointer-events: none; will-change: transform; transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); mix-blend-mode: screen; }
   
   .p3-inner { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-rows: auto 1fr auto; padding: clamp(24px, 4vw, 56px) clamp(24px, 6vw, 96px) clamp(26px, 6vh, 56px); }
-  .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: var(--ink-soft); padding-bottom: 16px; border-bottom: 4px double rgba(28,24,20,0.6); font-weight: 700; text-transform: uppercase; }
+  .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: var(--ink-soft); padding-bottom: 16px; border-bottom: 4px double rgba(21,18,15,0.6); font-weight: 700; text-transform: uppercase; }
   .p3-cases { position: relative; min-height: 0; }
-  .p3-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 11px; letter-spacing: 0.3em; color: var(--ink-soft); padding-top: 16px; border-top: 2px solid rgba(28,24,20,0.5); font-weight: 700; }
+  .p3-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 11px; letter-spacing: 0.3em; color: var(--ink-soft); padding-top: 16px; border-top: 2px solid rgba(21,18,15,0.5); font-weight: 700; }
   .foot-r { text-align: right; }
   .rail { display: flex; align-items: center; gap: 12px; }
-  .seg { position: relative; display: block; width: clamp(40px, 9vw, 120px); height: 2px; background: rgba(28,24,20,0.2); overflow: hidden; }
-  .seg i { position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; }
-  .tick { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(28,24,20,0.4); background: transparent; color: var(--ink); font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent; transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease; }
+  .seg { position: relative; display: block; width: clamp(40px, 9vw, 120px); height: 2px; background: rgba(21,18,15,0.2); overflow: hidden; }
+  .seg i { position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform 0.6s cubic-bezier(0.65, 0, 0.15, 1); }
+  .tick { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(21,18,15,0.4); background: transparent; color: var(--ink); font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 12px; letter-spacing: 0; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent; transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease; }
   .tick.is-on { background: var(--ink); color: var(--paper-light); border-color: var(--ink); }
   
   .case { position: absolute; inset: 0; display: grid; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, 4vh, 0); transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s; }
@@ -277,14 +272,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .case.is-past .reveal { transform: translate3d(0, -24px, 0); }
   .case.is-active .reveal { opacity: 1; transform: none; filter: none; transition: opacity 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.3s + var(--i, 0) * 0.12s), transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.3s + var(--i, 0) * 0.12s), filter 1.1s ease calc(0.3s + var(--i, 0) * 0.12s); }
   
-  /* 排版：更极端的对比度 */
-  .eyebrow { font-size: 12px; letter-spacing: 0.45em; color: var(--oxblood); margin: 0 0 16px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(130,34,34,0.3); display: inline-block; padding-bottom: 4px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.45em; color: var(--oxblood); margin: 0 0 16px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(122,31,31,0.3); display: inline-block; padding-bottom: 4px; }
   
   .intro-title { margin: 0; font-weight: 900; font-style: italic; font-size: clamp(42px, 9vw, 130px); line-height: 0.95; text-wrap: balance; color: var(--ink); }
   .intro-title .line { display: block; overflow: hidden; padding: 0.08em 0.12em 0.16em; margin: -0.08em -0.12em -0.16em; }
   .intro-title .line > span { display: inline-block; transform: translate3d(0, 115%, 0); transition: transform 0.6s ease; }
-  /* 第二行做特殊处理 */
-  .intro-title .line:nth-child(2) > span { background: linear-gradient(90deg, var(--ink) 30%, rgba(28,24,20,0.4) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+  .intro-title .line:nth-child(2) > span { background: linear-gradient(90deg, var(--ink) 30%, rgba(21,18,15,0.4) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
   .case.is-active .intro-title .line > span { transform: none; transition: transform 1.3s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.3s + var(--i, 0) * 0.14s); }
   .case.is-past .intro-title .line > span { transform: translate3d(0, -115%, 0); }
   
@@ -293,12 +286,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .hint i { display: block; width: 2px; height: 48px; background: linear-gradient(var(--ink), transparent); transform-origin: top; animation: drip 2.4s ease-in-out infinite; }
   @keyframes drip { 0% { transform: scaleY(0); opacity: 0; } 40% { opacity: 1; } 70% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
   
-  /* 巨大罗马数字 */
-  .case-num { justify-self: end; font-style: italic; font-weight: 900; line-height: 0.8; letter-spacing: -0.06em; font-size: clamp(140px, min(38vw, 50vh), 480px); color: transparent; -webkit-text-stroke: 2px rgba(28,24,20,0.25); user-select: none; opacity: 0; transform: translate3d(-40px, 0, 0) scale(1.08); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .case-num { justify-self: end; font-style: italic; font-weight: 900; line-height: 0.8; letter-spacing: -0.06em; font-size: clamp(140px, min(38vw, 50vh), 480px); color: transparent; -webkit-text-stroke: 2px rgba(21,18,15,0.25); user-select: none; opacity: 0; transform: translate3d(-40px, 0, 0) scale(1.08); transition: opacity 0.5s ease, transform 0.5s ease; }
   .case.is-active .case-num { opacity: 1; transform: none; transition: opacity 1.4s ease 0.1s, transform 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s; }
   
   .case-text { position: relative; max-width: 38rem; padding-top: 10px; }
-  /* 标题 */
   .case-title { display: block; margin: 0; font-weight: 900; line-height: 1.05; letter-spacing: -0.02em; font-size: clamp(36px, 5.5vw, 72px); color: var(--ink); text-wrap: balance; clip-path: inset(-12% 100% -12% 0); transition: clip-path 0.5s ease; font-style: italic; }
   .case.is-active .case-title { clip-path: inset(-12% 0 -12% 0); transition: clip-path 1.3s cubic-bezier(0.65, 0, 0.15, 1) calc(0.3s + var(--i, 0) * 0.12s); }
   
@@ -313,8 +304,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .p3-sign-off { font-style: italic; font-size: 16px; color: var(--ink-soft); margin: 0; }
   .p3-signature { font-family: 'Pinyon Script', cursive; font-size: clamp(54px, 6vw, 84px); color: var(--ink); margin: -6px 0 0; line-height: 1; display: inline-block; transform: rotate(-5deg); transform-origin: left center; }
   
-  /* 印章 */
-  .stamp { position: absolute; right: 0; top: -10px; padding: 8px 18px 6px; border: 4px double var(--oxblood); border-radius: 6px; color: var(--oxblood); font-weight: 700; font-size: 14px; letter-spacing: 0.32em; text-transform: uppercase; text-shadow: 0 0 2px rgba(130,34,34,0.8); mix-blend-mode: multiply; pointer-events: none; opacity: 0; transform: rotate(var(--r, -8deg)) scale(2.4); transition: opacity 0.35s ease, transform 0.35s ease; }
+  .stamp { position: absolute; right: 0; top: -10px; padding: 8px 18px 6px; border: 4px double var(--oxblood); border-radius: 6px; color: var(--oxblood); font-weight: 700; font-size: 14px; letter-spacing: 0.32em; text-transform: uppercase; text-shadow: 0 0 2px rgba(122,31,31,0.8); mix-blend-mode: multiply; pointer-events: none; opacity: 0; transform: rotate(var(--r, -8deg)) scale(2.4); transition: opacity 0.35s ease, transform 0.35s ease; }
   .case.is-active .stamp { opacity: 0.95; transform: rotate(var(--r, -8deg)) scale(1); transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s; }
 
   @media (max-width: 820px) { .case--file { grid-template-columns: 1fr; align-content: center; row-gap: 0; } .case-num { justify-self: start; font-size: min(50vw, 35vh); margin-bottom: -1vh; } .case-body { text-align: left; } }
@@ -324,5 +314,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   @media (prefers-reduced-motion: reduce) { .case, .reveal, .case-num, .case-title, .rule, .stamp, .intro-title .line > span, .p3-lantern { transition-duration: 0.01s !important; transition-delay: 0s !important; } .hint i { animation: none; } }
 </style>
 
-<script src="/script.js" defer></script>
-</BaseLayout>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const heroStage = document.getElementById('hero-masthead');
+    const infoSection = document.getElementById('info-section');
+    const rolesGrid = document.getElementById('roles-grid');
+    const actionArea = document.getElementById('action-area');
+    const bgImages = document.querySelectorAll('.bg-image');
+    
+    // 第1章登场
+    setTimeout(() => heroStage.classList.add('loaded'), 50);
+
+    // 滚动逻辑
+    let ticking = false;
+    let lastScrollY = window.scrollY;
+
+    function updateScroll() {
+      const scrolled = window.scrollY;
+      
+      // 第1章退场：滑过一屏高度时，主视觉缩小并淡出
+      if (scrolled < window.innerHeight) {
+        const progress = scrolled / window.innerHeight;
+        heroStage.style.transform = `translate3d(0, ${progress * -15}vh, 0) scale(${1 - progress * 0.15})`;
+        heroStage.style.opacity = 1 - progress * 1.2;
+      }
+
+      // 第2章内容显现：当第2章进入视口一定程度时触发
+      const infoTop = infoSection.getBoundingClientRect().top;
+      if (infoTop < window.innerHeight * 0.6 && !rolesGrid.classList.contains('show')) {
+        rolesGrid.classList.add('show');
+        actionArea.classList.add('show');
+      }
+
+      // 背景图片轮换（每滚动 30vh 换一张）
+      const imgIndex = Math.floor(scrolled / (window.innerHeight * 0.3)) % bgImages.length;
+      bgImages.forEach((img, idx) => {
+        if (idx === imgIndex) img.classList.add('active');
+        else img.classList.remove('active');
+      });
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      lastScrollY = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(updateScroll);
+        ticking = true;
+      }
+    }, { passive: true });
+  });
+</script>
