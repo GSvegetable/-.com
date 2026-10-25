@@ -1,36 +1,54 @@
 ---
-// SVG 滤镜水波 + 极简狂草书法
+// 纯英文错落排版 + 金属质感 + 剧烈水波震荡
 ---
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>宫水.com</title>
-    <!-- 引入行书和极简无衬线体 -->
+    <title>MIYAMIZU</title>
+    <!-- 引入极简高级无衬线字体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&family=Inter:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;800&family=Inter:wght@200;300&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- 隐藏的 SVG 滤镜，用来做文字水波扭曲 -->
+    <!-- SVG 滤镜：用于文字水波扭曲 -->
     <svg class="hidden-svg">
       <defs>
-        <filter id="water-filter">
-          <feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.015 0.015" numOctaves="3" result="noise" />
+        <filter id="water-ripple">
+          <feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="3" result="noise" />
           <feDisplacementMap id="displacement" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" />
         </filter>
       </defs>
     </svg>
 
-    <!-- 点击产生的水波圈容器 -->
+    <!-- 水波视觉层 -->
     <div id="ripple-container"></div>
 
-    <main class="layout">
-      <!-- 核心文字区域，应用了水波滤镜 -->
-      <div class="content" id="distort-target">
-        <h1 class="main-text">懒得做了</h1>
-        <p class="sub-text">但域名都买了，凑合看吧</p>
+    <!-- 内容区（非对称排版） -->
+    <main class="layout" id="distort-target">
+      
+      <!-- 左上角大字 -->
+      <h1 class="text-1">TOO</h1>
+      
+      <!-- 右侧偏上 -->
+      <h1 class="text-2">LAZY</h1>
+      
+      <!-- 左下角大字 -->
+      <h1 class="text-3">TO DO IT.</h1>
+
+      <!-- 右下角小字副标题 -->
+      <p class="sub-text">
+        Bought the domain,<br>
+        just make do with it.
+      </p>
+
+      <!-- 底部极小字点缀 -->
+      <div class="meta-text">
+        <span>MIYAMIZU.COM</span>
+        <span>CLICK TO DISTORT</span>
       </div>
+      
     </main>
 
     <script is:inline>
@@ -39,23 +57,27 @@
       const displacement = document.getElementById('displacement');
       let animId;
       let scale = 0;
+      let freq = 0.01;
 
-      // 触发水波形变动画
-      function triggerWaterDistort() {
+      // 触发文字震荡
+      function triggerDistort(x, y) {
         cancelAnimationFrame(animId);
-        scale = 60; // 初始形变强度
+        // 初始扭曲强度极大，产生明显形变
+        scale = 150; 
+        freq = 0.008;
 
         function animate() {
-          scale *= 0.95; // 缓慢衰减，营造层层晕开的感觉
-          
+          // 衰减系数
+          scale *= 0.94;
+          // 频率慢慢变大，波纹变密
+          freq += 0.0005;
+
           if (scale < 0.5) {
             target.style.filter = 'none';
             return;
           }
 
           displacement.setAttribute('scale', scale);
-          // 改变频率，让波纹在回弹时产生复杂的变化
-          const freq = 0.015 + (60 - scale) * 0.0002;
           turbulence.setAttribute('baseFrequency', `${freq} ${freq}`);
 
           animId = requestAnimationFrame(animate);
@@ -63,22 +85,22 @@
         animate();
       }
 
-      // 点击事件
+      // 屏幕点击事件
       document.body.addEventListener('pointerdown', (e) => {
         // 1. 触发文字扭曲
-        triggerWaterDistort();
+        triggerDistort();
 
-        // 2. 在点击处生成多层扩散的水波圈
+        // 2. 生成真实扩散的波纹圈（多层叠加）
         for (let i = 0; i < 3; i++) {
           setTimeout(() => {
             const ripple = document.createElement('div');
-            ripple.className = 'water-ring';
+            ripple.className = 'ring';
             ripple.style.left = `${e.clientX}px`;
             ripple.style.top = `${e.clientY}px`;
             document.getElementById('ripple-container').appendChild(ripple);
 
-            setTimeout(() => { ripple.remove(); }, 2500);
-          }, i * 250); // 三层波纹，每层延迟0.25秒，形成“层层晕开”的视觉
+            setTimeout(() => { ripple.remove(); }, 2000);
+          }, i * 150); // 层叠延迟
         }
       });
     </script>
@@ -87,93 +109,109 @@
 
 <style>
   :root {
-    --bg: #050505;
-    --text: #f5f5f5;
-    --font-cn: 'Zhi Mang Xing', cursive;
-    --font-en: 'Inter', sans-serif;
+    --bg: #0a0a0c; /* 极深太空灰 */
+    --text-metallic: linear-gradient(135deg, #ffffff 0%, #888b94 50%, #3a3c42 100%);
+    --font-display: 'Syne', sans-serif; /* 极具先锋感的设计师字体 */
+    --font-sans: 'Inter', sans-serif;
   }
 
   html, body {
     margin: 0; padding: 0;
     width: 100%; height: 100%;
     background-color: var(--bg);
-    color: var(--text);
+    color: white;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     cursor: crosshair;
+    font-family: var(--font-sans);
   }
 
   .hidden-svg { position: absolute; width: 0; height: 0; }
 
+  /* 非对称排版容器 */
   .layout {
     position: relative;
-    z-index: 10;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none; /* 让点击事件穿透到 body */
-  }
-
-  .content {
-    text-align: center;
-    /* 必须有 transition，否则 JS 改变滤镜时文字会闪烁 */
-    transition: filter 0.1s linear; 
+    width: 100%; height: 100%;
+    transition: filter 0.1s linear;
     will-change: filter;
   }
 
-  /* 夸张的英伦风草书（中式） */
-  .main-text {
-    font-family: var(--font-cn);
-    font-size: clamp(6rem, 18vw, 15rem);
-    font-weight: 400;
-    line-height: 1;
+  /* 所有文字的基础样式：金属渐变 */
+  .text-1, .text-2, .text-3 {
+    font-family: var(--font-display);
+    font-weight: 800;
     margin: 0;
-    letter-spacing: 0.05em;
-    /* 极具张力的阴影雕刻感 */
-    text-shadow: 2px 4px 15px rgba(255, 255, 255, 0.1);
-  }
-
-  .sub-text {
-    font-family: var(--font-cn);
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
-    color: rgba(255, 255, 255, 0.5);
-    margin-top: 2rem;
-    letter-spacing: 0.1em;
-  }
-
-  /* 层层晕开的水波圈 */
-  .water-ring {
+    line-height: 0.8;
+    background: var(--text-metallic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     position: absolute;
-    width: 0px; height: 0px;
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    /* 加上极其轻微的阴影增加立体感 */
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+  }
+
+  /* 错落有致的绝对定位 */
+  .text-1 {
+    font-size: clamp(6rem, 18vw, 20rem);
+    top: 10%;
+    left: 8%;
+  }
+
+  .text-2 {
+    font-size: clamp(6rem, 20vw, 22rem);
+    top: 35%;
+    right: 12%;
+  }
+
+  .text-3 {
+    font-size: clamp(5rem, 15vw, 16rem);
+    bottom: 15%;
+    left: 20%;
+  }
+
+  /* 副标题排版 */
+  .sub-text {
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 1.5vw, 1.5rem);
+    font-weight: 200;
+    color: #a1a1aa;
+    position: absolute;
+    bottom: 12%;
+    right: 10%;
+    text-align: right;
+    line-height: 1.6;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* 边角料信息 */
+  .meta-text {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    color: #52525b;
+    letter-spacing: 0.2em;
+  }
+
+  /* 扩散的水波纹圈 */
+  .ring {
+    position: absolute;
+    width: 10px; height: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    z-index: 1;
-    /* 慢速扩散 + 回弹感 */
-    animation: ripple-expand 2.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    /* 使用 cubic-bezier 模拟物理回弹减速 */
+    animation: ripple-grow 2s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
   }
 
-  @keyframes ripple-expand {
-    0% {
-      width: 0px; height: 0px;
-      opacity: 1;
-      border-width: 4px;
-      border-color: rgba(255, 255, 255, 0.8);
-    }
-    50% {
-      border-width: 2px;
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-    100% {
-      /* 扩散到非常大，模拟撞到屏幕边缘 */
-      width: 150vw; height: 150vw; 
-      opacity: 0;
-      border-width: 0px;
-    }
+  @keyframes ripple-grow {
+    0% { width: 10px; height: 10px; opacity: 1; border-width: 4px; }
+    100% { width: 200vmax; height: 200vmax; opacity: 0; border-width: 1px; }
   }
 </style>
