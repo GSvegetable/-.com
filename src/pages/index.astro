@@ -1,39 +1,22 @@
 ---
-// 纯黑底 + 极度夸张狂草手写错落排版
+// 纯黑底 + 极简居中 + 英国华丽手写体
 ---
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>凑合看</title>
-    <!-- 引入 Google Fonts 中最夸张的中文狂草手写体 -->
+    <title>Make do</title>
+    <!-- 引入英国华丽手写体 (Pinyon Script 和 Great Vibes) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Pinyon+Script&display=swap" rel="stylesheet">
   </head>
   <body>
     <main class="wrapper">
-      <!-- 第一句：巨大、左上倾斜 -->
-      <h1 class="text-main">凑合看</h1>
-      
-      <!-- 第二句：略小、右下倾斜、穿插 -->
-      <h2 class="text-sub">今天审美不在线</h2>
+      <!-- 翻译: 凑合看 / 今天审美不在线 -->
+      <h1 class="text-main">Make do</h1>
+      <h2 class="text-sub">aesthetic offline today</h2>
     </main>
-
-    <script is:inline>
-      // 极其微弱的鼠标跟随倾斜，增加一点物理呼吸感，不花哨
-      const main = document.querySelector('.text-main');
-      const sub = document.querySelector('.text-sub');
-
-      document.addEventListener('mousemove', (e) => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 15;
-        const y = (e.clientY / window.innerHeight - 0.5) * 15;
-
-        // 对角线反向移动，产生错位错觉
-        main.style.transform = `rotate(-8deg) translate(${x}px, ${y}px)`;
-        sub.style.transform = `rotate(5deg) translate(${-x}px, ${-y}px)`;
-      });
-    </script>
   </body>
 </html>
 
@@ -46,67 +29,40 @@
 
   html, body {
     width: 100%;
-    height: 100dvh; /* 锁定高度，禁止滑动 */
-    overflow: hidden; /* 彻底禁用滚动 */
+    height: 100dvh; /* 锁死高度 */
+    overflow: hidden; /* 彻底禁用上下滑动 */
     background-color: #000000; /* 纯黑背景 */
     color: #ffffff;
-    cursor: crosshair; /* 保持一点点锐利感 */
   }
 
   .wrapper {
-    position: relative;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    /* 绝对水平居中，无任何 transform 或旋转 */
   }
 
-  /* 字体基础设置：狂草手写、夸张的粗细对比 */
-  .text-main, .text-sub {
-    font-family: 'Zhi Mang Xing', cursive;
-    font-weight: 400;
-    position: absolute;
-    white-space: nowrap;
-    /* 初始过渡，让跟随效果更平滑 */
-    transition: transform 0.1s linear; 
-    will-change: transform;
-    /* 极简的高级感：纯白字，不加任何发光、渐变 */
-    color: #ffffff;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* 主句：极度放大，占据视觉中心偏左 */
+  /* 主句：极度夸张华丽的英文手写体 */
   .text-main {
-    font-size: clamp(10rem, 35vw, 40rem);
-    top: 5%;
-    left: -5%;
-    transform: rotate(-8deg);
-    z-index: 2;
+    font-family: 'Pinyon Script', cursive;
+    font-size: clamp(6rem, 18vw, 20rem);
+    line-height: 1;
+    font-weight: 400;
+    /* 极简的纯白，无渐变 */
+    color: #ffffff;
+    /* 稍微往下压一点点，给副标题留出呼吸空间 */
+    margin-bottom: -2vw; 
   }
 
-  /* 副句：穿插在主句右下角，形成压迫感 */
+  /* 副句：同样用手写体，但字号小一些，拉开视觉层次 */
   .text-sub {
-    font-size: clamp(4rem, 12vw, 15rem);
-    bottom: 10%;
-    right: -2%;
-    transform: rotate(5deg);
-    z-index: 1;
-    /* 稍微给一点点暗白色，拉开层次 */
-    color: #e0e0e0; 
-  }
-
-  /* 针对小屏幕适配 */
-  @media (max-width: 768px) {
-    .text-main {
-      font-size: 35vw;
-      top: 15%;
-      left: -10%;
-    }
-    .text-sub {
-      font-size: 14vw;
-      bottom: 20%;
-      right: 0;
-    }
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2.5rem, 6vw, 7rem);
+    line-height: 1.5;
+    font-weight: 400;
+    color: #a0a0a0; /* 稍微灰一点点，不抢主句风头 */
   }
 </style>
