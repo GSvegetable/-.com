@@ -1,5 +1,5 @@
 ---
-import '../styles/main.css';
+// 移除了外部 css 的 import
 ---
 <html lang="zh-CN">
   <head>
@@ -35,7 +35,6 @@ import '../styles/main.css';
       </section>
     </main>
 
-    <!-- 注意这里加了 is:inline，告诉 Astro 不要插手这段脚本 -->
     <script is:inline>
       const questionBank = [
         { prompt: "Ask for water politely.", answer: "水をください", keywords: ["水", "ください"] },
