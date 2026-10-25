@@ -1,148 +1,191 @@
 ---
-// 纯 CSS 高光液态玻璃文字
+// 高级杂志排版风 - Editorial Design
 ---
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>宫水.com</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;800&family=Noto+Serif+SC:wght@200;500&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- 背景流光：加强亮度 -->
-    <div class="bg-glow glow-1"></div>
-    <div class="bg-glow glow-2"></div>
-    <div class="bg-glow glow-3"></div>
+    <!-- 逼真的纸张噪点纹理 -->
+    <div class="grain"></div>
 
-    <div class="container">
-      <h1 class="glass-title" data-text="懒得做了">懒得做了</h1>
-      <p class="glass-sub">但域名都买了，凑合看吧</p>
-    </div>
+    <main class="layout">
+      <!-- 左上角细节 -->
+      <header class="header">
+        <span class="meta">© 2026 MIYAMIZU.COM</span>
+      </header>
+
+      <!-- 核心排版区 -->
+      <section class="content">
+        <h1 class="main-title">
+          <span class="line-1">懒得</span>
+          <span class="line-2">做了</span>
+        </h1>
+        
+        <div class="subtitle-wrapper">
+          <div class="divider"></div>
+          <p class="sub-text">
+            但域名都买了，<br>凑合看吧
+          </p>
+        </div>
+      </section>
+
+      <!-- 右下角细节 -->
+      <footer class="footer">
+        <div class="status">
+          <span class="dot"></span> UNDER CONSTRUCTION
+        </div>
+      </footer>
+    </main>
   </body>
 </html>
 
 <style>
+  /* 颜色变量：极简黑白灰 */
+  :root {
+    --bg: #f4f4f2; /* 宣纸灰，比纯白高级 */
+    --text: #111111;
+    --gray: #888888;
+    --font-sans: 'Inter', -apple-system, sans-serif;
+    --font-serif: 'Noto Serif SC', serif;
+  }
+
   html, body {
     margin: 0;
     padding: 0;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
     overflow: hidden;
-    background-color: #030305;
-    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 真实纸张噪点覆盖层 (Film Grain) */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    pointer-events: none;
+    opacity: 0.05; /* 非常克制，只增加质感 */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  .layout {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 4vw;
+    box-sizing: border-box;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
-  /* 增强版背景光晕 */
-  .bg-glow {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    z-index: 0;
-    opacity: 0.8;
-    animation: move-glow 10s infinite alternate ease-in-out;
-  }
-  .glow-1 {
-    width: 50vw; height: 50vw;
-    background: rgba(0, 255, 255, 0.4); /* 青色 */
-    top: 0%; left: 10%;
-  }
-  .glow-2 {
-    width: 60vw; height: 60vw;
-    background: rgba(255, 0, 128, 0.3); /* 粉红 */
-    bottom: -10%; right: 0%;
-    animation-delay: -3s;
-  }
-  .glow-3 {
-    width: 40vw; height: 40vw;
-    background: rgba(130, 80, 255, 0.4); /* 紫色 */
-    top: 30%; left: 40%;
-    animation-delay: -6s;
+  /* 顶部小字 */
+  .header .meta {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray);
   }
 
-  @keyframes move-glow {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(-5vw, 10vh) scale(1.1); }
+  /* 核心排版区 */
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex: 1;
+    padding-bottom: 10vh;
   }
 
-  .container {
-    z-index: 1;
-    text-align: center;
-    position: relative;
-  }
-
-  /* 核心：液态玻璃大字 */
-  .glass-title {
-    font-size: clamp(5rem, 18vw, 15rem);
-    font-weight: 900;
+  /* 主标题：超大极简黑体 */
+  .main-title {
     margin: 0;
-    letter-spacing: 0.05em;
-    position: relative;
-    
-    /* 内部完全透明，透出背景光 */
-    color: transparent;
-    
-    /* 玻璃材质感：只有边缘有白亮渐变，中间透明 */
-    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.2) 40%, rgba(255,255,255,0.8) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    
-    /* 高光反射：利用多重阴影模拟玻璃厚度 */
-    text-shadow: 
-      0 0 40px rgba(255, 255, 255, 0.1), /* 外发光 */
-      0 0 10px rgba(0, 255, 255, 0.3),
-      0 0 20px rgba(255, 0, 128, 0.2);
-      
-    /* 呼吸放大 + 光影流动 */
-    animation: breathe 4s ease-in-out infinite alternate, flow 8s infinite linear;
-  }
-
-  /* 用伪元素给文字加上边缘高光描边（模拟玻璃厚度） */
-  .glass-title::before {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: -1;
-    color: transparent;
-    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.4);
-    filter: blur(2px);
+    font-family: var(--font-sans);
+    font-size: clamp(6rem, 18vw, 22rem);
+    font-weight: 800;
+    line-height: 0.8; /* 极小的行高，创造紧凑排版 */
+    letter-spacing: -0.05em;
+    display: flex;
+    flex-direction: column;
   }
   
-  /* 增加内部折射光效 */
-  .glass-title::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: -2;
-    color: transparent;
-    -webkit-text-stroke: 4px rgba(0, 200, 255, 0.2);
-    filter: blur(8px);
+  .line-1 { margin-left: 0; }
+  .line-2 { margin-left: 25vw; } /* 错位排版 */
+
+  /* 副标题区域：极细衬线体 */
+  .subtitle-wrapper {
+    margin-bottom: 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  @keyframes breathe {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.05); }
+  .divider {
+    width: 40px;
+    height: 1px;
+    background-color: var(--text);
+    margin-bottom: 1.5rem;
   }
 
-  @keyframes flow {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(30deg); }
+  .sub-text {
+    font-family: var(--font-serif);
+    font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+    font-weight: 200;
+    line-height: 1.8;
+    letter-spacing: 0.1em;
+    margin: 0;
+    color: var(--text);
   }
 
-  .glass-sub {
-    font-size: clamp(1.2rem, 2vw, 1.8rem);
-    color: rgba(255, 255, 255, 0.7);
-    margin-top: 2rem;
-    letter-spacing: 0.3em;
-    font-weight: 300;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    animation: fade-in 2s ease-out;
+  /* 底部状态 */
+  .footer {
+    display: flex;
+    justify-content: flex-end;
   }
 
-  @keyframes fade-in {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  .status {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* 极其微小的闪烁点，代表“未完工” */
+  .dot {
+    width: 6px;
+    height: 6px;
+    background-color: #ff4444;
+    border-radius: 50%;
+    animation: blink 2s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  /* 响应式适配 */
+  @media (max-width: 768px) {
+    .layout { padding: 8vw; }
+    .content {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-end;
+      gap: 3rem;
+      padding-bottom: 5vh;
+    }
+    .line-2 { margin-left: 15vw; }
+    .footer { justify-content: flex-start; margin-top: 2rem; }
   }
 </style>
