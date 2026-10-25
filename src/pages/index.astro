@@ -5,13 +5,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>日语回忆练习 · 神经发音版</title>
+    <title>日语回忆练习 · 稳定版</title>
   </head>
-  <body>
+  <body style="background: #f7f9fc; color: #333;">
     <main class="container">
       <header>
         <h1>多邻国 · 专属回忆层</h1>
-        <p class="subtitle">中文场景 · 词块拼图 · 教学级神经发音</p>
+        <p class="subtitle">中文场景 · 词块拼图 · 浏览器免费发音</p>
       </header>
 
       <section class="card prompt-card">
@@ -32,225 +32,160 @@
       <section class="card feedback-card" id="feedback" style="display: none;">
         <span class="tag tag-green" id="feedback-tag">检查结果</span>
         <div id="feedback-content"></div>
-        <button id="play-audio-btn" style="display: none; margin-top: 10px; background: #1a73e8; padding: 0.5rem 1rem; font-size: 0.9rem;">🔊 听标准发音</button>
-        <span id="tts-status" style="display:none; font-size: 0.8rem; color: #999; margin-left: 8px;"></span>
+        <button id="play-audio-btn" style="display: none; margin-top: 10px; background: #1a73e8; padding: 0.5rem 1rem; font-size: 0.9rem;">🔊 听发音</button>
       </section>
     </main>
 
-    <script type="module">
-      import { PiperPlus } from "piper-plus";
-      import * as ort from "onnxruntime-web";
+    <script is:inline>
+      try {
+        const questionBank = [
+          { prompt: "那是什么？", answer: "それは何ですか", blocks: ["それは", "何", "です", "か", "水", "を"] },
+          { prompt: "请给我一杯水（礼貌）。", answer: "水をください", blocks: ["水", "を", "ください", "寿司", "は"] },
+          { prompt: "我是学生。", answer: "私は学生です", blocks: ["私", "は", "学生", "です", "か", "先生"] },
+          { prompt: "这是寿司。", answer: "これはすしです", blocks: ["これ", "は", "すし", "です", "何", "を"] }
+        ];
 
-      // ========== 1. 语音引擎初始化 ==========
-      let tts = null;
-      let ttsReady = false;
-      const ttsStatus = document.getElementById('tts-status');
+        let currentQuestion = 0;
+        let currentUserAnswer = [];
 
-      async function initTTS() {
-        try {
-          if (ttsStatus) ttsStatus.style.display = 'inline';
-          if (ttsStatus) ttsStatus.textContent = '正在加载语音模型...';
-          // 使用 "tsukuyomi" 模型，专为日语优化，处理声调和韵律
-          tts = await PiperPlus.initialize({ model: "tsukuyomi", ort });
-          ttsReady = true;
-          if (ttsStatus) ttsStatus.textContent = '✅ 语音引擎就绪';
-          setTimeout(() => { if (ttsStatus) ttsStatus.style.display = 'none'; }, 2000);
-        } catch (err) {
-          console.error("TTS 初始化失败:", err);
-          if (ttsStatus) ttsStatus.textContent = '⚠️ 语音加载失败，请刷新重试';
+        const promptText = document.getElementById('prompt-text');
+        const answerArea = document.getElementById('answer-area');
+        const poolArea = document.getElementById('pool-area');
+        const submitBtn = document.getElementById('submit-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const feedbackCard = document.getElementById('feedback');
+        const feedbackTag = document.getElementById('feedback-tag');
+        const feedbackContent = document.getElementById('feedback-content');
+        const playAudioBtn = document.getElementById('play-audio-btn');
+
+        function loadQuestion() {
+          const q = questionBank[currentQuestion];
+          promptText.textContent = q.prompt;
+          currentUserAnswer = [];
+          answerArea.innerHTML = '';
+          poolArea.innerHTML = '';
+          submitBtn.style.display = 'inline-block';
+          nextBtn.style.display = 'none';
+          feedbackCard.style.display = 'none';
+          playAudioBtn.style.display = 'none';
+          answerArea.classList.remove('correct-bg', 'error-bg');
+
+          const shuffledBlocks = [...q.blocks].sort(() => Math.random() - 0.5);
+          shuffledBlocks.forEach(blockText => {
+            const el = document.createElement('div');
+            el.className = 'word-block';
+            el.textContent = blockText;
+            el.onclick = () => moveBlockToAnswer(blockText, el);
+            poolArea.appendChild(el);
+          });
         }
-      }
-      initTTS();
 
-      // ========== 2. 题库与状态 ==========
-      const questionBank = [
-        { prompt: "那是什么？", answer: "それは何ですか", blocks: ["それは", "何", "です", "か", "水", "を"] },
-        { prompt: "请给我一杯水（礼貌）。", answer: "水をください", blocks: ["水", "を", "ください", "寿司", "は"] },
-        { prompt: "我是学生。", answer: "私は学生です", blocks: ["私", "は", "学生", "です", "か", "先生"] },
-        { prompt: "这是寿司。", answer: "これはすしです", blocks: ["これ", "は", "すし", "です", "何", "を"] }
-      ];
+        function moveBlockToAnswer(text, el) {
+          if (submitBtn.style.display === 'none') return;
+          el.remove();
+          const answerEl = document.createElement('div');
+          answerEl.className = 'word-block';
+          answerEl.textContent = text;
+          answerEl.onclick = () => moveBlockToPool(text, answerEl);
+          answerArea.appendChild(answerEl);
+          currentUserAnswer.push(text);
+        }
 
-      let currentQuestion = 0;
-      let currentUserAnswer = [];
+        function moveBlockToPool(text, el) {
+          if (submitBtn.style.display === 'none') return;
+          el.remove();
+          const poolEl = document.createElement('div');
+          poolEl.className = 'word-block';
+          poolEl.textContent = text;
+          poolEl.onclick = () => moveBlockToAnswer(text, poolEl);
+          poolArea.appendChild(poolEl);
+          const index = currentUserAnswer.indexOf(text);
+          if (index > -1) currentUserAnswer.splice(index, 1);
+        }
 
-      const promptText = document.getElementById('prompt-text');
-      const answerArea = document.getElementById('answer-area');
-      const poolArea = document.getElementById('pool-area');
-      const submitBtn = document.getElementById('submit-btn');
-      const nextBtn = document.getElementById('next-btn');
-      const feedbackCard = document.getElementById('feedback');
-      const feedbackTag = document.getElementById('feedback-tag');
-      const feedbackContent = document.getElementById('feedback-content');
-      const playAudioBtn = document.getElementById('play-audio-btn');
+        function checkAnswer() {
+          const q = questionBank[currentQuestion];
+          const userString = currentUserAnswer.join('');
 
-      // ========== 3. 题目渲染 ==========
-      function loadQuestion() {
-        const q = questionBank[currentQuestion];
-        promptText.textContent = q.prompt;
-        currentUserAnswer = [];
-        answerArea.innerHTML = '';
-        poolArea.innerHTML = '';
-        submitBtn.style.display = 'inline-block';
-        nextBtn.style.display = 'none';
-        feedbackCard.style.display = 'none';
-        playAudioBtn.style.display = 'none';
-        answerArea.classList.remove('correct-bg', 'error-bg');
+          feedbackCard.style.display = 'block';
+          playAudioBtn.style.display = 'inline-block';
+          submitBtn.style.display = 'none';
+          nextBtn.style.display = 'inline-block';
 
-        const shuffledBlocks = [...q.blocks].sort(() => Math.random() - 0.5);
-        shuffledBlocks.forEach(blockText => {
-          const el = document.createElement('div');
-          el.className = 'word-block';
-          el.textContent = blockText;
-          el.onclick = () => moveBlockToAnswer(blockText, el);
-          poolArea.appendChild(el);
+          if (userString === q.answer) {
+            feedbackTag.textContent = "✅ 回答正确";
+            feedbackTag.style.color = "#58cc02";
+            answerArea.classList.add('correct-bg');
+            feedbackContent.innerHTML = "<p>太棒了！你成功拼出了：<strong>" + q.answer + "</strong></p>";
+          } else {
+            feedbackTag.textContent = "❌ 需要复习";
+            feedbackTag.style.color = "#ff4b4b";
+            answerArea.classList.add('error-bg');
+            feedbackContent.innerHTML = "<p>顺序或用词不对，正确的说法是：<strong>" + q.answer + "</strong></p>";
+          }
+        }
+
+        function playWithTTS() {
+          const text = questionBank[currentQuestion].answer;
+          if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+          } else {
+            alert('你的浏览器不支持语音朗读');
+          }
+        }
+
+        submitBtn.addEventListener('click', checkAnswer);
+        nextBtn.addEventListener('click', () => {
+          currentQuestion = (currentQuestion + 1) % questionBank.length;
+          loadQuestion();
         });
-      }
+        playAudioBtn.addEventListener('click', playWithTTS);
 
-      function moveBlockToAnswer(text, el) {
-        if (submitBtn.style.display === 'none') return;
-        el.remove();
-        const answerEl = document.createElement('div');
-        answerEl.className = 'word-block';
-        answerEl.textContent = text;
-        answerEl.onclick = () => moveBlockToPool(text, answerEl);
-        answerArea.appendChild(answerEl);
-        currentUserAnswer.push(text);
-      }
-
-      function moveBlockToPool(text, el) {
-        if (submitBtn.style.display === 'none') return;
-        el.remove();
-        const poolEl = document.createElement('div');
-        poolEl.className = 'word-block';
-        poolEl.textContent = text;
-        poolEl.onclick = () => moveBlockToAnswer(text, poolEl);
-        poolArea.appendChild(poolEl);
-        const index = currentUserAnswer.indexOf(text);
-        if (index > -1) currentUserAnswer.splice(index, 1);
-      }
-
-      // ========== 4. 判卷与反馈 ==========
-      function checkAnswer() {
-        const q = questionBank[currentQuestion];
-        const userString = currentUserAnswer.join('');
-
-        feedbackCard.style.display = 'block';
-        playAudioBtn.style.display = 'inline-block';
-        submitBtn.style.display = 'none';
-        nextBtn.style.display = 'inline-block';
-
-        if (userString === q.answer) {
-          feedbackTag.textContent = "✅ 回答正确";
-          feedbackTag.style.color = "#58cc02";
-          answerArea.classList.add('correct-bg');
-          feedbackContent.innerHTML = "<p>太棒了！你成功拼出了：<strong>" + q.answer + "</strong></p>";
-        } else {
-          feedbackTag.textContent = "❌ 需要复习";
-          feedbackTag.style.color = "#ff4b4b";
-          answerArea.classList.add('error-bg');
-          feedbackContent.innerHTML = "<p>顺序或用词不对，正确的说法是：<strong>" + q.answer + "</strong></p>";
-        }
-      }
-
-      // ========== 5. 神经语音合成 ==========
-      async function playWithTTS() {
-        const text = questionBank[currentQuestion].answer;
-        if (!ttsReady || !tts) {
-          alert('语音引擎还在加载中，请稍后再试');
-          return;
-        }
-        try {
-          playAudioBtn.disabled = true;
-          playAudioBtn.textContent = '🔊 正在合成...';
-          // language: "ja" 指定日语，优化声调
-          const audio = await tts.synthesize(text, { language: "ja" });
-          await audio.play();
-        } catch (err) {
-          console.error("语音合成失败:", err);
-          alert('发音合成失败，请查看控制台');
-        } finally {
-          playAudioBtn.disabled = false;
-          playAudioBtn.textContent = '🔊 听标准发音';
-        }
-      }
-
-      submitBtn.addEventListener('click', checkAnswer);
-      nextBtn.addEventListener('click', () => {
-        currentQuestion = (currentQuestion + 1) % questionBank.length;
         loadQuestion();
-      });
-      playAudioBtn.addEventListener('click', playWithTTS);
 
-      loadQuestion();
+      } catch (error) {
+        document.body.innerHTML = `<div style="color:red; padding:20px; font-family:sans-serif;">
+          <h2>脚本出错了：</h2>
+          <p>${error.message}</p>
+        </div>`;
+      }
     </script>
   </body>
 </html>
 
 <style>
-  :root {
-    color-scheme: light;
-    --bg-color: #f7f9fc;
-    --text-main: #333;
-    --primary: #58cc02;
-    --primary-hover: #46a302;
-  }
-  body {
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    padding: 2rem 1rem;
-  }
-  .container { max-width: 600px; width: 100%; }
+  :root { color-scheme: light; }
+  .container { max-width: 600px; margin: 0 auto; padding: 2rem 1rem; font-family: sans-serif; }
   header h1 { margin-bottom: 0.2rem; }
   .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
   .card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    background: white; border-radius: 12px; padding: 1.5rem;
+    margin-bottom: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     border: 1px solid #eef1f5;
   }
   .tag {
-    display: inline-block;
-    background: #e5f0ff;
-    color: #1a73e8;
-    padding: 0.2rem 0.6rem;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 0.8rem;
+    display: inline-block; background: #e5f0ff; color: #1a73e8;
+    padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.8rem;
+    font-weight: bold; margin-bottom: 0.8rem;
   }
   .tag-green { background: #e5f9e5; }
   .prompt-card h2 { margin: 0; font-size: 1.4rem; }
   .word-blocks-area {
-    min-height: 60px;
-    border-radius: 8px;
-    padding: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
+    min-height: 60px; border-radius: 8px; padding: 10px;
+    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;
   }
   .answer-blocks {
-    border-bottom: 2px dashed #e0e0e0;
-    background: #fafafa;
-    min-height: 80px;
-    align-content: flex-start;
+    border-bottom: 2px dashed #e0e0e0; background: #fafafa;
+    min-height: 80px; align-content: flex-start;
   }
   .pool-blocks { background: #fff; }
   .word-block {
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    box-shadow: 0 2px 0 #e0e0e0;
-    user-select: none;
-    transition: all 0.1s;
+    background: white; border: 2px solid #e0e0e0; border-radius: 8px;
+    padding: 8px 16px; font-size: 1.2rem; cursor: pointer;
+    box-shadow: 0 2px 0 #e0e0e0; user-select: none; transition: all 0.1s;
   }
   .word-block:active { transform: translateY(2px); box-shadow: none; }
   .word-block:hover { background: #f0f0f0; }
@@ -258,16 +193,8 @@
   .error-bg { background: #ffe5e5 !important; border-color: #ff4b4b; }
   .actions { margin-top: 1rem; display: flex; justify-content: flex-end; gap: 10px; }
   button {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
+    background: #58cc02; color: white; border: none; padding: 0.8rem 1.5rem;
+    border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
   }
   button:hover { opacity: 0.9; }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
