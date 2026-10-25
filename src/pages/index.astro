@@ -1,5 +1,6 @@
 ---
-// 苹果同款液态玻璃版 - 使用 liquid-web
+// 原生 Web Component 方案
+import 'simple-liquid-glass/web-component';
 ---
 <html lang="zh-CN">
   <head>
@@ -8,36 +9,15 @@
     <title>宫水.com</title>
   </head>
   <body>
-    <!-- 丰富的背景，给玻璃提供折射内容 -->
-    <div class="bg-container">
-      <div class="bg-text">MIYAMIZU</div>
-      <div class="bg-text bg-text-2">結び</div>
-      <div class="bg-text bg-text-3">MUSUBI</div>
-    </div>
+    <div class="bg-text-bg">MIYAMIZU</div>
 
-    <!-- 液态玻璃卡片 -->
-    <div class="glass-wrapper" id="liquid-glass">
+    <!-- 直接使用自定义标签，无需写任何初始化 JS -->
+    <liquid-glass radius="32" frost="0.15" blur="8" saturation="150" style="width: 400px; height: 220px; display: block; position: relative; z-index: 2;">
       <div class="glass-content">
         <h1>懒得做了</h1>
         <p>但域名都买了，凑合看吧</p>
       </div>
-    </div>
-
-    <!-- 注意：这里去掉了 is:inline，让 Astro 帮忙打包 -->
-    <script>
-      import { LiquidWeb } from 'liquid-web';
-
-      // 等页面 DOM 加载完再初始化
-      document.addEventListener('DOMContentLoaded', () => {
-        new LiquidWeb('#liquid-glass', {
-          scale: 30,          // 折射强度
-          blur: 2,            // 模糊度
-          saturation: 180,    // 饱和度
-          aberration: 50,     // 色散强度
-          mode: 'standard'    // 渲染模式
-        });
-      });
-    </script>
+    </liquid-glass>
   </body>
 </html>
 
@@ -45,7 +25,7 @@
   html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    height: 100vh;
     overflow: hidden;
     background-color: #050505;
     display: flex;
@@ -54,46 +34,14 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
-  /* 纯色背景大字 */
-  .bg-container {
+  .bg-text-bg {
     position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .bg-text {
-    font-size: 12vw;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.15);
-    letter-spacing: 0.2em;
-    line-height: 1;
-    user-select: none;
-  }
-  .bg-text-2 {
-    font-size: 8vw;
+    font-size: 15vw;
+    font-weight: 900;
     color: rgba(255, 255, 255, 0.08);
-    margin-top: -2vw;
-  }
-  .bg-text-3 {
-    font-size: 6vw;
-    color: rgba(255, 255, 255, 0.05);
-    margin-top: -1vw;
-  }
-
-  /* 液态玻璃容器 */
-  .glass-wrapper {
-    position: relative;
-    z-index: 1;
-    width: 400px;
-    height: 220px;
-    border-radius: 32px;
-    /* 备用样式：如果 JS 没加载出来，至少这里是个毛玻璃 */
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    letter-spacing: 0.2em;
+    user-select: none;
+    z-index: 0;
   }
 
   .glass-content {
@@ -102,11 +50,7 @@
     justify-content: center;
     align-items: center;
     height: 100%;
-    padding: 2rem;
     text-align: center;
-    position: relative;
-    z-index: 2;
-    pointer-events: none;
   }
 
   h1 {
@@ -114,8 +58,10 @@
     font-weight: 700;
     margin: 0 0 0.8rem 0;
     color: #fff;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    letter-spacing: 0.1em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   }
+
   p {
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.7);
