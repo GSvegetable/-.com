@@ -11,29 +11,119 @@ import '../styles/main.css';
     <main class="container">
       <header>
         <h1>日语回忆层</h1>
-        <p class="subtitle">与 Duolingo 搭配使用 · 从识别到产出</p>
+        <p class="subtitle">与 Duolingo 搭配使用 · 纯本地无 API 版</p>
       </header>
 
       <section class="card prompt-card">
         <span class="tag">场景提示</span>
-        <h2>Ask for water politely.</h2>
+        <h2 id="prompt-text">加载中...</h2>
       </section>
 
       <section class="card input-card">
         <label for="answer">你的日文回答：</label>
-        <textarea id="answer" placeholder="在此输入或说出你的日语..."></textarea>
+        <textarea id="answer" placeholder="在此输入你的日语... (例如: 水をください)"></textarea>
         <div class="actions">
           <button id="submit-btn">提交检查</button>
+          <button id="next-btn" style="display: none; background: #666;">下一题</button>
         </div>
       </section>
 
       <section class="card feedback-card" id="feedback" style="display: none;">
-        <span class="tag tag-green">AI 反馈</span>
-        <div id="feedback-content">
-          <!-- AI 反馈会渲染在这里 -->
-        </div>
+        <span class="tag tag-green" id="feedback-tag">检查结果</span>
+        <div id="feedback-content"></div>
+        <button id="play-audio-btn" style="display: none; margin-top: 10px; background: #1a73e8; padding: 0.5rem 1rem; font-size: 0.9rem;">🔊 听正确发音</button>
       </section>
     </main>
+
+    <script>
+      // 纯本地题库 (模拟从多邻国学的进度)
+      const questionBank = [
+        { prompt: "Ask for water politely.", answer: "水をください", keywords: ["水", "ください"] },
+        { prompt: "I am a student.", answer: "私は学生です", keywords: ["私", "学生"] },
+        { prompt: "Where is the restroom?", answer: "トイレはどこですか", keywords: ["トイレ", "どこ"] }
+      ];
+
+      let currentQuestion = 0;
+
+      const promptText = document.getElementById('prompt-text');
+      const answerInput = document.getElementById('answer');
+      const submitBtn = document.getElementById('submit-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const feedbackCard = document.getElementById('feedback');
+      const feedbackTag = document.getElementById('feedback-tag');
+      const feedbackContent = document.getElementById('feedback-content');
+      const playAudioBtn = document.getElementById('play-audio-btn');
+
+      function loadQuestion() {
+        promptText.textContent = questionBank[currentQuestion].prompt;
+        answerInput.value = '';
+        answerInput.disabled = false;
+        submitBtn.style.display = 'inline-block';
+        nextBtn.style.display = 'none';
+        feedbackCard.style.display = 'none';
+        playAudioBtn.style.display = 'none';
+        answerInput.focus();
+      }
+
+      function checkAnswer() {
+        const userAnswer = answerInput.value.trim();
+        const correctAnswer = questionBank[currentQuestion].answer;
+        const keywords = questionBank[currentQuestion].keywords;
+
+        // 简单的规则判定：看用户有没有输入核心关键词
+        const isCorrect = keywords.every(kw => userAnswer.includes(kw));
+
+        feedbackCard.style.display = 'block';
+        playAudioBtn.style.display = 'inline-block';
+        answerInput.disabled = true;
+        submitBtn.style.display = 'none';
+        nextBtn.style.display = 'inline-block';
+
+        if (isCorrect) {
+          feedbackTag.textContent = "✅ 回答正确";
+          feedbackTag.style.color = "#58cc02";
+          feedbackContent.innerHTML = `<p>非常棒！你成功回忆出了：<strong>${correctAnswer}</strong></p>`;
+        } else {
+          feedbackTag.textContent = "❌ 需要复习";
+          feedbackTag.style.color = "#ff4b4b";
+          // 如果没答对，给一点提示
+          feedbackContent.innerHTML = `
+            <p>还差一点，正确的说法是：<strong>${correctAnswer}</strong></p>
+            <p style="color: #666; font-size: 0.9rem;">提示关键词：${keywords.join('、')}</p>
+          `;
+        }
+      }
+
+      submitBtn.addEventListener('click', checkAnswer);
+
+      // 支持 Ctrl+Enter 或 Cmd+Enter 快捷提交
+      answerInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+          checkAnswer();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        currentQuestion = (currentQuestion + 1) % questionBank.length;
+        loadQuestion();
+      });
+
+      // 使用浏览器自带的免费 TTS 引擎朗读
+      playAudioBtn.addEventListener('click', () => {
+        const text = questionBank[currentQuestion].answer;
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'ja-JP'; // 设置为日语
+          utterance.rate = 0.9; // 稍微放慢语速
+          window.speechSynthesis.speak(utterance);
+        } else {
+          alert('你的浏览器不支持语音朗读功能');
+        }
+      });
+
+      // 初始化加载第一题
+      loadQuestion();
+    </script>
   </body>
 </html>
 
@@ -42,7 +132,7 @@ import '../styles/main.css';
     color-scheme: light;
     --bg-color: #f7f9fc;
     --text-main: #333;
-    --primary: #58cc02; /* 致敬多邻国绿 */
+    --primary: #58cc02;
     --primary-hover: #46a302;
   }
   body {
@@ -53,10 +143,7 @@ import '../styles/main.css';
     justify-content: center;
     padding: 2rem 1rem;
   }
-  .container {
-    max-width: 600px;
-    width: 100%;
-  }
+  .container { max-width: 600px; width: 100%; }
   header h1 { margin-bottom: 0.2rem; }
   .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
   .card {
@@ -77,7 +164,7 @@ import '../styles/main.css';
     font-weight: bold;
     margin-bottom: 0.8rem;
   }
-  .tag-green { background: #e5f9e5; color: var(--primary); }
+  .tag-green { background: #e5f9e5; }
   .prompt-card h2 { margin: 0; font-size: 1.4rem; }
   label { display: block; margin-bottom: 0.8rem; font-weight: 500;}
   textarea {
@@ -91,11 +178,8 @@ import '../styles/main.css';
     box-sizing: border-box;
     font-family: inherit;
   }
-  textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-  }
-  .actions { margin-top: 1rem; text-align: right; }
+  textarea:focus { outline: none; border-color: var(--primary); }
+  .actions { margin-top: 1rem; display: flex; justify-content: flex-end; gap: 10px; }
   button {
     background: var(--primary);
     color: white;
@@ -107,5 +191,5 @@ import '../styles/main.css';
     cursor: pointer;
     transition: background 0.2s;
   }
-  button:hover { background: var(--primary-hover); }
+  button:hover { opacity: 0.9; }
 </style>
