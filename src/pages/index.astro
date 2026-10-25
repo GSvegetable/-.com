@@ -1,200 +1,295 @@
 ---
-// 移除了外部 css 的 import
 ---
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>日语回忆练习 · 稳定版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kotoba - 沉浸式日语学习</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500;700&display=swap" rel="stylesheet">
   </head>
-  <body style="background: #f7f9fc; color: #333;">
-    <main class="container">
-      <header>
-        <h1>多邻国 · 专属回忆层</h1>
-        <p class="subtitle">中文场景 · 词块拼图 · 浏览器免费发音</p>
-      </header>
+  <body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
 
-      <section class="card prompt-card">
-        <span class="tag">场景提示</span>
-        <h2 id="prompt-text">加载中...</h2>
-      </section>
+    <nav class="navbar">
+      <div class="logo">Kotoba.</div>
+      <div class="nav-links">
+        <a href="#">功能</a>
+        <a href="#">题库</a>
+        <a href="#">关于</a>
+      </div>
+      <button class="btn-login">登录</button>
+    </nav>
 
-      <section class="card input-card">
-        <label>点击下方词块，拼出正确的日语句子：</label>
-        <div id="answer-area" class="word-blocks-area answer-blocks"></div>
-        <div id="pool-area" class="word-blocks-area pool-blocks"></div>
-        <div class="actions">
-          <button id="submit-btn">提交检查</button>
-          <button id="next-btn" style="display: none; background: #666;">下一题</button>
+    <main class="hero">
+      <div class="hero-content">
+        <div class="badge">✨ 全新 V2.0 版本已上线</div>
+        <h1>打破选择题的枷锁<br><span class="gradient-text">真正学会开口说日语</span></h1>
+        <p>放弃机械的选项记忆。通过智能拼图、主动回忆与真实场景，将多邻国学到的知识转化为你的直觉。</p>
+        <div class="cta-group">
+          <button class="btn-primary">开始免费体验</button>
+          <button class="btn-secondary">查看介绍 →</button>
         </div>
-      </section>
+      </div>
 
-      <section class="card feedback-card" id="feedback" style="display: none;">
-        <span class="tag tag-green" id="feedback-tag">检查结果</span>
-        <div id="feedback-content"></div>
-        <button id="play-audio-btn" style="display: none; margin-top: 10px; background: #1a73e8; padding: 0.5rem 1rem; font-size: 0.9rem;">🔊 听发音</button>
-      </section>
+      <div class="hero-visual">
+        <div class="glass-card main-card">
+          <div class="card-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <div class="card-body">
+            <p class="prompt">请给我一杯水（礼貌）</p>
+            <div class="blocks">
+              <span class="block">水</span>
+              <span class="block">を</span>
+              <span class="block">ください</span>
+            </div>
+            <div class="feedback success">✅ 完美！</div>
+          </div>
+        </div>
+        <div class="glass-card sub-card">
+          <p>🔥 连续打卡 12 天</p>
+        </div>
+      </div>
     </main>
 
-    <script is:inline>
-      try {
-        const questionBank = [
-          { prompt: "那是什么？", answer: "それは何ですか", blocks: ["それは", "何", "です", "か", "水", "を"] },
-          { prompt: "请给我一杯水（礼貌）。", answer: "水をください", blocks: ["水", "を", "ください", "寿司", "は"] },
-          { prompt: "我是学生。", answer: "私は学生です", blocks: ["私", "は", "学生", "です", "か", "先生"] },
-          { prompt: "这是寿司。", answer: "これはすしです", blocks: ["これ", "は", "すし", "です", "何", "を"] }
-        ];
-
-        let currentQuestion = 0;
-        let currentUserAnswer = [];
-
-        const promptText = document.getElementById('prompt-text');
-        const answerArea = document.getElementById('answer-area');
-        const poolArea = document.getElementById('pool-area');
-        const submitBtn = document.getElementById('submit-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const feedbackCard = document.getElementById('feedback');
-        const feedbackTag = document.getElementById('feedback-tag');
-        const feedbackContent = document.getElementById('feedback-content');
-        const playAudioBtn = document.getElementById('play-audio-btn');
-
-        function loadQuestion() {
-          const q = questionBank[currentQuestion];
-          promptText.textContent = q.prompt;
-          currentUserAnswer = [];
-          answerArea.innerHTML = '';
-          poolArea.innerHTML = '';
-          submitBtn.style.display = 'inline-block';
-          nextBtn.style.display = 'none';
-          feedbackCard.style.display = 'none';
-          playAudioBtn.style.display = 'none';
-          answerArea.classList.remove('correct-bg', 'error-bg');
-
-          const shuffledBlocks = [...q.blocks].sort(() => Math.random() - 0.5);
-          shuffledBlocks.forEach(blockText => {
-            const el = document.createElement('div');
-            el.className = 'word-block';
-            el.textContent = blockText;
-            el.onclick = () => moveBlockToAnswer(blockText, el);
-            poolArea.appendChild(el);
-          });
-        }
-
-        function moveBlockToAnswer(text, el) {
-          if (submitBtn.style.display === 'none') return;
-          el.remove();
-          const answerEl = document.createElement('div');
-          answerEl.className = 'word-block';
-          answerEl.textContent = text;
-          answerEl.onclick = () => moveBlockToPool(text, answerEl);
-          answerArea.appendChild(answerEl);
-          currentUserAnswer.push(text);
-        }
-
-        function moveBlockToPool(text, el) {
-          if (submitBtn.style.display === 'none') return;
-          el.remove();
-          const poolEl = document.createElement('div');
-          poolEl.className = 'word-block';
-          poolEl.textContent = text;
-          poolEl.onclick = () => moveBlockToAnswer(text, poolEl);
-          poolArea.appendChild(poolEl);
-          const index = currentUserAnswer.indexOf(text);
-          if (index > -1) currentUserAnswer.splice(index, 1);
-        }
-
-        function checkAnswer() {
-          const q = questionBank[currentQuestion];
-          const userString = currentUserAnswer.join('');
-
-          feedbackCard.style.display = 'block';
-          playAudioBtn.style.display = 'inline-block';
-          submitBtn.style.display = 'none';
-          nextBtn.style.display = 'inline-block';
-
-          if (userString === q.answer) {
-            feedbackTag.textContent = "✅ 回答正确";
-            feedbackTag.style.color = "#58cc02";
-            answerArea.classList.add('correct-bg');
-            feedbackContent.innerHTML = "<p>太棒了！你成功拼出了：<strong>" + q.answer + "</strong></p>";
-          } else {
-            feedbackTag.textContent = "❌ 需要复习";
-            feedbackTag.style.color = "#ff4b4b";
-            answerArea.classList.add('error-bg');
-            feedbackContent.innerHTML = "<p>顺序或用词不对，正确的说法是：<strong>" + q.answer + "</strong></p>";
-          }
-        }
-
-        function playWithTTS() {
-          const text = questionBank[currentQuestion].answer;
-          if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ja-JP';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-          } else {
-            alert('你的浏览器不支持语音朗读');
-          }
-        }
-
-        submitBtn.addEventListener('click', checkAnswer);
-        nextBtn.addEventListener('click', () => {
-          currentQuestion = (currentQuestion + 1) % questionBank.length;
-          loadQuestion();
-        });
-        playAudioBtn.addEventListener('click', playWithTTS);
-
-        loadQuestion();
-
-      } catch (error) {
-        document.body.innerHTML = `<div style="color:red; padding:20px; font-family:sans-serif;">
-          <h2>脚本出错了：</h2>
-          <p>${error.message}</p>
-        </div>`;
-      }
-    </script>
+    <section class="features">
+      <div class="feature-card">
+        <div class="icon">🧠</div>
+        <h3>主动回忆训练</h3>
+        <p>不再让你做多选题，逼迫大脑从零生成句子，记忆效率提升 300%。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🧩</div>
+        <h3>渐进式拼图</h3>
+        <p>从词块拼图到全键盘输入，平滑过渡，彻底告别“提笔忘字”。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🎙️</div>
+        <h3>精准发音评估</h3>
+        <p>本地神经语音合成，配合你的发音练习，告别哑巴外语。</p>
+      </div>
+    </section>
   </body>
 </html>
 
 <style>
-  :root { color-scheme: light; }
-  .container { max-width: 600px; margin: 0 auto; padding: 2rem 1rem; font-family: sans-serif; }
-  header h1 { margin-bottom: 0.2rem; }
-  .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
-  .card {
-    background: white; border-radius: 12px; padding: 1.5rem;
-    margin-bottom: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border: 1px solid #eef1f5;
+  :root {
+    --bg-color: #0a0a0f;
+    --text-main: #f0f0f5;
+    --text-muted: #9a9aaf;
+    --primary: #58cc02;
+    --primary-glow: rgba(88, 204, 2, 0.3);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
   }
-  .tag {
-    display: inline-block; background: #e5f0ff; color: #1a73e8;
-    padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.8rem;
-    font-weight: bold; margin-bottom: 0.8rem;
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Noto Sans SC', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
   }
-  .tag-green { background: #e5f9e5; }
-  .prompt-card h2 { margin: 0; font-size: 1.4rem; }
-  .word-blocks-area {
-    min-height: 60px; border-radius: 8px; padding: 10px;
-    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;
+
+  /* 动态背景光晕 */
+  .bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: -1;
   }
-  .answer-blocks {
-    border-bottom: 2px dashed #e0e0e0; background: #fafafa;
-    min-height: 80px; align-content: flex-start;
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: rgba(88, 204, 2, 0.15);
+    top: -100px; right: -100px;
   }
-  .pool-blocks { background: #fff; }
-  .word-block {
-    background: white; border: 2px solid #e0e0e0; border-radius: 8px;
-    padding: 8px 16px; font-size: 1.2rem; cursor: pointer;
-    box-shadow: 0 2px 0 #e0e0e0; user-select: none; transition: all 0.1s;
+  .orb-2 {
+    width: 400px; height: 400px;
+    background: rgba(26, 115, 232, 0.15);
+    bottom: 0; left: -100px;
   }
-  .word-block:active { transform: translateY(2px); box-shadow: none; }
-  .word-block:hover { background: #f0f0f0; }
-  .correct-bg { background: #e5f9e5 !important; border-color: #58cc02; }
-  .error-bg { background: #ffe5e5 !important; border-color: #ff4b4b; }
-  .actions { margin-top: 1rem; display: flex; justify-content: flex-end; gap: 10px; }
-  button {
-    background: #58cc02; color: white; border: none; padding: 0.8rem 1.5rem;
-    border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
+
+  /* 导航栏 */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    background: rgba(10, 10, 15, 0.7);
+    backdrop-filter: blur(12px);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--glass-border);
   }
-  button:hover { opacity: 0.9; }
+  .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 1px; }
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    margin: 0 1.5rem;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--text-main); }
+  .btn-login {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-login:hover { background: var(--glass-bg); }
+
+  /* 主视觉区 */
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10rem 10% 5rem;
+    min-height: 100vh;
+    gap: 4rem;
+  }
+  .hero-content { flex: 1; max-width: 600px; }
+  .badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #a0e070;
+    margin-bottom: 1.5rem;
+  }
+  h1 {
+    font-size: 3.5rem;
+    line-height: 1.2;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+  .gradient-text {
+    background: linear-gradient(90deg, #58cc02, #1a73e8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+  }
+
+  .cta-group { display: flex; gap: 1rem; }
+  .btn-primary {
+    background: var(--primary);
+    color: #000;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 20px var(--primary-glow);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--primary-glow);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--glass-border);
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .btn-secondary:hover { background: var(--glass-bg); }
+
+  /* 视觉展示区（毛玻璃卡片） */
+  .hero-visual {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+  .glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  }
+  .main-card { width: 100%; max-width: 400px; z-index: 2; }
+  .card-header { display: flex; gap: 8px; margin-bottom: 1rem; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .red { background: #ff5f56; }
+  .yellow { background: #ffbd2e; }
+  .green { background: #27c93f; }
+  
+  .prompt { color: var(--text-main); font-weight: 500; font-size: 1.1rem; margin-bottom: 1rem; }
+  .blocks { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+  .block {
+    background: #2a2a35;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    border: 1px solid #444;
+  }
+  .feedback {
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .success { background: rgba(88, 204, 2, 0.1); color: #58cc02; border: 1px solid rgba(88, 204, 2, 0.2); }
+  
+  .sub-card {
+    position: absolute;
+    bottom: -30px;
+    right: -20px;
+    padding: 1rem 1.5rem;
+    z-index: 3;
+  }
+  .sub-card p { margin: 0; font-size: 0.9rem; color: #ffd700; }
+
+  /* 功能卡片区 */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem 10% 8rem;
+  }
+  .feature-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 2rem;
+    border-radius: 16px;
+    transition: transform 0.3s, background 0.3s;
+  }
+  .feature-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .feature-card .icon { font-size: 2rem; margin-bottom: 1rem; }
+  .feature-card h3 { font-size: 1.2rem; margin-bottom: 0.8rem; font-weight: 500; }
+  .feature-card p { font-size: 0.95rem; margin-bottom: 0; }
+
+  @media (max-width: 768px) {
+    .hero { flex-direction: column; text-align: center; padding-top: 8rem; }
+    h1 { font-size: 2.5rem; }
+    .cta-group { justify-content: center; }
+    .nav-links { display: none; }
+  }
 </style>
