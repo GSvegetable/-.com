@@ -5,27 +5,61 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="The Blank Front Page">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
   <div class="progress-ring" id="progress-ring">
     <span id="progress-text" class="mono">0%</span>
   </div>
 
+  <header class="topbar">
+    <div class="brand-wrap">
+      <span class="brand-mark serif">G</span>
+      <span class="brand-text mono">Gong Shui</span>
+    </div>
+    <nav class="top-nav mono" aria-label="Main navigation">
+      <a href="#info-section">Work</a>
+      <a href="#page-three">Approach</a>
+      <a href="#site-footer">Contact</a>
+    </nav>
+    <a class="cta mono" href="#site-footer">Book a call</a>
+  </header>
+
   <section class="hero-section">
     <div class="perspective-wrap">
       <div class="hero-stage" id="hero-masthead">
-        <div class="bg-layer">
-          <div class="bg-image active" style="background-image: url('/bg1.jpg')"></div>
-          <div class="bg-image" style="background-image: url('/bg2.jpg')"></div>
-          <div class="bg-image" style="background-image: url('/bg3.jpg')"></div>
-          <div class="bg-image" style="background-image: url('/bg4.jpg')"></div>
-          <div class="bg-image" style="background-image: url('/bg5.jpg')"></div>
-          <div class="bg-image" style="background-image: url('/bg6.jpg')"></div>
+        <div class="bg-layer" aria-hidden="true">
+          <div class="orb orb-1"></div>
+          <div class="orb orb-2"></div>
+          <div class="orb orb-3"></div>
+          <div class="noise"></div>
+          <div class="gridline"></div>
+          <div class="light-sweep"></div>
         </div>
+
+        <div class="content-wrap">
+          <div class="eyebrow mono">Independent creative studio // Shanghai · Toronto</div>
+          <h1 class="headline serif">
+            <span class="line">The Blank</span>
+            <span class="line accent">Front Page</span>
+          </h1>
+          <p class="lede serif">
+            We shape cinematic worlds, premium brands, and immersive digital experiences that deserve to be remembered.
+          </p>
+          <div class="cta-row mono">
+            <a href="#page-three" class="primary">Open the dossier</a>
+            <a href="#info-section" class="secondary">View disciplines</a>
+          </div>
+          <div class="meta-row mono">
+            <span>Strategy</span>
+            <span>Worldbuilding</span>
+            <span>Immersive Systems</span>
+          </div>
+        </div>
+
         <div class="newspaper-masthead">
           <div class="masthead-top mono">
             <span>VOL. I</span>
-            <span>LONDON GAZETTE</span>
+            <span>THE BLANK FRONT PAGE</span>
             <span>EST. 1888</span>
           </div>
           <div class="letter-body">
@@ -35,10 +69,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="content-group">
               <p class="greeting">Dear Partner,</p>
               <p class="body-text">
-                The year is <span class="highlight">1888</span>. The city drowns in mist, and mysteries unfold in the gaslight. We are crafting a grand illusion <span class="highlight">(Unreal Engine 5)</span>, a world of shadows and truth. 
+                We are building a world of <span class="highlight">signal and silence</span>, where atmosphere becomes strategy and story becomes system.
               </p>
               <p class="body-text">
-                We seek the Architects, the Illustrators, and the Chroniclers. We welcome you in <span class="highlight">London</span>, <span class="highlight">Shanghai</span>, and <span class="highlight">Toronto</span>.
+                We create across <span class="highlight">Shanghai</span>, <span class="highlight">Toronto</span>, and the imagined edges of the future.
               </p>
             </div>
             <div class="signature-group">
@@ -55,10 +89,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <section class="info-section" id="info-section">
     <div class="content-block">
+      <div class="section-kicker mono">Selected disciplines</div>
       <div class="roles-grid" id="roles-grid">
-        <div class="role-item"><h3>UE5 / C++</h3><p>SYSTEM ARCHITECTURE</p></div>
-        <div class="role-item"><h3>3D / LIGHTING</h3><p>ENVIRONMENT ART</p></div>
-        <div class="role-item"><h3>NARRATIVE</h3><p>STORY & MECHANICS</p></div>
+        <div class="role-item">
+          <span class="role-index mono">01</span>
+          <h3>UE5 / C++</h3>
+          <p>System architecture</p>
+        </div>
+        <div class="role-item">
+          <span class="role-index mono">02</span>
+          <h3>3D / Lighting</h3>
+          <p>Environment art</p>
+        </div>
+        <div class="role-item">
+          <span class="role-index mono">03</span>
+          <h3>Narrative</h3>
+          <p>Story & mechanics</p>
+        </div>
+      </div>
+      <div class="floating-line mono">
+        <span>Worldbuilding</span>
+        <span>Brand direction</span>
+        <span>Immersive design</span>
       </div>
     </div>
   </section>
@@ -67,29 +119,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <section class="page-three" id="page-three">
     <div class="p3-stage" id="p3-stage">
-      
-      <!-- 新增：动态光晕与暗角背景 -->
       <div class="p3-bg-glow" id="p3-glow"></div>
       <div class="p3-vignette"></div>
 
       <div class="p3-inner">
         <header class="p3-mast mono">
-          <span>NO. 001</span><span>THE BLANK FRONT PAGE</span><span>ONE PENNY</span>
+          <span>NO. 001</span>
+          <span>THE BLANK FRONT PAGE</span>
+          <span>ONE PENNY</span>
         </header>
 
         <div class="p3-cases">
           <article class="case case--intro">
             <div class="intro-watermark serif">PROLOGUE</div>
             <div class="intro-content">
-              <p class="intro-eyebrow mono">THE CASE FILES</p>
+              <p class="intro-eyebrow mono">The case files</p>
               <h2 class="intro-title serif">
                 <span class="line-1">The truth is</span>
                 <span class="line-2">buried in the mist.</span>
               </h2>
               <div class="intro-divider"></div>
-              <p class="intro-sub serif">Three files. One city.<br>Open them in order.</p>
+              <p class="intro-sub serif">Three files. One mystery.<br>Open them in order.</p>
               <div class="scroll-hint">
-                <span class="mono">SCROLL TO OPEN</span>
+                <span class="mono">Scroll to open</span>
                 <div class="hint-line"></div>
               </div>
             </div>
@@ -103,7 +155,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <p class="case-sub serif">Paid by the line. Loyal to no paper.</p>
               </div>
               <i class="rule"></i>
-              <p class="case-body serif dropcap">He sells his words to many papers and belongs to none. He knows which editor will print what, and exactly where to send a story so that it blows up. A loophole in the newspaper system, not an employee of it.</p>
+              <p class="case-body serif dropcap">
+                He sells his words to many papers and belongs to none. He knows which editor will print what, and exactly where to send a story so it turns into a myth. A loophole in the system, not a servant to it.
+              </p>
               <div class="stamp-art mono" style="--r:-8deg">Freelance</div>
             </div>
           </article>
@@ -116,7 +170,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <p class="case-sub serif">To high society, servants are air.</p>
               </div>
               <i class="rule"></i>
-              <p class="case-body serif dropcap">She sees what he cannot. She knows what normal looks like, so she knows the moment something is wrong, and her network of servants runs deeper than any newspaper's. She is his eyes. He is her voice.</p>
+              <p class="case-body serif dropcap">
+                She sees what he cannot. She knows what normal looks like, so she senses the fracture at once. Her network of household eyes runs deeper than any newsroom ever could. She is his witness. He is her voice.
+              </p>
               <div class="stamp-art mono" style="--r:6deg">Informant</div>
             </div>
           </article>
@@ -126,10 +182,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="case-text">
               <div class="case-header-group">
                 <h3 class="case-title serif">The City</h3>
-                <p class="case-sub serif">1888. Fog, gaslight, and a great many closed doors.</p>
+                <p class="case-sub serif">Fog, lamps, and a horizon worth chasing.</p>
               </div>
               <i class="rule"></i>
-              <p class="case-body serif dropcap">We are building it in Unreal Engine 5, from London, Shanghai and Toronto. The case is open, and it needs Architects, Illustrators and Chroniclers.</p>
+              <p class="case-body serif dropcap">
+                We are building it in Unreal Engine 5, from Shanghai and Toronto. The case is open, and it needs architects, illustrators, and chroniclers to bring the impossible into form.
+              </p>
               <div class="stamp-art mono" style="--r:-5deg">Open</div>
             </div>
           </article>
@@ -147,7 +205,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <div class="footer-line"></div>
             </div>
             <div class="footer-col right">
-              <span class="mono">LONDON · SHANGHAI · TORONTO</span>
+              <span class="mono">SHANGHAI · TORONTO</span>
               <span class="mono footer-confidential">CONFIDENTIAL</span>
             </div>
           </div>
@@ -155,157 +213,854 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </div>
   </section>
-
 </BaseLayout>
 
 <style is:global>
-  * { -webkit-tap-highlight-color: transparent !important; }
-  a, div, button { outline: none !important; }
-
-  html { color-scheme: only light; overscroll-behavior-y: none; overflow-x: clip; max-width: 100vw; }
-  body { margin: 0; padding: 0; background-color: #030303; color: #e8e8e8; -webkit-font-smoothing: antialiased; width: 100%; overflow-x: clip; max-width: 100vw; }
+  * { -webkit-tap-highlight-color: transparent !important; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    padding: 0;
+    background:
+      radial-gradient(circle at top, rgba(202, 168, 83, 0.15), transparent 30%),
+      linear-gradient(180deg, #0b0a09 0%, #11110f 26%, #0d0d0d 100%);
+    color: #f1ead8;
+    font-family: 'Courier Prime', monospace;
+    width: 100%;
+    overflow-x: clip;
+    max-width: 100vw;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: inherit; text-decoration: none; }
   ::-webkit-scrollbar { display: none; width: 0 !important; }
   .mono { font-family: 'Courier Prime', monospace; }
   .serif { font-family: 'Playfair Display', serif; }
 
+  .topbar {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(1200px, calc(100vw - 32px));
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(15, 16, 15, 0.35);
+    border: 1px solid rgba(222, 198, 138, 0.22);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(10px);
+    z-index: 20;
+    border-radius: 999px;
+  }
+
+  .brand-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212,176,76,0.22), rgba(255,255,255,0.08));
+    border: 1px solid rgba(212,176,76,0.45);
+    color: #f0d39a;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .brand-text {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #efe5d0;
+  }
+
+  .top-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2vw, 32px);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(240, 235, 221, 0.7);
+  }
+  .top-nav a { transition: color 0.2s ease; }
+  .top-nav a:hover { color: #f0d39a; }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(212,176,76,0.5);
+    background: rgba(212,176,76,0.08);
+    color: #f1d28a;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .cta:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(212,176,76,0.12); }
+
   .progress-ring {
-    position: fixed; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
     background: conic-gradient(#d4af37 0%, rgba(255,255,255,0.1) 0%);
-    z-index: 9999; pointer-events: none;
-    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 1px rgba(212, 176, 76, 0.3);
   }
-  .progress-ring::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background-color: #030303; }
-  .progress-ring span { position: relative; font-size: 10px; color: #d4af37; font-weight: 700; letter-spacing: -0.5px; }
-
-  .hero-section { position: fixed; inset: 0; height: 100vh; display: flex; align-items: center; justify-content: center; z-index: 10; overflow: hidden; pointer-events: none; }
-  .perspective-wrap { perspective: 2500px; perspective-origin: 50% 0%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-  .hero-stage { position: relative; width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; transform-origin: center bottom; will-change: transform, opacity; pointer-events: auto; }
-  .bg-layer { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
-  .bg-image { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: grayscale(100%) contrast(130%) brightness(0.35); opacity: 0; transform: scale(1); transition: opacity 3s ease-in-out, transform 30s linear; }
-  .bg-image.active { opacity: 1; transform: scale(1.15); }
-
-  .newspaper-masthead { position: relative; z-index: 2; width: 100%; max-width: 900px; margin: 0 auto; padding: 0 40px; display: flex; flex-direction: column; }
-  .masthead-top { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 0 0 12px 0; font-size: 10px; letter-spacing: 0.3em; color: #aaa; margin-bottom: 30px; }
-  .letter-body { padding: 20px 0; display: flex; flex-direction: column; position: relative; border-left: 1px solid rgba(255,255,255,0.15); padding-left: 30px; margin-left: 10px; margin-top: 10px; }
-  .header-group { margin-bottom: 24px; }
-  .salutation { font-family: 'Pinyon Script', cursive; font-size: clamp(40px, 5vw, 60px); color: #f4eee0; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
-  .content-group { max-width: 80%; }
-  .greeting { font-family: 'Pinyon Script', cursive; font-size: 32px; color: #d1c5b4; margin: 0 0 16px 0; }
-  .body-text { font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.8; color: #c4bcad; margin: 0 0 16px 0; text-align: justify; }
-  .highlight { color: #d4af37; font-weight: 700; font-style: italic; }
-  .signature-group { margin-top: 20px; }
-  .sign-off { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: #888; margin: 0; }
-  .signature { font-family: 'Pinyon Script', cursive; font-size: clamp(50px, 6vw, 70px); color: #f4eee0; margin: 0; transform: rotate(-5deg); display: inline-block; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
-  .ink-break { -webkit-mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); mask-image: radial-gradient(circle at 20% 50%, transparent 2px, black 3px), radial-gradient(circle at 45% 30%, transparent 1.5px, black 2.5px), radial-gradient(circle at 70% 70%, transparent 2.5px, black 3.5px), radial-gradient(circle at 85% 40%, transparent 1px, black 2px), radial-gradient(circle at 10% 80%, transparent 1.5px, black 3px); filter: blur(0.3px) contrast(1.2); }
-
-  .scroll-spacer { height: 100vh; pointer-events: none; }
-  
-  .info-section { position: sticky; top: 0; z-index: 20; height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background-color: #050505; border-radius: 60px 60px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.9); overflow: hidden; transform-origin: 50% 0%; will-change: transform, opacity; }
-  .p2-dwell { height: 60vh; pointer-events: none; }
-  .content-block { max-width: 1000px; width: 100%; position: relative; z-index: 2; margin-top: 10vh; }
-  .roles-grid { display: grid; grid-template-columns: 1fr; gap: 60px; text-align: center; transform: translateY(150px); opacity: 0; will-change: transform, opacity; }
-  @media (min-width: 768px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
-  .role-item h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; font-weight: 400; margin: 0 0 10px; color: #fff; }
-  .role-item p { font-size: 11px; color: #777; letter-spacing: 0.1em; margin: 0; }
-
-  /* ====== 第三页：迷雾档案与动态煤气灯 ====== */
-  .page-three { 
-    --paper-base: #f2efe9; /* 复古羊皮纸色 */
-    --ink: #000000; 
-    position: relative; z-index: 30; height: 500vh; width: 100%; background-color: #030303; overflow-x: clip; 
+  .progress-ring::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.94);
+    border: 1px solid rgba(212,176,76,0.15);
   }
-  
-  .p3-stage { 
-    position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; color: #000; 
-    background-color: var(--paper-base); 
-    transform-origin: center top; will-change: transform, box-shadow; 
-    box-shadow: 0 -20px 50px rgba(0,0,0,0.1); 
+  .progress-ring span {
+    position: relative;
+    z-index: 1;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: #f0d39a;
   }
 
-  /* 动态光晕层 */
+  .hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 100px;
+    display: grid;
+    place-items: center;
+  }
+  .perspective-wrap {
+    width: min(1400px, calc(100vw - 32px));
+    perspective: 1800px;
+  }
+  .hero-stage {
+    position: relative;
+    min-height: 760px;
+    border: 1px solid rgba(234, 214, 164, 0.17);
+    background: rgba(11, 11, 11, 0.33);
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 40px 120px rgba(0,0,0,0.6);
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+  }
+
+  .bg-layer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(10,10,10,0.7), rgba(23,19,14,0.2) 40%, rgba(8,8,8,0.9));
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(36px);
+    opacity: 0.6;
+  }
+  .orb-1 {
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(233,204,123,0.56), transparent 65%);
+    left: -90px; top: 26px;
+  }
+  .orb-2 {
+    width: 620px; height: 620px;
+    background: radial-gradient(circle, rgba(133,97,50,0.4), transparent 65%);
+    right: 8%; bottom: -80px;
+  }
+  .orb-3 {
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 65%);
+    left: 42%; top: 18%;
+  }
+  .noise {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(circle at center, black, transparent 90%);
+    opacity: 0.25;
+  }
+  .gridline {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(212,176,76,0.1) 50%, transparent 100%);
+    transform: skewY(-8deg) scaleY(1.08);
+    opacity: 0.3;
+  }
+  .light-sweep {
+    position: absolute;
+    inset: -30% -20% 0 0;
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.14) 38%, transparent 60%);
+    transform: translateX(-20%);
+    filter: blur(18px);
+    animation: sweep 12s ease-in-out infinite alternate;
+  }
+  @keyframes sweep {
+    0% { transform: translateX(-35%) translateY(-10%) rotate(0deg); }
+    100% { transform: translateX(25%) translateY(8%) rotate(4deg); }
+  }
+
+  .content-wrap {
+    position: relative;
+    z-index: 2;
+    width: min(640px, calc(100% - 48px));
+    padding: clamp(56px, 7vw, 112px) 0 60px clamp(30px, 5vw, 96px);
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(240, 211, 154, 0.8);
+    margin-bottom: 26px;
+  }
+  .headline {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    color: #f4efe7;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .headline .line {
+    display: block;
+    font-size: clamp(52px, 7vw, 126px);
+    font-style: italic;
+  }
+  .headline .line.accent {
+    color: #f0d39a;
+    text-shadow: 0 0 24px rgba(212,176,76,0.2);
+  }
+  .lede {
+    max-width: 560px;
+    margin: 28px 0 0;
+    font-size: clamp(20px, 2vw, 30px);
+    line-height: 1.4;
+    font-style: italic;
+    color: rgba(246, 238, 223, 0.8);
+  }
+  .cta-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+  .cta-row a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: 999px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .cta-row a:hover { transform: translateY(-2px); }
+  .cta-row .primary {
+    background: linear-gradient(135deg, #e5c777, #b88a2c);
+    color: #180d05;
+    box-shadow: 0 18px 32px rgba(212,176,76,0.18);
+  }
+  .cta-row .secondary {
+    border: 1px solid rgba(242, 225, 184, 0.22);
+    background: rgba(255,255,255,0.02);
+    color: #f2e9d7;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 20px;
+    margin-top: 32px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(214, 204, 188, 0.8);
+  }
+
+  .newspaper-masthead {
+    position: absolute;
+    right: clamp(32px, 5vw, 76px);
+    top: clamp(128px, 16vw, 172px);
+    width: min(460px, 34vw);
+    min-width: 300px;
+    padding: 22px 26px 18px;
+    background: rgba(247, 240, 225, 0.96);
+    color: #0f0f0f;
+    backdrop-filter: blur(2px);
+    box-shadow: 0 18px 60px rgba(0,0,0, 0.25);
+    border: 1px solid rgba(0,0,0,0.18);
+  }
+  .masthead-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(0,0,0,0.95);
+  }
+  .letter-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 16px;
+  }
+  .salutation {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.7);
+  }
+  .content-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .greeting {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+  }
+  .body-text {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(23,22,18,0.82);
+  }
+  .highlight {
+    color: #8d5b1d;
+    font-weight: 700;
+  }
+  .signature-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 10px;
+    color: rgba(0,0,0,0.7);
+  }
+  .sign-off { margin: 0; font-size: 12px; }
+  .signature {
+    margin: 0;
+    font-size: clamp(30px, 3vw, 40px);
+    font-family: 'Pinyon Script', cursive;
+    color: #000;
+    transform: translateY(-2px);
+  }
+
+  .scroll-spacer {
+    height: 36vh;
+    background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0.12));
+  }
+
+  .info-section {
+    position: relative;
+    width: 100%;
+    padding: 80px 0 40px;
+    background: rgba(5, 5, 5, 0.46);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .content-block {
+    width: min(1200px, calc(100vw - 32px));
+    margin: 0 auto;
+  }
+  .section-kicker {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(240, 211, 154, 0.8);
+    margin-bottom: 28px;
+  }
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(18px, 2vw, 28px);
+  }
+  .role-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 240px;
+    padding: 22px 20px 18px;
+    background: linear-gradient(180deg, rgba(22,19,14,0.78), rgba(17,17,17,0.96));
+    border: 1px solid rgba(214, 190, 126, 0.14);
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+  .role-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(212,176,76,0.14), transparent 50%);
+    opacity: 0.8;
+  }
+  .role-item:hover {
+    transform: translateY(-6px);
+    border-color: rgba(214, 190, 126, 0.28);
+  }
+  .role-index {
+    position: absolute;
+    right: 18px;
+    top: 14px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(240, 211, 154, 0.8);
+  }
+  .role-item h3 {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(30px, 3vw, 48px);
+    font-weight: 700;
+    line-height: 0.93;
+    color: #f5efe7;
+    letter-spacing: -0.04em;
+  }
+  .role-item p {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(229, 214, 181, 0.72);
+  }
+
+  .floating-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+    margin-top: 24px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(214, 204, 188, 0.72);
+  }
+  .floating-line span {
+    padding: 8px 12px;
+    border: 1px solid rgba(214, 190, 126, 0.2);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .p2-dwell { height: 30vh; }
+
+  .page-three {
+    position: relative;
+    width: 100%;
+    min-height: 110vh;
+    background: #f1ebdf;
+    color: #17120d;
+    overflow: hidden;
+  }
+
+  .p3-stage {
+    position: relative;
+    width: min(1400px, calc(100vw - 34px));
+    margin: 24px auto 0;
+    min-height: 980px;
+    background: linear-gradient(180deg, #efe7da 0%, #f7f2e6 19%, #eee5d3 100%);
+    overflow: hidden;
+    box-shadow: 0 30px 90px rgba(18, 13, 8, 0.16), inset 0 0 0 1px rgba(0,0,0,0.12);
+    transform-style: preserve-3d;
+    will-change: transform, box-shadow;
+  }
+
   .p3-bg-glow {
     position: absolute;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
     pointer-events: none;
     z-index: 0;
-    background: radial-gradient(circle at center, rgba(255, 245, 220, 0.9) 0%, rgba(255, 245, 220, 0.4) 20%, transparent 60%);
+    background: radial-gradient(circle at center, rgba(255, 245, 220, 0.9) 0%, rgba(255, 245, 220, 0.5) 18%, transparent 60%);
     will-change: transform;
     transition: transform 0.1s linear;
   }
-
-  /* 暗角，增强复古感 */
   .p3-vignette {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    box-shadow: inset 0 0 150px rgba(60, 40, 20, 0.15);
+    box-shadow: inset 0 0 150px rgba(60, 40, 20, 0.16);
   }
-
-  .p3-inner { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 40px; padding-bottom: 0; z-index: 1; }
-  .p3-mast { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.35em; color: #333; padding-bottom: 16px; border-bottom: 4px double #000; font-weight: 700; flex-shrink: 0; }
-  .p3-cases { position: relative; flex: 1; display: flex; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 40px; }
-
-  .case { position: absolute; inset: 0; display: flex; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, 4vh, 0); transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s; }
+  .p3-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 980px;
+    padding: 38px 40px 0;
+  }
+  .p3-mast {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: #333;
+    padding-bottom: 16px;
+    border-bottom: 4px double #000;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .p3-cases {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+  .case {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(0, 4vh, 0);
+    transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.5, 0, 0.2, 1), visibility 0s linear 0.9s;
+  }
   .case.is-past { transform: translate3d(0, -4vh, 0); }
-  .case.is-active { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity 0.8s ease 0.15s, transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s, visibility 0s linear 0s; }
-  
-  .case--intro { flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
-  .intro-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(100px, 20vw, 300px); font-weight: 900; font-style: italic; letter-spacing: 0.05em; color: rgba(0,0,0,0.03); pointer-events: none; user-select: none; white-space: nowrap; z-index: 0; }
-  .intro-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
-  .intro-eyebrow { font-size: 11px; letter-spacing: 0.5em; color: #7b1e1e; margin: 0 0 24px 0; font-weight: 700; text-transform: uppercase; }
-  .intro-title { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .intro-title .line-1 { font-size: clamp(24px, 4vw, 40px); font-style: italic; color: rgba(0,0,0,0.5); font-weight: 400; }
-  .intro-title .line-2 { font-size: clamp(48px, 10vw, 110px); font-weight: 900; font-style: italic; line-height: 1; color: #000; }
-  .intro-divider { width: 40px; height: 2px; background: #000; margin: 30px 0; opacity: 0.2; }
-  .intro-sub { font-size: clamp(16px, 2vw, 22px); font-style: italic; color: #666; line-height: 1.6; margin: 0; }
-  .scroll-hint { margin-top: 50px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-  .scroll-hint span { font-size: 10px; letter-spacing: 0.4em; color: #999; }
-  .hint-line { width: 1px; height: 40px; background: linear-gradient(to bottom, #000, transparent); animation: dripDown 2s ease-in-out infinite; }
-
+  .case.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition: opacity 0.8s ease 0.15s, transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s, visibility 0s linear 0s;
+  }
+  .case--intro {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+  }
+  .intro-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(100px, 20vw, 300px);
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    color: rgba(0,0,0,0.03);
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    z-index: 0;
+  }
+  .intro-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .intro-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.5em;
+    color: #7b1e1e;
+    margin: 0 0 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .intro-title {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .intro-title .line-1 {
+    font-size: clamp(24px, 4vw, 40px);
+    font-style: italic;
+    color: rgba(0,0,0,0.5);
+    font-weight: 400;
+  }
+  .intro-title .line-2 {
+    font-size: clamp(48px, 10vw, 110px);
+    font-weight: 900;
+    font-style: italic;
+    line-height: 1;
+    color: #000;
+  }
+  .intro-divider {
+    width: 40px;
+    height: 2px;
+    background: #000;
+    margin: 30px 0;
+    opacity: 0.2;
+  }
+  .intro-sub {
+    font-size: clamp(16px, 2vw, 22px);
+    font-style: italic;
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .scroll-hint {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .scroll-hint span {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: #999;
+    text-transform: uppercase;
+  }
+  .hint-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, #000, transparent);
+    animation: dripDown 2s ease-in-out infinite;
+  }
   @keyframes dripDown {
     0% { transform: scaleY(0); opacity: 0; transform-origin: top; }
     50% { transform: scaleY(1); opacity: 1; transform-origin: top; }
     51% { transform: scaleY(1); opacity: 1; transform-origin: bottom; }
     100% { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
   }
-
   .case--file { align-items: center; width: 100%; }
-  .case-num { position: absolute; left: -3%; font-size: clamp(200px, 30vw, 500px); font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 2px rgba(0,0,0,0.06); user-select: none; opacity: 0; transform: translateY(-50%) translateX(-50px) scale(1.05); transition: opacity 0.5s ease, transform 0.5s ease; z-index: 1; top: 50%; }
-  .case.is-active .case-num { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); transition: opacity 1.4s ease 0.1s, transform 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s; }
-
-  .case-text { position: relative; z-index: 2; width: 100%; max-width: 680px; margin-left: 15%; display: flex; flex-direction: column; justify-content: center; }
+  .case-num {
+    position: absolute;
+    left: -3%;
+    font-size: clamp(200px, 30vw, 500px);
+    font-weight: 900;
+    font-style: italic;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(0,0,0,0.06);
+    user-select: none;
+    opacity: 0;
+    transform: translateY(-50%) translateX(-50px) scale(1.05);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 1;
+    top: 50%;
+  }
+  .case.is-active .case-num {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+    transition: opacity 1.4s ease 0.1s, transform 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s;
+  }
+  .case-text {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 680px;
+    margin-left: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
   .case-header-group { margin-bottom: 24px; }
-  .case-title { display: block; margin: 0; font-size: clamp(32px, 4vw, 56px); font-weight: 900; font-style: italic; line-height: 1.1; color: #000; clip-path: inset(-12% 100% -12% 0); transition: clip-path 0.5s ease; }
-  .case.is-active .case-title { clip-path: inset(-12% 0 -12% 0); transition: clip-path 1.3s cubic-bezier(0.65, 0, 0.15, 1) 0.3s; }
-  .case-sub { font-size: clamp(16px, 1.8vw, 22px); font-style: italic; color: rgba(0,0,0,0.6); margin-top: 12px; opacity: 0; transform: translate3d(0, 24px, 0); filter: blur(6px); transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease; }
-  .case.is-active .case-sub { opacity: 1; transform: none; filter: none; transition: opacity 1.1s ease 0.4s, transform 1.1s ease 0.4s, filter 1.1s ease 0.4s; }
-  .rule { display: block; width: 64px; height: 3px; margin: 16px 0; background: #7b1e1e; transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
-  .case.is-active .rule { transform: scaleX(1); transition: transform 1s cubic-bezier(0.65, 0, 0.15, 1) 0.5s; }
-  .case-body { font-size: clamp(14px, 1.2vw + 2px, 17px); line-height: 1.9; color: #333; text-align: justify; opacity: 0; transform: translate3d(0, 24px, 0); filter: blur(6px); transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease; }
-  .case.is-active .case-body { opacity: 1; transform: none; filter: none; transition: opacity 1.1s ease 0.6s, transform 1.1s ease 0.6s, filter 1.1s ease 0.6s; }
-  .stamp-art { position: absolute; right: -20px; top: -30px; color: #d4af37; font-family: 'Pinyon Script', cursive; font-size: 44px; pointer-events: none; opacity: 0; transform: rotate(var(--r, -8deg)) scale(2.4); transition: opacity 0.35s ease, transform 0.35s ease; }
-  .case.is-active .stamp-art { opacity: 0.9; transform: rotate(var(--r, -8deg)) scale(1); transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s; }
-
-  .site-footer { 
-    position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 40px 40px; 
-    background-color: var(--paper-base); 
-    transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); 
-    will-change: transform; box-sizing: border-box; z-index: 10; border-top: 4px double #000;
+  .case-title {
+    display: block;
+    margin: 0;
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 900;
+    font-style: italic;
+    line-height: 1.1;
+    color: #000;
+    clip-path: inset(-12% 100% -12% 0);
+    transition: clip-path 0.5s ease;
+  }
+  .case.is-active .case-title {
+    clip-path: inset(-12% 0 -12% 0);
+    transition: clip-path 1.3s cubic-bezier(0.65, 0, 0.15, 1) 0.3s;
+  }
+  .case-sub {
+    font-size: clamp(16px, 1.8vw, 22px);
+    font-style: italic;
+    color: rgba(0,0,0,0.6);
+    margin-top: 12px;
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    filter: blur(6px);
+    transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease;
+  }
+  .case.is-active .case-sub {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: opacity 1.1s ease 0.4s, transform 1.1s ease 0.4s, filter 1.1s ease 0.4s;
+  }
+  .rule {
+    display: block;
+    width: 64px;
+    height: 3px;
+    margin: 16px 0;
+    background: #7b1e1e;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .case.is-active .rule {
+    transform: scaleX(1);
+    transition: transform 1s cubic-bezier(0.65, 0, 0.15, 1) 0.5s;
+  }
+  .case-body {
+    font-size: clamp(14px, 1.2vw + 2px, 17px);
+    line-height: 1.9;
+    color: #333;
+    text-align: justify;
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    filter: blur(6px);
+    transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease;
+  }
+  .case.is-active .case-body {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: opacity 1.1s ease 0.6s, transform 1.1s ease 0.6s, filter 1.1s ease 0.6s;
+  }
+  .stamp-art {
+    position: absolute;
+    right: -20px;
+    top: -30px;
+    color: #d4af37;
+    font-family: 'Pinyon Script', cursive;
+    font-size: 44px;
+    pointer-events: none;
+    opacity: 0;
+    transform: rotate(var(--r, -8deg)) scale(2.4);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .case.is-active .stamp-art {
+    opacity: 0.9;
+    transform: rotate(var(--r, -8deg)) scale(1);
+    transition: opacity 0.25s ease 1.15s, transform 0.5s cubic-bezier(0.2, 1.5, 0.35, 1) 1.15s;
   }
 
-  .footer-top { display: grid; grid-template-columns: 1fr 1.5fr 1fr; align-items: center; gap: 20px; }
-  .footer-col { display: flex; flex-direction: column; gap: 6px; }
+  .site-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 40px 40px;
+    background-color: rgba(245, 239, 229, 0.94);
+    transform: translateY(100%);
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+    box-sizing: border-box;
+    z-index: 10;
+    border-top: 4px double #000;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    align-items: center;
+    gap: 20px;
+  }
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
   .footer-col.left { align-items: flex-start; }
   .footer-col.center { align-items: center; text-align: center; }
   .footer-col.right { align-items: flex-end; text-align: right; }
+  .footer-logo {
+    font-size: 32px;
+    font-weight: 700;
+    font-style: italic;
+    color: #000;
+    line-height: 1;
+  }
+  .footer-sub {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: #666;
+  }
+  .footer-quote {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: #000;
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  .footer-line {
+    width: 40px;
+    height: 1px;
+    background: #000;
+    opacity: 0.3;
+  }
+  .footer-col.right .mono {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #444;
+  }
+  .footer-confidential {
+    color: #7b1e1e !important;
+    font-weight: 700;
+    letter-spacing: 0.2em !important;
+    margin-top: 4px;
+  }
 
-  .footer-logo { font-size: 32px; font-weight: 700; font-style: italic; color: #000; line-height: 1; }
-  .footer-sub { font-size: 9px; letter-spacing: 0.3em; color: #666; }
-  .footer-quote { font-size: 12px; letter-spacing: 0.1em; color: #000; font-weight: 700; margin: 8px 0; }
-  .footer-line { width: 40px; height: 1px; background: #000; opacity: 0.3; }
-  .footer-col.right .mono { font-size: 10px; letter-spacing: 0.15em; color: #444; }
-  .footer-confidential { color: #7b1e1e !important; font-weight: 700; letter-spacing: 0.2em !important; margin-top: 4px; }
+  @media (max-width: 960px) {
+    .topbar {
+      border-radius: 24px;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .top-nav { order: 3; width: 100%; justify-content: center; }
+    .hero-stage { min-height: 840px; }
+    .newspaper-masthead {
+      position: static;
+      width: min(100%, 540px);
+      margin: 0 auto 24px;
+      min-width: 0;
+    }
+    .content-wrap {
+      padding: 120px 24px 24px;
+      width: min(100%, 640px);
+    }
+    .headline .line { font-size: clamp(48px, 12vw, 100px); }
+  }
 
   @media (max-width: 768px) {
+    .roles-grid { grid-template-columns: 1fr; }
+    .p3-inner { padding: 24px 20px 0; }
+    .p3-mast { font-size: 9px; letter-spacing: 0.2em; flex-wrap: wrap; gap: 8px; }
+    .case-text { margin-left: 0; }
+    .case-num { display: none; }
+    .case-body { text-align: left; }
     .footer-top { grid-template-columns: 1fr; gap: 24px; }
     .footer-col.left, .footer-col.center, .footer-col.right { align-items: center; text-align: center; }
   }
@@ -320,7 +1075,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const rolesGrid = document.getElementById('roles-grid');
     const pageThree = document.getElementById('page-three');
     const p3Stage = document.getElementById('p3-stage');
-    const p3Glow = document.getElementById('p3-glow'); // 获取光晕 DOM
+    const p3Glow = document.getElementById('p3-glow');
     const siteFooter = document.getElementById('site-footer');
     const dwell = document.getElementById('p2-dwell');
     const cases = Array.from(document.querySelectorAll('.case'));
@@ -346,7 +1101,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const windowHeight = window.innerHeight;
       const totalScrollable = Math.max(1, document.documentElement.scrollHeight - windowHeight);
       const globalProgress = clamp(scrollY / totalScrollable);
-      
+
       if (progressRing && progressText) {
         const percent = Math.round(globalProgress * 100);
         progressRing.style.background = `conic-gradient(#d4af37 ${percent}%, rgba(255,255,255,0.1) ${percent}%)`;
@@ -354,7 +1109,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }
 
       const p3 = pageThree.getBoundingClientRect();
-      const coverProgress = clamp(1 - p3.top / windowHeight); 
+      const coverProgress = clamp(1 - p3.top / windowHeight);
       const e = smooth(coverProgress);
 
       if (infoSection) {
@@ -365,28 +1120,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       if (p3Stage) {
         if (e > 0 && e < 1) {
-          const rotateX = (1 - e) * 35; 
+          const rotateX = (1 - e) * 35;
           const translateY = (1 - e) * -20;
           p3Stage.style.transform = `perspective(1500px) rotateX(${rotateX}deg) translateY(${translateY}vh)`;
-          p3Stage.style.boxShadow = `0 ${(1-e)*50}px ${(1-e)*80}px rgba(0,0,0,${(1-e)*0.5})`;
+          p3Stage.style.boxShadow = `0 ${(1 - e) * 50}px ${(1 - e) * 80}px rgba(0,0,0,${(1 - e) * 0.5})`;
         } else if (e >= 1) {
           p3Stage.style.transform = 'none';
           p3Stage.style.boxShadow = '0 -10px 30px rgba(0,0,0,0.05)';
         }
       }
 
-      const rise = clamp(1 - p3.top / windowHeight); 
+      const rise = clamp(1 - p3.top / windowHeight);
       const run = Math.max(1, p3.height - windowHeight);
       const q = clamp(-p3.top / run);
-      
-      // ====== 光晕跟随滚动移动 ======
+
       if (p3Glow) {
-        // 利用正弦余弦让光晕在屏幕内游走，模拟提灯阅读
-        // 当 q 从 0 到 1 时，光晕在 X 轴走一个完整的来回，Y 轴缓慢下移
-        const glowX = Math.sin(q * Math.PI * 1.5) * 40; // 左右摆动幅度
-        const glowY = Math.cos(q * Math.PI * 1.5) * 20 + (q * 30); // 上下摆动并缓慢下沉
-        
-        // 使用 translate3d 触发 GPU 加速，不消耗 CPU
+        const glowX = Math.sin(q * Math.PI * 1.5) * 40;
+        const glowY = Math.cos(q * Math.PI * 1.5) * 20 + (q * 30);
         p3Glow.style.transform = `translate3d(${glowX}%, ${glowY}%, 0)`;
       }
 
@@ -396,13 +1146,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }
 
       const heroRawProgress = scrollY / windowHeight;
-      const heroRotate = Math.min(89, heroRawProgress * 70); 
-      const stretchY = (1 / Math.cos(heroRotate * Math.PI / 180)) * 1.05; 
-      const translateY = -10 + (Math.pow(heroRawProgress, 2) * 8); 
+      const heroRotate = Math.min(89, heroRawProgress * 70);
+      const stretchY = (1 / Math.cos(heroRotate * Math.PI / 180)) * 1.05;
+      const translateY = -10 + (Math.pow(heroRawProgress, 2) * 8);
       heroStage.style.transform = `translate3d(0, ${translateY}vh, 0) rotateX(${heroRotate}deg) scaleY(${stretchY})`;
       heroStage.style.opacity = Math.max(0, 1 - (heroRawProgress * 0.5) - e * 2);
 
-      const dwellH = Math.max(1, dwell.offsetHeight);
+      const dwellH = Math.max(1, dwell?.offsetHeight || 1);
       const d = clamp(1 - (p3.top - windowHeight) / dwellH);
       const lift = d * 18 + rise * 30;
 
@@ -410,9 +1160,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const easeP2 = smooth(p2);
       if (rolesGrid) {
         if (easeP2 >= 0.99) {
-          rolesGrid.style.transform = 'none'; rolesGrid.style.opacity = '1';
+          rolesGrid.style.transform = 'none';
+          rolesGrid.style.opacity = '1';
         } else {
-          rolesGrid.style.transform = `translate3d(0, ${150 * (1 - easeP2) - lift}px, 0)`; rolesGrid.style.opacity = easeP2;
+          rolesGrid.style.transform = `translate3d(0, ${150 * (1 - easeP2) - lift}px, 0)`;
+          rolesGrid.style.opacity = easeP2;
         }
       }
 
@@ -422,7 +1174,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     window.addEventListener('scroll', () => {
       if (!ticking) {
-        window.requestAnimationFrame(() => { update(); ticking = false; });
+        window.requestAnimationFrame(() => {
+          update();
+          ticking = false;
+        });
         ticking = true;
       }
     }, { passive: true });
