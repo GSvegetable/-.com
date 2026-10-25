@@ -5,14 +5,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>多邻国日语 - 词块拼装练习</title>
+  <title>多邻国日语 - 第一课点餐练习</title>
   <style>
-    :root { --duo-green: #58cc02; --duo-green-shadow: #46a302; --duo-blue: #1cb0f6; --duo-blue-shadow: #1899d6; }
+    :root { --duo-green: #58cc02; --duo-green-shadow: #46a302; --duo-blue: #1cb0f6; }
     body { font-family: "Nunito", -apple-system, sans-serif; background: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; color: #4b4b4b; user-select: none; }
     
     .top-bar { width: 100%; max-width: 600px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
     .progress-text { font-weight: bold; color: #afafaf; font-size: 16px; }
-    .speaker-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--duo-blue); }
 
     .main-content { width: 100%; max-width: 600px; padding: 20px; flex: 1; display: flex; flex-direction: column; }
     .question-hint { font-size: 22px; font-weight: bold; margin-bottom: 30px; }
@@ -44,13 +43,13 @@
 </head>
 <body>
   <div class="top-bar">
-    <div class="progress-text">第 1 单元 · 基础问候与介绍</div>
+    <div class="progress-text">Unit 1 · 点餐与饮料</div>
   </div>
 
   <div class="main-content">
-    <div class="question-hint">翻译这句话：<br><span id="chinese-hint" style="color:#333; font-size:28px;">我是学生</span></div>
+    <div class="question-hint">翻译这句话：<br><span id="chinese-hint" style="color:#333; font-size:28px;">请给我水</span></div>
     <div class="answer-area" id="answer-area"></div>
-    <div style="font-size: 14px; color: #afafaf; margin-bottom: 20px;">点击下方词块拼出日文句子</div>
+    <div style="font-size: 14px; color: #afafaf; margin-bottom: 20px;">点击下方词块拼出日文</div>
     <div class="bank-area" id="bank-area" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
   </div>
 
@@ -64,38 +63,37 @@
   </div>
 
   <script>
-    // 核心数据：真实提取自多邻国日语 Section 1 Unit 1 的内容
-    // 包含：问候、基础判断句、基础助词
+    // 完全基于多邻国 Section 1, Unit 1 "Order food and drinks" 真实语料
     const quizData = [
       { 
-        chinese: "我是学生", 
-        answer: "わたしは学生です", 
-        blocks: ["です", "わたし", "学生", "は"],
-        explain: "「は」是主题助词，读作 wa；「です」表示断定。"
-      },
-      { 
-        chinese: "这是水", 
-        answer: "これは水です", 
-        blocks: ["水", "これ", "です", "は"],
-        explain: "「これ」指代离自己近的事物。"
-      },
-      { 
-        chinese: "早上好", 
-        answer: "おはようございます", 
-        blocks: ["ございます", "おはよう"],
-        explain: "标准早晨问候语，对长辈或正式场合使用。"
-      },
-      { 
         chinese: "请给我水", 
-        answer: "水をください", 
-        blocks: ["ください", "水", "を"],
-        explain: "「を」是宾格助词，读作 o，连接动作对象。"
+        answer: "みずください", 
+        blocks: ["ください", "みず", "です"],
+        explain: "「ください」放在名词后面，表示“请给我...”。"
       },
       { 
-        chinese: "田中先生是老师", 
-        answer: "田中さんは先生です", 
-        blocks: ["先生", "田中さん", "です", "は"],
-        explain: "「さん」接在人名后表示尊称。"
+        chinese: "是茶", 
+        answer: "おちゃです", 
+        blocks: ["です", "おちゃ", "ください"],
+        explain: "「です」表示判断，相当于“是...”。"
+      },
+      { 
+        chinese: "请给我寿司", 
+        answer: "すしください", 
+        blocks: ["ください", "ごはん", "すし"],
+        explain: "「すし」是寿司。多邻国非常喜欢让你点寿司。"
+      },
+      { 
+        chinese: "请给我饭和茶", 
+        answer: "ごはんとおちゃください", 
+        blocks: ["おちゃ", "ごはん", "と", "ください"],
+        explain: "「と」连接两个名词，表示“和”。"
+      },
+      { 
+        chinese: "是水", 
+        answer: "みずです", 
+        blocks: ["みず", "ください", "です"],
+        explain: "非常直接的判断句。"
       }
     ];
 
@@ -112,12 +110,10 @@
     const feedbackTitle = document.getElementById('feedback-title');
     const feedbackDesc = document.getElementById('feedback-desc');
 
-    // 打乱数组
     function shuffle(array) {
       return array.sort(() => Math.random() - 0.5);
     }
 
-    // 初始化题目
     function loadQuestion() {
       isAnswered = false;
       currentSelectedBlocks = [];
@@ -132,7 +128,6 @@
       answerArea.innerHTML = '';
       bankArea.innerHTML = '';
       
-      // 渲染词块
       shuffle([...q.blocks]).forEach(text => {
         const btn = document.createElement('div');
         btn.className = 'block bank';
@@ -142,10 +137,8 @@
       });
     }
 
-    // 词块移到答题区
     function moveToAnswer(btn) {
       if (isAnswered) return;
-      
       btn.classList.remove('bank');
       btn.classList.add('placeholder');
       btn.onclick = null;
@@ -153,19 +146,15 @@
       const newBtn = document.createElement('div');
       newBtn.className = 'block selected';
       newBtn.innerText = btn.innerText;
-      
       newBtn.onclick = () => moveToBank(newBtn, btn);
       
       answerArea.appendChild(newBtn);
       currentSelectedBlocks.push(btn.innerText);
-      
       checkBtn.disabled = currentSelectedBlocks.length === 0;
     }
 
-    // 词块移回库中
     function moveToBank(newBtn, originalBtn) {
       if (isAnswered) return;
-      
       answerArea.removeChild(newBtn);
       const idx = currentSelectedBlocks.indexOf(newBtn.innerText);
       if (idx > -1) currentSelectedBlocks.splice(idx, 1);
@@ -173,11 +162,9 @@
       originalBtn.classList.remove('placeholder');
       originalBtn.classList.add('bank');
       originalBtn.onclick = () => moveToAnswer(originalBtn);
-      
       checkBtn.disabled = currentSelectedBlocks.length === 0;
     }
 
-    // 检查答案
     checkBtn.onclick = () => {
       isAnswered = true;
       checkBtn.disabled = true;
@@ -193,7 +180,6 @@
         feedbackTitle.innerText = '太棒了！回答正确！';
         feedbackDesc.innerText = q.explain;
         
-        // 自动朗读标准发音
         const utterance = new SpeechSynthesisUtterance(q.answer);
         utterance.lang = 'ja-JP';
         utterance.rate = 0.85;
@@ -211,13 +197,11 @@
       nextBtn.style.display = 'block';
     };
 
-    // 下一题
     nextBtn.onclick = () => {
       currentIndex = (currentIndex + 1) % quizData.length;
       loadQuestion();
     };
 
-    // 初始化
     loadQuestion();
   </script>
 </body>
