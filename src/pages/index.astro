@@ -1,220 +1,179 @@
 ---
-// 纯手写英伦风 + Canvas 物理水波纹（带回弹）
+// SVG 滤镜水波 + 极简狂草书法
 ---
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>宫水.com</title>
-    <!-- 引入极夸张的英伦花体与中文狂草 -->
+    <!-- 引入行书和极简无衬线体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Liu+Jian+Mao+Cao&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&family=Inter:wght@300&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- 主画布，用于物理水波渲染 -->
-    <canvas id="water-canvas"></canvas>
-    
-    <!-- 提示文案 -->
-    <div class="hint">CLICK / DRAG TO DISTORT</div>
+    <!-- 隐藏的 SVG 滤镜，用来做文字水波扭曲 -->
+    <svg class="hidden-svg">
+      <defs>
+        <filter id="water-filter">
+          <feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.015 0.015" numOctaves="3" result="noise" />
+          <feDisplacementMap id="displacement" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- 点击产生的水波圈容器 -->
+    <div id="ripple-container"></div>
+
+    <main class="layout">
+      <!-- 核心文字区域，应用了水波滤镜 -->
+      <div class="content" id="distort-target">
+        <h1 class="main-text">懒得做了</h1>
+        <p class="sub-text">但域名都买了，凑合看吧</p>
+      </div>
+    </main>
 
     <script is:inline>
-      const canvas = document.getElementById('water-canvas');
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const target = document.getElementById('distort-target');
+      const turbulence = document.getElementById('turbulence');
+      const displacement = document.getElementById('displacement');
+      let animId;
+      let scale = 0;
 
-      let width, height;
-      let textCanvas, textCtx;
-      let textImageData;
-      let originalData;
-      
-      // 水波物理引擎变量
-      let current = [];
-      let previous = [];
-      let damping = 0.985; // 阻尼，越小波纹消散越快 (0.985非常缓慢，能层层晕开)
-      let waveSpeed = 0.5; // 波纹扩散速度
-      let resolution = 2; // 分辨率缩放比例（为了性能）
-      let simWidth, simHeight;
+      // 触发水波形变动画
+      function triggerWaterDistort() {
+        cancelAnimationFrame(animId);
+        scale = 60; // 初始形变强度
 
-      // 1. 初始化画布与文字
-      async function init() {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-
-        // 等待字体加载完毕
-        await document.fonts.load('12rem "Pinyon Script"');
-        await document.fonts.load('12rem "Liu Jian Mao Cao"');
-
-        // 创建离屏 Canvas 用来画字
-        textCanvas = document.createElement('canvas');
-        textCanvas.width = width;
-        textCanvas.height = height;
-        textCtx = textCanvas.getContext('2d', { willReadFrequently: true });
-
-        drawText();
-
-        // 获取文字像素数据
-        textImageData = textCtx.getImageData(0, 0, width, height);
-        originalData = new Uint8ClampedArray(textImageData.data);
-
-        // 初始化水波物理数组
-        simWidth = Math.floor(width / resolution);
-        simHeight = Math.floor(height / resolution);
-        current = new Float32Array(simWidth * simHeight);
-        previous = new Float32Array(simWidth * simHeight);
-
-        // 启动动画循环
-        requestAnimationFrame(render);
-      }
-
-      // 2. 绘制排版与字体
-      function drawText() {
-        textCtx.fillStyle = '#050505'; // 纯黑背景
-        textCtx.fillRect(0, 0, width, height);
-        
-        textCtx.textAlign = 'center';
-        textCtx.textBaseline = 'middle';
-
-        // 中文狂草 “懒得做了”
-        textCtx.fillStyle = '#f5f5f5';
-        let cnSize = Math.min(width * 0.15, 200);
-        textCtx.font = `${cnSize}px "Liu Jian Mao Cao", cursive`;
-        textCtx.fillText('懒得做了', width / 2, height / 2 - 30);
-
-        // 英文花体 “TOO LAZY TO DO IT”
-        textCtx.fillStyle = '#d4af37'; // 烫金色
-        let enSize = Math.min(width * 0.06, 80);
-        textCtx.font = `${enSize}px "Pinyon Script", cursive`;
-        textCtx.fillText('Too Lazy To Do It', width / 2, height / 2 + 100);
-
-        // 中文细体 “但域名都买了，凑合看吧”
-        textCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-        let subSize = Math.min(width * 0.02, 20);
-        textCtx.font = `${subSize}px sans-serif`;
-        textCtx.letterSpacing = '5px';
-        textCtx.fillText('但域名都买了，凑合看吧', width / 2, height / 2 + 180);
-      }
-
-      // 3. 触发水波 (鼠标点击或拖动)
-      function disturb(x, y) {
-        let sx = Math.floor(x / resolution);
-        let sy = Math.floor(y / resolution);
-        let index = sx + sy * simWidth;
-        if (index >= 0 && index < current.length) {
-          // 注入能量（激起水波）
-          current[index] = 500; 
-        }
-      }
-
-      window.addEventListener('pointerdown', e => disturb(e.clientX, e.clientY));
-      window.addEventListener('pointermove', e => {
-        if (e.buttons === 1) { // 按住鼠标拖动
-          disturb(e.clientX, e.clientY);
-        }
-      });
-
-      // 4. 物理水波核心计算 (波方程)
-      function updateWave() {
-        for (let y = 1; y < simHeight - 1; y++) {
-          for (let x = 1; x < simWidth - 1; x++) {
-            let i = x + y * simWidth;
-            
-            // 核心波动方程：计算周围四个点的平均值减去当前点
-            let wave = (previous[i - 1] + previous[i + 1] + previous[i - simWidth] + previous[i + simWidth]) / 2 - current[i];
-            
-            // 加上阻尼，波纹会慢慢消失
-            current[i] = wave * damping;
+        function animate() {
+          scale *= 0.95; // 缓慢衰减，营造层层晕开的感觉
+          
+          if (scale < 0.5) {
+            target.style.filter = 'none';
+            return;
           }
-        }
 
-        // 边缘回弹处理 (将上一帧的数据和当前帧交换)
-        let temp = previous;
-        previous = current;
-        current = temp;
+          displacement.setAttribute('scale', scale);
+          // 改变频率，让波纹在回弹时产生复杂的变化
+          const freq = 0.015 + (60 - scale) * 0.0002;
+          turbulence.setAttribute('baseFrequency', `${freq} ${freq}`);
+
+          animId = requestAnimationFrame(animate);
+        }
+        animate();
       }
 
-      // 5. 渲染画面并扭曲像素
-      function render() {
-        updateWave();
+      // 点击事件
+      document.body.addEventListener('pointerdown', (e) => {
+        // 1. 触发文字扭曲
+        triggerWaterDistort();
 
-        // 重置像素数据
-        textImageData.data.set(originalData);
-        let data = textImageData.data;
+        // 2. 在点击处生成多层扩散的水波圈
+        for (let i = 0; i < 3; i++) {
+          setTimeout(() => {
+            const ripple = document.createElement('div');
+            ripple.className = 'water-ring';
+            ripple.style.left = `${e.clientX}px`;
+            ripple.style.top = `${e.clientY}px`;
+            document.getElementById('ripple-container').appendChild(ripple);
 
-        // 根据水波高度扭曲文字像素
-        for (let y = 1; y < simHeight - 1; y++) {
-          for (let x = 1; x < simWidth - 1; x++) {
-            let i = x + y * simWidth;
-            
-            // 计算折射偏移量
-            let xOffset = Math.floor(previous[i - 1] - previous[i + 1]);
-            let yOffset = Math.floor(previous[i - simWidth] - previous[i + simWidth]);
-
-            // 映射回真实像素坐标
-            let px = x * resolution;
-            let py = y * resolution;
-            
-            let targetX = px + xOffset;
-            let targetY = py + yOffset;
-
-            // 边界检查
-            if (targetX >= 0 && targetX < width && targetY >= 0 && targetY < height) {
-              let srcIndex = (targetX + targetY * width) * 4;
-              let destIndex = (px + py * width) * 4;
-
-              // 位移扭曲像素
-              data[destIndex] = originalData[srcIndex];         // R
-              data[destIndex + 1] = originalData[srcIndex + 1]; // G
-              data[destIndex + 2] = originalData[srcIndex + 2]; // B
-            }
-          }
+            setTimeout(() => { ripple.remove(); }, 2500);
+          }, i * 250); // 三层波纹，每层延迟0.25秒，形成“层层晕开”的视觉
         }
-
-        // 绘制到主画布
-        ctx.putImageData(textImageData, 0, 0);
-
-        requestAnimationFrame(render);
-      }
-
-      // 启动
-      init();
-
-      // 窗口缩放时重新初始化
-      window.addEventListener('resize', () => {
-        // 为了简单，直接刷新页面
-        window.location.reload(); 
       });
     </script>
-
-    <style>
-      html, body {
-        margin: 0; padding: 0;
-        width: 100%; height: 100%;
-        background: #050505;
-        overflow: hidden;
-        cursor: crosshair;
-      }
-      #water-canvas {
-        display: block;
-        width: 100%; height: 100%;
-      }
-      .hint {
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: rgba(255, 255, 255, 0.2);
-        font-family: monospace;
-        font-size: 12px;
-        letter-spacing: 3px;
-        pointer-events: none;
-        animation: pulse 3s infinite alternate;
-      }
-      @keyframes pulse {
-        from { opacity: 0.2; }
-        to { opacity: 0.8; }
-      }
-    </style>
   </body>
 </html>
+
+<style>
+  :root {
+    --bg: #050505;
+    --text: #f5f5f5;
+    --font-cn: 'Zhi Mang Xing', cursive;
+    --font-en: 'Inter', sans-serif;
+  }
+
+  html, body {
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    background-color: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: crosshair;
+  }
+
+  .hidden-svg { position: absolute; width: 0; height: 0; }
+
+  .layout {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* 让点击事件穿透到 body */
+  }
+
+  .content {
+    text-align: center;
+    /* 必须有 transition，否则 JS 改变滤镜时文字会闪烁 */
+    transition: filter 0.1s linear; 
+    will-change: filter;
+  }
+
+  /* 夸张的英伦风草书（中式） */
+  .main-text {
+    font-family: var(--font-cn);
+    font-size: clamp(6rem, 18vw, 15rem);
+    font-weight: 400;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: 0.05em;
+    /* 极具张力的阴影雕刻感 */
+    text-shadow: 2px 4px 15px rgba(255, 255, 255, 0.1);
+  }
+
+  .sub-text {
+    font-family: var(--font-cn);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 2rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* 层层晕开的水波圈 */
+  .water-ring {
+    position: absolute;
+    width: 0px; height: 0px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1;
+    /* 慢速扩散 + 回弹感 */
+    animation: ripple-expand 2.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+  }
+
+  @keyframes ripple-expand {
+    0% {
+      width: 0px; height: 0px;
+      opacity: 1;
+      border-width: 4px;
+      border-color: rgba(255, 255, 255, 0.8);
+    }
+    50% {
+      border-width: 2px;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    100% {
+      /* 扩散到非常大，模拟撞到屏幕边缘 */
+      width: 150vw; height: 150vw; 
+      opacity: 0;
+      border-width: 0px;
+    }
+  }
+</style>
