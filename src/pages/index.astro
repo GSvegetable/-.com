@@ -1,5 +1,5 @@
 ---
-// 极简摆烂版
+// 极简液态玻璃版 - 无依赖
 ---
 <html lang="zh-CN">
   <head>
@@ -8,7 +8,12 @@
     <title>宫水.com</title>
   </head>
   <body>
-    <div class="container">
+    <!-- 背景流动的光斑 -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
+    <!-- 液态玻璃容器 -->
+    <div class="glass-container">
       <h1>懒得做了</h1>
       <p>但域名都买了，凑合看吧</p>
     </div>
@@ -16,31 +21,110 @@
 </html>
 
 <style>
-  body {
+  /* 彻底禁止滑动 */
+  html, body {
     margin: 0;
     padding: 0;
-    background-color: #0f0f0f; /* 高级黑 */
-    color: #ffffff;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    height: 100%;
+    width: 100%;
+    overflow: hidden; 
+    background-color: #050505;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
-  .container {
+
+  /* 背景流动光斑：给玻璃提供折射的背景 */
+  .bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+    opacity: 0.6;
+    animation: float 10s infinite alternate ease-in-out;
+  }
+  .blob-1 {
+    width: 40vw;
+    height: 40vw;
+    background: #2b4162;
+    background-image: linear-gradient(45deg, #2b4162 0%, #12100e 100%);
+    top: 10%;
+    left: 20%;
+  }
+  .blob-2 {
+    width: 35vw;
+    height: 35vw;
+    background: #444;
+    background-image: linear-gradient(120deg, #3a3a3a 0%, #1a1a1a 100%);
+    bottom: 10%;
+    right: 20%;
+    animation-delay: -5s;
+  }
+
+  @keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(5vw, 5vh) scale(1.2); }
+  }
+
+  /* 核心：液态玻璃容器 */
+  .glass-container {
+    position: relative;
+    z-index: 1;
+    padding: 4rem 6rem;
+    
+    /* 玻璃质感核心代码 */
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    
+    /* 边缘高光与不规则圆角（模拟液态流动） */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    animation: morph 8s ease-in-out infinite;
+    
+    box-shadow: 
+      inset 0 0 20px rgba(255, 255, 255, 0.05),
+      0 20px 40px rgba(0, 0, 0, 0.5);
+      
     text-align: center;
-    padding: 2rem;
   }
+
+  /* 圆角变形动画：让玻璃看起来在“流动” */
+  @keyframes morph {
+    0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+    34% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+    67% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+  }
+
+  /* 字体样式 */
   h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin: 0 0 1rem 0;
     letter-spacing: 0.1em;
+    
+    /* 文字也加点玻璃高光感 */
+    background: linear-gradient(135deg, #ffffff 0%, #aaaaaa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(255,255,255,0.1);
   }
+
   p {
     font-size: 1.2rem;
-    color: #888;
+    color: rgba(255, 255, 255, 0.6);
     margin: 0;
     letter-spacing: 0.05em;
+  }
+
+  /* 移动端适配 */
+  @media (max-width: 600px) {
+    .glass-container {
+      padding: 3rem 2rem;
+      margin: 0 1rem;
+    }
+    h1 { font-size: 2.2rem; }
+    p { font-size: 1rem; }
   }
 </style>
