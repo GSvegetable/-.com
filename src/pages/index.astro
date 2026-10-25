@@ -36,7 +36,7 @@ import '../styles/main.css';
     </main>
 
     <script>
-      // 纯本地题库 (模拟从多邻国学的进度)
+      // 纯本地题库
       const questionBank = [
         { prompt: "Ask for water politely.", answer: "水をください", keywords: ["水", "ください"] },
         { prompt: "I am a student.", answer: "私は学生です", keywords: ["私", "学生"] },
@@ -45,14 +45,15 @@ import '../styles/main.css';
 
       let currentQuestion = 0;
 
-      const promptText = document.getElementById('prompt-text');
-      const answerInput = document.getElementById('answer');
-      const submitBtn = document.getElementById('submit-btn');
-      const nextBtn = document.getElementById('next-btn');
-      const feedbackCard = document.getElementById('feedback');
-      const feedbackTag = document.getElementById('feedback-tag');
-      const feedbackContent = document.getElementById('feedback-content');
-      const playAudioBtn = document.getElementById('play-audio-btn');
+      // 这里加上 as HTML...Element 给 TypeScript 吃定心丸
+      const promptText = document.getElementById('prompt-text') as HTMLElement;
+      const answerInput = document.getElementById('answer') as HTMLTextAreaElement;
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+      const nextBtn = document.getElementById('next-btn') as HTMLButtonElement;
+      const feedbackCard = document.getElementById('feedback') as HTMLElement;
+      const feedbackTag = document.getElementById('feedback-tag') as HTMLElement;
+      const feedbackContent = document.getElementById('feedback-content') as HTMLElement;
+      const playAudioBtn = document.getElementById('play-audio-btn') as HTMLButtonElement;
 
       function loadQuestion() {
         promptText.textContent = questionBank[currentQuestion].prompt;
@@ -70,7 +71,6 @@ import '../styles/main.css';
         const correctAnswer = questionBank[currentQuestion].answer;
         const keywords = questionBank[currentQuestion].keywords;
 
-        // 简单的规则判定：看用户有没有输入核心关键词
         const isCorrect = keywords.every(kw => userAnswer.includes(kw));
 
         feedbackCard.style.display = 'block';
@@ -86,7 +86,6 @@ import '../styles/main.css';
         } else {
           feedbackTag.textContent = "❌ 需要复习";
           feedbackTag.style.color = "#ff4b4b";
-          // 如果没答对，给一点提示
           feedbackContent.innerHTML = `
             <p>还差一点，正确的说法是：<strong>${correctAnswer}</strong></p>
             <p style="color: #666; font-size: 0.9rem;">提示关键词：${keywords.join('、')}</p>
@@ -96,8 +95,7 @@ import '../styles/main.css';
 
       submitBtn.addEventListener('click', checkAnswer);
 
-      // 支持 Ctrl+Enter 或 Cmd+Enter 快捷提交
-      answerInput.addEventListener('keydown', (e) => {
+      answerInput.addEventListener('keydown', (e: KeyboardEvent) => {
         if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
           checkAnswer();
         }
@@ -108,20 +106,18 @@ import '../styles/main.css';
         loadQuestion();
       });
 
-      // 使用浏览器自带的免费 TTS 引擎朗读
       playAudioBtn.addEventListener('click', () => {
         const text = questionBank[currentQuestion].answer;
         if ('speechSynthesis' in window) {
           const utterance = new SpeechSynthesisUtterance(text);
-          utterance.lang = 'ja-JP'; // 设置为日语
-          utterance.rate = 0.9; // 稍微放慢语速
+          utterance.lang = 'ja-JP';
+          utterance.rate = 0.9;
           window.speechSynthesis.speak(utterance);
         } else {
           alert('你的浏览器不支持语音朗读功能');
         }
       });
 
-      // 初始化加载第一题
       loadQuestion();
     </script>
   </body>
