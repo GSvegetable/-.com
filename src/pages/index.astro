@@ -5,96 +5,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>日语拼句练习</title>
+  <title>多邻国日语 - 词块拼装练习</title>
   <style>
-    body { font-family: -apple-system, sans-serif; background: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; color: #333; }
-    .header { width: 100%; max-width: 500px; margin-bottom: 20px; }
-    .title { font-size: 24px; font-weight: bold; color: #58cc02; margin-bottom: 10px; }
-    .question { font-size: 20px; color: #555; margin-bottom: 30px; font-weight: bold; }
+    :root { --duo-green: #58cc02; --duo-green-shadow: #46a302; --duo-blue: #1cb0f6; --duo-blue-shadow: #1899d6; }
+    body { font-family: "Nunito", -apple-system, sans-serif; background: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; color: #4b4b4b; user-select: none; }
     
-    /* 拼装区 */
-    .answer-area { width: 100%; max-width: 500px; min-height: 80px; border-bottom: 2px solid #e5e5e5; display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 0; margin-bottom: 30px; align-content: flex-start; }
-    
-    /* 词块通用样式 */
-    .block { padding: 10px 16px; border-radius: 12px; font-size: 20px; cursor: pointer; user-select: none; transition: 0.1s; font-weight: bold; }
-    
-    /* 选中的词块 */
-    .block.selected { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; color: #333; }
-    .block.selected:active { transform: translateY(2px); border-bottom-width: 2px; }
-    
-    /* 底部的词库 */
-    .bank-area { width: 100%; max-width: 500px; display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 0; min-height: 60px; }
-    .block.bank { background: #f7f7f7; border: 2px solid #e5e5e5; border-bottom-width: 4px; color: #333; }
-    .block.bank:active { transform: translateY(2px); border-bottom-width: 2px; }
-    
-    /* 占位符（当词块被选走后） */
-    .block.placeholder { background: #f0f0f0; border: 2px solid transparent; color: transparent; pointer-events: none; }
+    .top-bar { width: 100%; max-width: 600px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+    .progress-text { font-weight: bold; color: #afafaf; font-size: 16px; }
+    .speaker-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--duo-blue); }
 
-    /* 按钮区 */
-    .controls { width: 100%; max-width: 500px; margin-top: auto; display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; }
-    button { padding: 15px; font-size: 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; text-transform: uppercase; }
-    #check-btn { background: #58cc02; color: white; box-shadow: 0 4px 0 #46a302; }
-    #next-btn { background: #1cb0f6; color: white; box-shadow: 0 4px 0 #1899d6; display: none; }
-    .util-btn { background: #fff; color: #1cb0f6; border: 2px solid #e5e5e5; box-shadow: 0 4px 0 #e5e5e5; }
+    .main-content { width: 100%; max-width: 600px; padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .question-hint { font-size: 22px; font-weight: bold; margin-bottom: 30px; }
     
-    /* 反馈提示 */
-    .feedback { text-align: center; font-size: 18px; font-weight: bold; min-height: 30px; margin-bottom: 10px; }
-    .correct-text { color: #58cc02; }
-    .wrong-text { color: #ff4b4b; }
+    .answer-area { min-height: 100px; border-bottom: 2px solid #e5e5e5; margin-bottom: 40px; display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; padding-bottom: 10px; }
+    
+    .block { padding: 10px 16px; border-radius: 12px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.1s; }
+    
+    .block.selected { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; color: #4b4b4b; }
+    .block.selected:active { border-bottom-width: 2px; transform: translateY(2px); }
+    
+    .block.bank { background: #f7f7f7; border: 2px solid #e5e5e5; border-bottom-width: 4px; color: #4b4b4b; }
+    .block.bank:active { border-bottom-width: 2px; transform: translateY(2px); }
+    .block.placeholder { background: #f0f0f0; color: transparent; pointer-events: none; border: 2px solid transparent; }
+
+    .bottom-panel { width: 100%; max-width: 600px; border-top: 2px solid #e5e5e5; background: #fff; padding: 20px; box-sizing: border-box; position: fixed; bottom: 0; }
+    .feedback-box { display: none; margin-bottom: 15px; padding: 15px; border-radius: 12px; background: #ddf4ff; }
+    .feedback-title { font-size: 20px; font-weight: bold; margin-bottom: 5px; color: var(--duo-blue); }
+    .feedback-title.error { color: #ea2b2b; }
+    .feedback-desc { font-size: 16px; color: #4b4b4b; }
+    
+    button.action-btn { width: 100%; padding: 16px; border-radius: 16px; font-size: 18px; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; transition: all 0.1s; }
+    #check-btn { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-shadow); }
+    #check-btn:disabled { background: #e5e5e5; box-shadow: none; color: #afafaf; cursor: not-allowed; }
+    #check-btn:active:not(:disabled) { box-shadow: 0 0 0; transform: translateY(4px); }
+    #next-btn { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-shadow); display: none; }
+    #next-btn:active { box-shadow: 0 0 0; transform: translateY(4px); }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="title">拼出正确的句子</div>
-    <div class="question" id="chinese-hint">这是书</div>
+  <div class="top-bar">
+    <div class="progress-text">第 1 单元 · 基础问候与介绍</div>
   </div>
 
-  <div class="answer-area" id="answer-area"></div>
+  <div class="main-content">
+    <div class="question-hint">翻译这句话：<br><span id="chinese-hint" style="color:#333; font-size:28px;">我是学生</span></div>
+    <div class="answer-area" id="answer-area"></div>
+    <div style="font-size: 14px; color: #afafaf; margin-bottom: 20px;">点击下方词块拼出日文句子</div>
+    <div class="bank-area" id="bank-area" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+  </div>
 
-  <div class="bank-area" id="bank-area"></div>
-
-  <div class="controls">
-    <div class="feedback" id="feedback"></div>
-    <button id="check-btn">检 查</button>
-    <button id="next-btn">下 一 题</button>
-    <button id="play-btn" class="util-btn">🔊 听正确发音</button>
+  <div class="bottom-panel">
+    <div class="feedback-box" id="feedback-box">
+      <div class="feedback-title" id="feedback-title">太棒了！</div>
+      <div class="feedback-desc" id="feedback-desc"></div>
+    </div>
+    <button class="action-btn" id="check-btn" disabled>检查</button>
+    <button class="action-btn" id="next-btn">继续</button>
   </div>
 
   <script>
+    // 核心数据：真实提取自多邻国日语 Section 1 Unit 1 的内容
+    // 包含：问候、基础判断句、基础助词
     const quizData = [
-      { answer: "これは本です", blocks: ["です", "これ", "本", "は"], chinese: "这是书" },
-      { answer: "水をください", blocks: ["ください", "を", "水"], chinese: "请给我水" },
-      { answer: "猫がいます", blocks: ["います", "猫", "が"], chinese: "有猫" }
+      { 
+        chinese: "我是学生", 
+        answer: "わたしは学生です", 
+        blocks: ["です", "わたし", "学生", "は"],
+        explain: "「は」是主题助词，读作 wa；「です」表示断定。"
+      },
+      { 
+        chinese: "这是水", 
+        answer: "これは水です", 
+        blocks: ["水", "これ", "です", "は"],
+        explain: "「これ」指代离自己近的事物。"
+      },
+      { 
+        chinese: "早上好", 
+        answer: "おはようございます", 
+        blocks: ["ございます", "おはよう"],
+        explain: "标准早晨问候语，对长辈或正式场合使用。"
+      },
+      { 
+        chinese: "请给我水", 
+        answer: "水をください", 
+        blocks: ["ください", "水", "を"],
+        explain: "「を」是宾格助词，读作 o，连接动作对象。"
+      },
+      { 
+        chinese: "田中先生是老师", 
+        answer: "田中さんは先生です", 
+        blocks: ["先生", "田中さん", "です", "は"],
+        explain: "「さん」接在人名后表示尊称。"
+      }
     ];
 
     let currentIndex = 0;
-    let currentAnswer = [];
-    
-    const hintEl = document.getElementById('chinese-hint');
+    let currentSelectedBlocks = [];
+    let isAnswered = false;
+
+    const chineseHint = document.getElementById('chinese-hint');
     const answerArea = document.getElementById('answer-area');
     const bankArea = document.getElementById('bank-area');
-    const feedbackEl = document.getElementById('feedback');
     const checkBtn = document.getElementById('check-btn');
     const nextBtn = document.getElementById('next-btn');
-    const playBtn = document.getElementById('play-btn');
+    const feedbackBox = document.getElementById('feedback-box');
+    const feedbackTitle = document.getElementById('feedback-title');
+    const feedbackDesc = document.getElementById('feedback-desc');
 
+    // 打乱数组
     function shuffle(array) {
       return array.sort(() => Math.random() - 0.5);
     }
 
+    // 初始化题目
     function loadQuestion() {
-      currentAnswer = [];
-      feedbackEl.innerText = '';
+      isAnswered = false;
+      currentSelectedBlocks = [];
+      feedbackBox.style.display = 'none';
       checkBtn.style.display = 'block';
       nextBtn.style.display = 'none';
+      checkBtn.disabled = true;
       
       const q = quizData[currentIndex];
-      hintEl.innerText = q.chinese;
+      chineseHint.innerText = q.chinese;
       
       answerArea.innerHTML = '';
       bankArea.innerHTML = '';
       
-      // 渲染底部词库
+      // 渲染词块
       shuffle([...q.blocks]).forEach(text => {
         const btn = document.createElement('div');
         btn.className = 'block bank';
@@ -104,70 +142,82 @@
       });
     }
 
+    // 词块移到答题区
     function moveToAnswer(btn) {
-      // 如果已经检查过了，不允许再移动
-      if (checkBtn.style.display === 'none') return;
+      if (isAnswered) return;
       
       btn.classList.remove('bank');
-      btn.classList.add('placeholder'); // 变透明占位，防止页面抖动
+      btn.classList.add('placeholder');
       btn.onclick = null;
       
       const newBtn = document.createElement('div');
       newBtn.className = 'block selected';
       newBtn.innerText = btn.innerText;
-      newBtn.dataset.sourceIndex = Array.from(bankArea.children).indexOf(btn);
       
       newBtn.onclick = () => moveToBank(newBtn, btn);
       
       answerArea.appendChild(newBtn);
-      currentAnswer.push(btn.innerText);
+      currentSelectedBlocks.push(btn.innerText);
+      
+      checkBtn.disabled = currentSelectedBlocks.length === 0;
     }
 
+    // 词块移回库中
     function moveToBank(newBtn, originalBtn) {
-      if (checkBtn.style.display === 'none') return;
-
+      if (isAnswered) return;
+      
       answerArea.removeChild(newBtn);
-      const idx = currentAnswer.indexOf(newBtn.innerText);
-      if (idx > -1) currentAnswer.splice(idx, 1);
+      const idx = currentSelectedBlocks.indexOf(newBtn.innerText);
+      if (idx > -1) currentSelectedBlocks.splice(idx, 1);
       
       originalBtn.classList.remove('placeholder');
       originalBtn.classList.add('bank');
       originalBtn.onclick = () => moveToAnswer(originalBtn);
+      
+      checkBtn.disabled = currentSelectedBlocks.length === 0;
     }
 
+    // 检查答案
     checkBtn.onclick = () => {
-      const q = quizData[currentIndex];
-      const userStr = currentAnswer.join('');
+      isAnswered = true;
+      checkBtn.disabled = true;
       
-      if (userStr === q.answer) {
-        feedbackEl.innerText = '太棒了！完全正确 🎉';
-        feedbackEl.className = 'feedback correct-text';
-        playAudio(q.answer); // 答对自动播放
+      const q = quizData[currentIndex];
+      const userAnswer = currentSelectedBlocks.join('');
+      
+      if (userAnswer === q.answer) {
+        feedbackBox.style.display = 'block';
+        feedbackBox.style.background = '#d7ffb8';
+        feedbackTitle.className = 'feedback-title';
+        feedbackTitle.style.color = '#58a700';
+        feedbackTitle.innerText = '太棒了！回答正确！';
+        feedbackDesc.innerText = q.explain;
+        
+        // 自动朗读标准发音
+        const utterance = new SpeechSynthesisUtterance(q.answer);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
       } else {
-        feedbackEl.innerText = '不对哦，再想想语序和助词 🤔';
-        feedbackEl.className = 'feedback wrong-text';
+        feedbackBox.style.display = 'block';
+        feedbackBox.style.background = '#ffdfe0';
+        feedbackTitle.className = 'feedback-title error';
+        feedbackTitle.style.color = '#ea2b2b';
+        feedbackTitle.innerText = '正确答案是：';
+        feedbackDesc.innerHTML = `<b style="font-size:20px; color:#333;">${q.answer}</b><br><br>${q.explain}`;
       }
       
       checkBtn.style.display = 'none';
       nextBtn.style.display = 'block';
     };
 
+    // 下一题
     nextBtn.onclick = () => {
       currentIndex = (currentIndex + 1) % quizData.length;
       loadQuestion();
     };
 
-    function playAudio(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'ja-JP';
-      utterance.rate = 0.85;
-      window.speechSynthesis.speak(utterance);
-    }
-
-    playBtn.onclick = () => {
-      playAudio(quizData[currentIndex].answer);
-    };
-
+    // 初始化
     loadQuestion();
   </script>
 </body>
