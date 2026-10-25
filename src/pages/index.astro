@@ -1,202 +1,111 @@
 ---
+import '../styles/main.css';
 ---
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>日语回忆练习</title>
-<style is:global>
-:root{color-scheme:light;--g:#58cc02;--gs:#46a302;--b:#1cb0f6;--r:#ea2b2b;--line:#e5e5e5;--ink:#3c3c3c;--mute:#9a9a9a}
-*{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP","Noto Sans SC",sans-serif;color:var(--ink);background:#fff;min-height:100dvh;display:flex;justify-content:center}
-.app{width:100%;max-width:560px;padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px}
-.top{display:flex;align-items:center;gap:12px}
-.bar{flex:1;height:14px;border-radius:7px;background:var(--line);overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:var(--g);border-radius:7px;transition:width .3s}
-.pill{font-size:13px;font-weight:700;color:var(--b);background:#ddf4ff;padding:4px 10px;border-radius:12px;white-space:nowrap}
-.tip{margin:0;font-size:13px;color:var(--mute)}
-.card{position:relative;border:2px solid var(--line);border-radius:18px;padding:22px 20px;display:flex;flex-direction:column;gap:14px}
-.tag{min-height:18px;font-size:14px;font-weight:700;color:var(--b)}
-.tag.err{color:var(--r)}
-.zh{font-size:26px;font-weight:800;line-height:1.35}
-.ja{font-size:28px;line-height:1.7;min-height:48px}
-.blank{display:inline-block;min-width:3.4em;text-align:center;border-bottom:3px solid var(--b);color:var(--b);font-weight:700}
-.fill{color:#58a700;font-weight:800}
-.icon{position:absolute;top:12px;right:12px;border:none;background:#f3f3f3;border-radius:50%;width:38px;height:38px;font-size:18px;cursor:pointer}
-#ans{width:100%;font-size:24px;padding:14px 16px;border:2px solid var(--line);border-radius:14px;outline:none;font-family:inherit;color:var(--ink)}
-#ans:focus{border-color:var(--b)}
-.fb{display:none;padding:14px 16px;border-radius:14px}
-.fb.good{display:block;background:#d7ffb8}
-.fb.bad{display:block;background:#ffdfe0}
-.fb b{display:block;font-size:20px;margin-bottom:4px}
-.fb.good b{color:#58a700}
-.fb.bad b{color:var(--r)}
-.fb span{font-size:15px}
-.big{width:100%;padding:16px;border:none;border-radius:16px;font-size:18px;font-weight:800;color:#fff;background:var(--g);box-shadow:0 4px 0 var(--gs);cursor:pointer;font-family:inherit}
-.big:active:not(:disabled){box-shadow:none;transform:translateY(4px)}
-.big:disabled{background:var(--line);color:#afafaf;box-shadow:none;cursor:not-allowed}
-.row{display:flex;justify-content:space-between;gap:10px}
-.link{border:none;background:none;color:var(--mute);font-size:15px;font-weight:700;padding:8px 4px;cursor:pointer;font-family:inherit}
-</style>
-</head>
-<body>
-<main class="app">
-  <div class="top"><div class="bar"><i id="bar"></i></div><span class="pill" id="pill"></span></div>
-  <p class="tip">用罗马字输入就行，会自动变成假名（例：mizu → みず；长音按 - 键）</p>
-  <section class="card">
-    <div class="tag" id="tag"></div>
-    <div class="zh" id="zh"></div>
-    <div class="ja" id="ja"></div>
-    <button class="icon" id="spk" aria-label="发音">🔊</button>
-  </section>
-  <input id="ans" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="在这里输入">
-  <div class="fb" id="fb"><b id="fbt"></b><span id="fbd"></span></div>
-  <button class="big" id="main">检查</button>
-  <div class="row"><button class="link" id="hint">💡 提示</button><button class="link" id="giveup">不会，看答案</button></div>
-</main>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>日语回忆练习 (Recall Layer)</title>
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>日语回忆层</h1>
+        <p class="subtitle">与 Duolingo 搭配使用 · 从识别到产出</p>
+      </header>
 
-<script is:inline>
-const ITEMS=[
- {id:'mizu',w:'みず',s:'＿をください',zh:'请给我水',zw:'水',ex:'「を」标记想要的东西，「ください」= 请给我。'},
- {id:'ocha',w:'おちゃ',s:'これは＿です',zh:'这是茶',zw:'茶',ex:'「です」表示判断，相当于“是…”。'},
- {id:'sushi',w:'すし',s:'＿をください',zh:'请给我寿司',zw:'寿司',ex:'名词 + をください，就能点单。'},
- {id:'gohan',w:'ごはん',s:'＿とおちゃをください',zh:'请给我饭和茶',zw:'饭',ex:'「ごはん」是饭，也指一顿饭。'},
- {id:'to',w:'と',s:'ごはん＿おちゃをください',zh:'请给我饭和茶',zw:'和（连接两个名词）',ex:'「と」放在两个名词中间，表示“和”。'},
- {id:'koohii',w:'コーヒー',s:'＿をください',zh:'请给我咖啡',zw:'咖啡',ex:'外来语用片假名，长音写成「ー」（输入 ko-hi-）。'},
- {id:'juusu',w:'ジュース',s:'＿をください',zh:'请给我果汁',zw:'果汁',ex:'外来语用片假名（输入 ju-su）。'},
- {id:'gyuunyuu',w:'ぎゅうにゅう',s:'＿をください',zh:'请给我牛奶',zw:'牛奶',ex:'「ゅ」是小字（输入 gyuunyuu）。'},
- {id:'pan',w:'パン',s:'＿をください',zh:'请给我面包',zw:'面包',ex:'「パン」是外来语，用片假名。'},
- {id:'kudasai',w:'ください',s:'みずを＿',zh:'请给我水',zw:'请给我…（句末）',ex:'「ください」放在句末，表示“请给我…”。'}
-];
+      <section class="card prompt-card">
+        <span class="tag">场景提示</span>
+        <h2>Ask for water politely.</h2>
+      </section>
 
-/* ---------- romaji → kana ---------- */
-const V='aiueo',SM={a:'ゃ',u:'ゅ',o:'ょ'};
-const R={k:'かきくけこ',s:'さしすせそ',t:'たちつてと',n:'なにぬねの',h:'はひふへほ',m:'まみむめも',r:'らりるれろ',g:'がぎぐげご',z:'ざじずぜぞ',d:'だぢづでど',b:'ばびぶべぼ',p:'ぱぴぷぺぽ'};
-const M={a:'あ',i:'い',u:'う',e:'え',o:'お',ya:'や',yu:'ゆ',yo:'よ',wa:'わ',wo:'を',shi:'し',chi:'ち',tsu:'つ',fu:'ふ',ji:'じ'};
-for(const c in R){[...V].forEach((v,i)=>{M[c+v]=R[c][i]});for(const y of 'auo')M[c+'y'+y]=R[c][1]+SM[y];}
-for(const y of 'auo'){M['sh'+y]='し'+SM[y];M['ch'+y]='ち'+SM[y];M['j'+y]='じ'+SM[y];M['jy'+y]='じ'+SM[y];}
-function toKana(s,fin){
-  s=s.replace(/[A-Z]/g,c=>c.toLowerCase());
-  let o='',i=0;
-  while(i<s.length){
-    const c=s[i],n=s[i+1];
-    if(c==='-'){o+='ー';i++;continue}
-    if(c===n&&/[bcdfghjklmpqrstvwxyz]/.test(c)){o+='っ';i++;continue}
-    let m=0;
-    if(m)continue;
-    if(c==='n'){
-      if(n===undefined){if(fin){o+='ん'}else{o+='n'}i++;continue}
-    }
-    if(c==="'"){i++;continue}
-    o+=c;i++;
-  }
-  return o;
-}
-const norm=s=>s.replace(/\s/g,'').replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-96));
+      <section class="card input-card">
+        <label for="answer">你的日文回答：</label>
+        <textarea id="answer" placeholder="在此输入或说出你的日语..."></textarea>
+        <div class="actions">
+          <button id="submit-btn">提交检查</button>
+        </div>
+      </section>
 
-/* ---------- storage ---------- */
-const KEY='jp-recall-v1';
-let store={};try{store=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){store={}}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}};
-const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toLocaleDateString('sv')};
-const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
-
-/* ---------- elements ---------- */
-const $=id=>document.getElementById(id);
-const bar=$('bar'),pill=$('pill'),tag=$('tag'),zh=$('zh'),ja=$('ja'),spk=$('spk'),inp=$('ans'),fb=$('fb'),fbt=$('fbt'),fbd=$('fbd'),main=$('main'),hintBtn=$('hint'),giveBtn=$('giveup');
-
-/* ---------- session ---------- */
-let queue=[],total=0,done=0,stats={pass:0,other:0},cur=null,state='ask',hinted=false,mode='cloze',pending=null;
-
-function startSession(all){
-  const t=addDays(0);
-  const seen=ITEMS.filter(i=>store[i.id]);
-  const rev=shuffle(all?seen:seen.filter(i=>store[i.id].due<=t)).slice(0,10).map(i=>({it:i,kind:'test',clean:true,misses:0}));
-  queue=[...rev,...fresh];total=queue.length;done=0;stats={pass:0,other:0};
-  next();
-}
-function next(){
-  cur=queue.shift();hinted=false;state='ask';
-  render();
-}
-function finish(){
-  state='end';cur=null;
-  tag.textContent='';tag.className='tag';pill.textContent='';
-  zh.textContent=total?'本轮完成 🎉':'今天没有要复习的内容';
-  ja.textContent=total?('一次答对 '+stats.pass+' / '+total):'明天再来，或者再练一轮';
-  bar.style.width='100%';
-  inp.style.display='none';fb.className='fb';hintBtn.hidden=true;giveBtn.hidden=true;spk.hidden=true;
-  main.textContent='再练一轮';main.disabled=false;
-}
-function render(){
-  const it=cur.it,s=store[it.id],lv=s?s.lv:0,study=cur.kind==='study';
-  mode=study?'copy':(lv>=2?'word':'cloze');
-  const reveal=study||state!=='ask';
-  const ht=it.w.length>1?it.w[0]+'＿'.repeat(it.w.length-1):'＿';
-  const showHint=hinted||(mode==='cloze'&&lv===0);
-  const parts=it.s.split('＿');
-  const blank=reveal?'<span class="fill">'+it.w+'</span>':'<span class="blank">'+(showHint?ht:'')+'</span>';
-  zh.textContent=mode==='word'?('「'+it.zw+'」用日语怎么说？'):it.zh;
-  tag.className='tag';
-  tag.textContent=state==='retype'?'照着上面的答案，再输入一遍':(study?'新词 · 先看一遍，再照着输入':'');
-  pill.textContent=study?'新词':(lv===0?'有提示':(lv===1?'填空':'只看中文'));
-  bar.style.width=(total?done/total*100:0)+'%';
-  inp.style.display='';inp.disabled=false;inp.value='';inp.placeholder=study||state==='retype'?'照着输入':'用罗马字输入';
-  fb.className='fb';spk.hidden=false;
-  main.textContent='检查';main.disabled=true;
-  giveBtn.hidden=!(state==='ask'&&cur.kind==='test');
-  inp.focus();
-}
-function showFb(type,title,desc,after){
-  fb.className='fb '+type;fbt.textContent=title;fbd.textContent=desc||'';
-  state='fb';pending=after;inp.disabled=true;
-  main.textContent='继续';main.disabled=false;hintBtn.hidden=true;giveBtn.hidden=true;
-}
-function settle(res){
-  const s=store[cur.it.id]||(store[cur.it.id]={lv:0,due:addDays(0),ok:0});
-  if(res==='pass'){if(s.lv<2){s.lv++;s.due=addDays(1)}else{s.ok++;s.due=addDays(s.ok>=2?7:3)}}
-  else if(res==='hint'){s.due=addDays(1)}
-  else{s.lv=Math.max(0,s.lv-1);s.due=addDays(1)}
-  save();
-}
-function complete(){done++;stats[cur.clean?'pass':'other']++;next()}
-function requeue(){queue.splice(Math.min(3,queue.length),0,cur);next()}
-function miss(){
-  settle('miss');cur.clean=false;cur.misses++;
-  showFb('bad','正确答案：'+cur.it.w,cur.it.ex,()=>{state='retype';render()});
-}
-function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
-
-main.onclick=()=>{
-  if(state==='end'){startSession(true);return}
-  if(state==='fb'){pending&&pending();return}
-  const v=toKana(inp.value,true);inp.value=v;
-  const it=cur.it,ok=norm(v)===norm(it.w);
-  if(state==='retype'||cur.kind==='study'){
-    if(cur.kind==='study'){
-      store[it.id]={lv:0,due:addDays(0),ok:0};save();
-      cur={it:it,kind:'test',clean:true,misses:0};
-      showFb('good','记住了，等一下再考你',it.s.replace('＿',it.w),()=>requeue());
-    }else{cur.misses>=2?complete():requeue()}
-    return;
-  }
-  if(ok){
-    settle(hinted?'hint':'pass');if(hinted)cur.clean=false;
-    say(it.s.replace('＿',it.w));
-    state='fb';render0();
-    showFb('good',hinted?'对了（用了提示，明天再考）':'答对了！',it.ex,()=>complete());
-  }else miss();
-};
-function render0(){ja.innerHTML=ja.innerHTML}  /* placeholder keeps layout stable */
-hintBtn.onclick=()=>{hinted=true;render()};
-giveBtn.onclick=()=>{state='fb';miss()};
-spk.onclick=()=>{if(cur)say(mode==='word'&&state==='ask'?'':cur.it.s.replace('＿',cur.it.w))};
-inp.addEventListener('input',()=>{
-  const v=toKana(inp.value,false);
-  if(v!==inp.value){inp.value=v;inp.setSelectionRange(v.length,v.length)}
-});
-
-startSession(false);
-</script>
-</body>
+      <section class="card feedback-card" id="feedback" style="display: none;">
+        <span class="tag tag-green">AI 反馈</span>
+        <div id="feedback-content">
+          <!-- AI 反馈会渲染在这里 -->
+        </div>
+      </section>
+    </main>
+  </body>
 </html>
+
+<style>
+  :root {
+    color-scheme: light;
+    --bg-color: #f7f9fc;
+    --text-main: #333;
+    --primary: #58cc02; /* 致敬多邻国绿 */
+    --primary-hover: #46a302;
+  }
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  .container {
+    max-width: 600px;
+    width: 100%;
+  }
+  header h1 { margin-bottom: 0.2rem; }
+  .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #eef1f5;
+  }
+  .tag {
+    display: inline-block;
+    background: #e5f0ff;
+    color: #1a73e8;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.8rem;
+  }
+  .tag-green { background: #e5f9e5; color: var(--primary); }
+  .prompt-card h2 { margin: 0; font-size: 1.4rem; }
+  label { display: block; margin-bottom: 0.8rem; font-weight: 500;}
+  textarea {
+    width: 100%;
+    height: 100px;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: vertical;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .actions { margin-top: 1rem; text-align: right; }
+  button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  button:hover { background: var(--primary-hover); }
+</style>
