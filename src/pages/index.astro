@@ -1,6 +1,5 @@
 ---
-// 原生 Web Component 方案
-import 'simple-liquid-glass/web-component';
+// 纯 CSS 液态玻璃放大字体版
 ---
 <html lang="zh-CN">
   <head>
@@ -9,63 +8,122 @@ import 'simple-liquid-glass/web-component';
     <title>宫水.com</title>
   </head>
   <body>
-    <div class="bg-text-bg">MIYAMIZU</div>
+    <!-- 背景流光，专门给玻璃字透光用 -->
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
 
-    <!-- 直接使用自定义标签，无需写任何初始化 JS -->
-    <liquid-glass radius="32" frost="0.15" blur="8" saturation="150" style="width: 400px; height: 220px; display: block; position: relative; z-index: 2;">
-      <div class="glass-content">
-        <h1>懒得做了</h1>
-        <p>但域名都买了，凑合看吧</p>
-      </div>
-    </liquid-glass>
+    <div class="container">
+      <h1 class="glass-title">懒得做了</h1>
+      <p class="glass-sub">但域名都买了，凑合看吧</p>
+    </div>
   </body>
 </html>
 
 <style>
+  /* 彻底锁死页面，不能滑动 */
   html, body {
     margin: 0;
     padding: 0;
     height: 100vh;
     overflow: hidden;
     background-color: #050505;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
-  .bg-text-bg {
+  /* 背景光晕：为了让文字透出颜色和折射感 */
+  .bg-glow {
     position: absolute;
-    font-size: 15vw;
-    font-weight: 900;
-    color: rgba(255, 255, 255, 0.08);
-    letter-spacing: 0.2em;
-    user-select: none;
+    border-radius: 50%;
+    filter: blur(100px);
     z-index: 0;
+    opacity: 0.7;
+    animation: move-glow 8s infinite alternate ease-in-out;
+  }
+  .glow-1 {
+    width: 60vw;
+    height: 60vw;
+    background: rgba(80, 150, 255, 0.4);
+    top: -10%;
+    left: -10%;
+  }
+  .glow-2 {
+    width: 50vw;
+    height: 50vw;
+    background: rgba(255, 80, 150, 0.3);
+    bottom: -10%;
+    right: -10%;
+    animation-delay: -4s;
   }
 
-  .glass-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+  @keyframes move-glow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(10vw, 10vh) scale(1.2); }
+  }
+
+  .container {
+    z-index: 1;
     text-align: center;
   }
 
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0 0 0.8rem 0;
-    color: #fff;
-    letter-spacing: 0.1em;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  }
-
-  p {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.7);
+  /* 核心：液态玻璃大字 */
+  .glass-title {
+    font-size: clamp(4rem, 15vw, 12rem);
+    font-weight: 900;
     margin: 0;
     letter-spacing: 0.05em;
+    
+    /* 核心技巧：让文字内部透明，透出背景的光晕 */
+    color: transparent;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.1) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    /* 玻璃的反光边缘和阴影 */
+    text-shadow: 
+      0 0 20px rgba(255,255,255,0.2),
+      inset 0 0 10px rgba(255,255,255,0.5);
+    
+    /* 放大和呼吸动画 */
+    animation: breathe 4s ease-in-out infinite alternate;
+    
+    /* 悬停时变清晰、放大 */
+    transition: all 0.5s ease;
+  }
+
+  .glass-title:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 30px rgba(255,255,255,0.4));
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.4) 100%);
+    -webkit-background-clip: text;
+  }
+
+  /* 呼吸/放大的关键帧 */
+  @keyframes breathe {
+    0% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+    }
+    100% {
+      transform: scale(1.03);
+      filter: drop-shadow(0 0 25px rgba(255,255,255,0.3));
+    }
+  }
+
+  .glass-sub {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 1rem;
+    letter-spacing: 0.2em;
+    font-weight: 300;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    animation: fade-in 2s ease-out;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 </style>
