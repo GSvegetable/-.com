@@ -35,8 +35,8 @@ import '../styles/main.css';
       </section>
     </main>
 
-    <script>
-      // 纯本地题库
+    <!-- 注意这里加了 is:inline，告诉 Astro 不要插手这段脚本 -->
+    <script is:inline>
       const questionBank = [
         { prompt: "Ask for water politely.", answer: "水をください", keywords: ["水", "ください"] },
         { prompt: "I am a student.", answer: "私は学生です", keywords: ["私", "学生"] },
@@ -45,17 +45,17 @@ import '../styles/main.css';
 
       let currentQuestion = 0;
 
-      // 这里加上 as HTML...Element 给 TypeScript 吃定心丸
-      const promptText = document.getElementById('prompt-text') as HTMLElement;
-      const answerInput = document.getElementById('answer') as HTMLTextAreaElement;
-      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
-      const nextBtn = document.getElementById('next-btn') as HTMLButtonElement;
-      const feedbackCard = document.getElementById('feedback') as HTMLElement;
-      const feedbackTag = document.getElementById('feedback-tag') as HTMLElement;
-      const feedbackContent = document.getElementById('feedback-content') as HTMLElement;
-      const playAudioBtn = document.getElementById('play-audio-btn') as HTMLButtonElement;
+      const promptText = document.getElementById('prompt-text');
+      const answerInput = document.getElementById('answer');
+      const submitBtn = document.getElementById('submit-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const feedbackCard = document.getElementById('feedback');
+      const feedbackTag = document.getElementById('feedback-tag');
+      const feedbackContent = document.getElementById('feedback-content');
+      const playAudioBtn = document.getElementById('play-audio-btn');
 
       function loadQuestion() {
+        if (!promptText || !answerInput || !submitBtn || !nextBtn || !feedbackCard || !playAudioBtn) return;
         promptText.textContent = questionBank[currentQuestion].prompt;
         answerInput.value = '';
         answerInput.disabled = false;
@@ -67,11 +67,13 @@ import '../styles/main.css';
       }
 
       function checkAnswer() {
+        if (!answerInput || !feedbackCard || !feedbackTag || !feedbackContent || !playAudioBtn || !submitBtn || !nextBtn) return;
+        
         const userAnswer = answerInput.value.trim();
         const correctAnswer = questionBank[currentQuestion].answer;
         const keywords = questionBank[currentQuestion].keywords;
 
-        const isCorrect = keywords.every(kw => userAnswer.includes(kw));
+        const isCorrect = keywords.every(function(kw) { return userAnswer.includes(kw); });
 
         feedbackCard.style.display = 'block';
         playAudioBtn.style.display = 'inline-block';
@@ -82,41 +84,44 @@ import '../styles/main.css';
         if (isCorrect) {
           feedbackTag.textContent = "✅ 回答正确";
           feedbackTag.style.color = "#58cc02";
-          feedbackContent.innerHTML = `<p>非常棒！你成功回忆出了：<strong>${correctAnswer}</strong></p>`;
+          feedbackContent.innerHTML = "<p>非常棒！你成功回忆出了：<strong>" + correctAnswer + "</strong></p>";
         } else {
           feedbackTag.textContent = "❌ 需要复习";
           feedbackTag.style.color = "#ff4b4b";
-          feedbackContent.innerHTML = `
-            <p>还差一点，正确的说法是：<strong>${correctAnswer}</strong></p>
-            <p style="color: #666; font-size: 0.9rem;">提示关键词：${keywords.join('、')}</p>
-          `;
+          feedbackContent.innerHTML = "<p>还差一点，正确的说法是：<strong>" + correctAnswer + "</strong></p><p style='color: #666; font-size: 0.9rem;'>提示关键词：" + keywords.join('、') + "</p>";
         }
       }
 
-      submitBtn.addEventListener('click', checkAnswer);
+      if (submitBtn) submitBtn.addEventListener('click', checkAnswer);
 
-      answerInput.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-          checkAnswer();
-        }
-      });
+      if (answerInput) {
+        answerInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            checkAnswer();
+          }
+        });
+      }
 
-      nextBtn.addEventListener('click', () => {
-        currentQuestion = (currentQuestion + 1) % questionBank.length;
-        loadQuestion();
-      });
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+          currentQuestion = (currentQuestion + 1) % questionBank.length;
+          loadQuestion();
+        });
+      }
 
-      playAudioBtn.addEventListener('click', () => {
-        const text = questionBank[currentQuestion].answer;
-        if ('speechSynthesis' in window) {
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.lang = 'ja-JP';
-          utterance.rate = 0.9;
-          window.speechSynthesis.speak(utterance);
-        } else {
-          alert('你的浏览器不支持语音朗读功能');
-        }
-      });
+      if (playAudioBtn) {
+        playAudioBtn.addEventListener('click', function() {
+          const text = questionBank[currentQuestion].answer;
+          if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+          } else {
+            alert('你的浏览器不支持语音朗读功能');
+          }
+        });
+      }
 
       loadQuestion();
     </script>
