@@ -1,191 +1,215 @@
 ---
-// 高级杂志排版风 - Editorial Design
+// 英伦复古艺术字 + SVG Shader 水波扭曲交互
 ---
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>宫水.com</title>
+    <!-- 引入英伦古典字体 Playfair Display -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;800&family=Noto+Serif+SC:wght@200;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- 逼真的纸张噪点纹理 -->
+    <!-- 隐藏的 SVG 滤镜，用来做水波位移形变 -->
+    <svg class="hidden-svg">
+      <defs>
+        <filter id="water-ripple">
+          <feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="2" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- 背景的颗粒感 -->
     <div class="grain"></div>
 
+    <!-- 水波纹点击特效容器 -->
+    <div id="ripple-container"></div>
+
     <main class="layout">
-      <!-- 左上角细节 -->
       <header class="header">
-        <span class="meta">© 2026 MIYAMIZU.COM</span>
+        <span>EST. 2026</span>
+        <span>LONDON · TOKYO</span>
       </header>
 
-      <!-- 核心排版区 -->
+      <!-- 核心文字区，应用水波滤镜 -->
       <section class="content">
-        <h1 class="main-title">
-          <span class="line-1">懒得</span>
-          <span class="line-2">做了</span>
+        <h1 class="british-text" id="ripple-target">
+          <span class="cn">懒得做了</span>
+          <span class="en">TOO LAZY TO DO IT</span>
         </h1>
-        
-        <div class="subtitle-wrapper">
-          <div class="divider"></div>
-          <p class="sub-text">
-            但域名都买了，<br>凑合看吧
-          </p>
-        </div>
+        <p class="subtitle">但域名都买了，凑合看吧</p>
       </section>
 
-      <!-- 右下角细节 -->
       <footer class="footer">
-        <div class="status">
-          <span class="dot"></span> UNDER CONSTRUCTION
-        </div>
+        <div class="line"></div>
+        <span>CLICK ANYWHERE TO DISTORT</span>
       </footer>
     </main>
+
+    <script is:inline>
+      const target = document.getElementById('ripple-target');
+      const turbulence = document.getElementById('turbulence');
+      const displacementMap = document.querySelector('#water-ripple feDisplacementMap');
+      
+      let scale = 0;
+      let freq = 0.01;
+      let animId;
+
+      // 水波消散动画
+      function animateRipple() {
+        scale *= 0.92; // 阻尼衰减
+        freq += 0.002; // 波纹变细
+
+        if (scale < 0.1) {
+          target.style.filter = 'none';
+          scale = 0;
+          return;
+        }
+
+        displacementMap.setAttribute('scale', scale);
+        turbulence.setAttribute('baseFrequency', `${freq} ${freq}`);
+        animId = requestAnimationFrame(animateRipple);
+      }
+
+      // 点击事件：触发文字扭曲 + 视觉水波圈
+      document.body.addEventListener('pointerdown', (e) => {
+        // 1. 重置并触发 SVG 滤镜
+        cancelAnimationFrame(animId);
+        target.style.filter = 'url(#water-ripple)';
+        scale = 80; 
+        freq = 0.01;
+        animateRipple();
+
+        // 2. 在点击位置生成物理水波纹圈
+        const ripple = document.createElement('div');
+        ripple.className = 'water-ring';
+        ripple.style.left = `${e.clientX}px`;
+        ripple.style.top = `${e.clientY}px`;
+        document.getElementById('ripple-container').appendChild(ripple);
+
+        // 动画结束移除 DOM
+        setTimeout(() => {
+          ripple.remove();
+        }, 1000);
+      });
+    </script>
   </body>
 </html>
 
 <style>
-  /* 颜色变量：极简黑白灰 */
   :root {
-    --bg: #f4f4f2; /* 宣纸灰，比纯白高级 */
-    --text: #111111;
-    --gray: #888888;
-    --font-sans: 'Inter', -apple-system, sans-serif;
-    --font-serif: 'Noto Serif SC', serif;
+    --bg: #0a0c10; /* 极深的牛津蓝/黑 */
+    --gold: #d4af37; /* 烫金 */
+    --cream: #f5eedc; /* 奶油白 */
+    --font-uk: 'Playfair Display', 'Times New Roman', serif;
+    --font-cn: 'Noto Serif SC', 'Songti SC', serif;
   }
 
   html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
     background-color: var(--bg);
-    color: var(--text);
-    font-family: var(--font-sans);
+    color: var(--cream);
     overflow: hidden;
-    -webkit-font-smoothing: antialiased;
+    font-family: var(--font-uk);
+    cursor: crosshair; /* 换成十字光标，增加艺术感 */
   }
 
-  /* 真实纸张噪点覆盖层 (Film Grain) */
+  .hidden-svg { position: absolute; width: 0; height: 0; }
+
+  /* 浓郁的纸张噪点 */
   .grain {
-    position: fixed;
-    inset: 0;
-    z-index: 99;
-    pointer-events: none;
-    opacity: 0.05; /* 非常克制，只增加质感 */
+    position: fixed; inset: 0; z-index: 99; pointer-events: none; opacity: 0.08;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 
   .layout {
     position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 4vw;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    width: 100%; height: 100%;
+    padding: 4vw; box-sizing: border-box;
+    display: flex; flex-direction: column; justify-content: space-between;
   }
 
-  /* 顶部小字 */
-  .header .meta {
-    font-size: 0.75rem;
-    font-weight: 400;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gray);
+  /* 顶部极简英文字体 */
+  .header {
+    display: flex; justify-content: space-between;
+    font-size: 0.8rem; letter-spacing: 0.2em; color: rgba(245, 238, 220, 0.5);
   }
 
-  /* 核心排版区 */
+  /* 核心文字区 */
   .content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    flex: 1;
-    padding-bottom: 10vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    flex: 1; text-align: center;
+    z-index: 10;
   }
 
-  /* 主标题：超大极简黑体 */
-  .main-title {
+  /* 英伦复古艺术字 */
+  .british-text {
     margin: 0;
-    font-family: var(--font-sans);
-    font-size: clamp(6rem, 18vw, 22rem);
-    font-weight: 800;
-    line-height: 0.8; /* 极小的行高，创造紧凑排版 */
-    letter-spacing: -0.05em;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .line-1 { margin-left: 0; }
-  .line-2 { margin-left: 25vw; } /* 错位排版 */
-
-  /* 副标题区域：极细衬线体 */
-  .subtitle-wrapper {
-    margin-bottom: 2vw;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    display: flex; flex-direction: column; align-items: center;
+    /* 滤镜过渡必须有，否则 JS 改变时会产生生硬跳变 */
+    transition: filter 0.1s; 
   }
 
-  .divider {
-    width: 40px;
-    height: 1px;
-    background-color: var(--text);
-    margin-bottom: 1.5rem;
-  }
-
-  .sub-text {
-    font-family: var(--font-serif);
-    font-size: clamp(1.1rem, 1.5vw, 1.4rem);
-    font-weight: 200;
-    line-height: 1.8;
+  .british-text .cn {
+    font-family: var(--font-cn);
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 900;
+    line-height: 1.2;
     letter-spacing: 0.1em;
-    margin: 0;
-    color: var(--text);
+    color: var(--cream);
+    /* 文字内阴影模拟雕刻感 */
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.5), inset 0 0 20px rgba(212,175,55,0.2);
   }
 
-  /* 底部状态 */
+  .british-text .en {
+    font-family: var(--font-uk);
+    font-size: clamp(1rem, 2vw, 2rem);
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    margin-top: 1rem;
+    font-style: italic;
+    /* 烫金渐变 */
+    background: linear-gradient(180deg, #fff 0%, var(--gold) 40%, #8a6e1c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    margin-top: 3rem;
+    font-family: var(--font-cn);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    color: rgba(245, 238, 220, 0.6);
+    letter-spacing: 0.4em;
+    font-weight: 300;
+  }
+
+  /* 底部装饰 */
   .footer {
-    display: flex;
-    justify-content: flex-end;
+    display: flex; align-items: center; gap: 1rem;
+    color: rgba(245, 238, 220, 0.3); font-size: 0.7rem; letter-spacing: 0.2em;
   }
+  .footer .line { flex: 1; height: 1px; background: rgba(245, 238, 220, 0.1); }
 
-  .status {
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    color: var(--gray);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* 极其微小的闪烁点，代表“未完工” */
-  .dot {
-    width: 6px;
-    height: 6px;
-    background-color: #ff4444;
+  /* 点击产生的水波纹圆圈 */
+  .water-ring {
+    position: absolute;
+    width: 10px; height: 10px;
+    border: 1px solid var(--gold);
     border-radius: 50%;
-    animation: blink 2s infinite;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1;
+    animation: ripple-out 1s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
   }
 
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
-
-  /* 响应式适配 */
-  @media (max-width: 768px) {
-    .layout { padding: 8vw; }
-    .content {
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-end;
-      gap: 3rem;
-      padding-bottom: 5vh;
-    }
-    .line-2 { margin-left: 15vw; }
-    .footer { justify-content: flex-start; margin-top: 2rem; }
+  @keyframes ripple-out {
+    0% { width: 10px; height: 10px; opacity: 1; border-width: 3px; }
+    100% { width: 400px; height: 400px; opacity: 0; border-width: 1px; }
   }
 </style>
