@@ -5,89 +5,169 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>多邻国课后训练 - 日语填空</title>
+  <title>日语拼句练习</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7f9fc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #333; }
-    .card { background: #fff; width: 90%; max-width: 400px; border-radius: 20px; padding: 30px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
-    .sentence { font-size: 32px; font-weight: bold; letter-spacing: 2px; margin-bottom: 10px; color: #222; }
-    .chinese { font-size: 16px; color: #888; margin-bottom: 30px; }
-    input[type="text"] { width: 80%; font-size: 20px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 12px; text-align: center; outline: none; background-color: #fafafa; }
-    input[type="text"]:focus { border-color: #58cc02; background-color: #fff; }
-    .feedback { height: 24px; margin-top: 15px; font-weight: bold; font-size: 16px; }
-    .correct { color: #58cc02; }
-    .incorrect { color: #ff4b4b; }
-    .actions { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
-    button { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; }
-    #submit-btn { background-color: #58cc02; color: white; box-shadow: 0 4px 0 #46a302; }
-    #next-btn { background-color: #1cb0f6; color: white; box-shadow: 0 4px 0 #1899d6; display: none; }
-    #play-btn { background-color: #fff; color: #1cb0f6; border: 2px solid #1cb0f6; margin-top: 10px; }
+    body { font-family: -apple-system, sans-serif; background: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; color: #333; }
+    .header { width: 100%; max-width: 500px; margin-bottom: 20px; }
+    .title { font-size: 24px; font-weight: bold; color: #58cc02; margin-bottom: 10px; }
+    .question { font-size: 20px; color: #555; margin-bottom: 30px; font-weight: bold; }
+    
+    /* 拼装区 */
+    .answer-area { width: 100%; max-width: 500px; min-height: 80px; border-bottom: 2px solid #e5e5e5; display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 0; margin-bottom: 30px; align-content: flex-start; }
+    
+    /* 词块通用样式 */
+    .block { padding: 10px 16px; border-radius: 12px; font-size: 20px; cursor: pointer; user-select: none; transition: 0.1s; font-weight: bold; }
+    
+    /* 选中的词块 */
+    .block.selected { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; color: #333; }
+    .block.selected:active { transform: translateY(2px); border-bottom-width: 2px; }
+    
+    /* 底部的词库 */
+    .bank-area { width: 100%; max-width: 500px; display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 0; min-height: 60px; }
+    .block.bank { background: #f7f7f7; border: 2px solid #e5e5e5; border-bottom-width: 4px; color: #333; }
+    .block.bank:active { transform: translateY(2px); border-bottom-width: 2px; }
+    
+    /* 占位符（当词块被选走后） */
+    .block.placeholder { background: #f0f0f0; border: 2px solid transparent; color: transparent; pointer-events: none; }
+
+    /* 按钮区 */
+    .controls { width: 100%; max-width: 500px; margin-top: auto; display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; }
+    button { padding: 15px; font-size: 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; text-transform: uppercase; }
+    #check-btn { background: #58cc02; color: white; box-shadow: 0 4px 0 #46a302; }
+    #next-btn { background: #1cb0f6; color: white; box-shadow: 0 4px 0 #1899d6; display: none; }
+    .util-btn { background: #fff; color: #1cb0f6; border: 2px solid #e5e5e5; box-shadow: 0 4px 0 #e5e5e5; }
+    
+    /* 反馈提示 */
+    .feedback { text-align: center; font-size: 18px; font-weight: bold; min-height: 30px; margin-bottom: 10px; }
+    .correct-text { color: #58cc02; }
+    .wrong-text { color: #ff4b4b; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="sentence" id="question-sentence">これは＿です</div>
-    <div class="chinese" id="question-chinese">这是书</div>
-    <input type="text" id="answer-input" placeholder="输入填空内容" autocomplete="off" />
-    <div class="feedback" id="feedback"></div>
-    <div class="actions">
-      <button id="submit-btn">提 交</button>
-      <button id="next-btn">下 一 题</button>
-      <button id="play-btn">🔊 听发音</button>
-    </div>
+  <div class="header">
+    <div class="title">拼出正确的句子</div>
+    <div class="question" id="chinese-hint">这是书</div>
   </div>
+
+  <div class="answer-area" id="answer-area"></div>
+
+  <div class="bank-area" id="bank-area"></div>
+
+  <div class="controls">
+    <div class="feedback" id="feedback"></div>
+    <button id="check-btn">检 查</button>
+    <button id="next-btn">下 一 题</button>
+    <button id="play-btn" class="util-btn">🔊 听正确发音</button>
+  </div>
+
   <script>
     const quizData = [
-      { sentence: "これは＿です", answer: "本", chinese: "这是书" },
-      { sentence: "水を＿", answer: "ください", chinese: "请给我水" },
-      { sentence: "猫が＿", answer: "います", chinese: "有猫" }
+      { answer: "これは本です", blocks: ["です", "これ", "本", "は"], chinese: "这是书" },
+      { answer: "水をください", blocks: ["ください", "を", "水"], chinese: "请给我水" },
+      { answer: "猫がいます", blocks: ["います", "猫", "が"], chinese: "有猫" }
     ];
-    const sentenceEl = document.getElementById('question-sentence');
-    const chineseEl = document.getElementById('question-chinese');
-    const inputEl = document.getElementById('answer-input');
+
+    let currentIndex = 0;
+    let currentAnswer = [];
+    
+    const hintEl = document.getElementById('chinese-hint');
+    const answerArea = document.getElementById('answer-area');
+    const bankArea = document.getElementById('bank-area');
     const feedbackEl = document.getElementById('feedback');
-    const submitBtn = document.getElementById('submit-btn');
+    const checkBtn = document.getElementById('check-btn');
     const nextBtn = document.getElementById('next-btn');
     const playBtn = document.getElementById('play-btn');
-    let currentIndex = 0;
-    function loadQuestion() {
-      const currentQ = quizData[currentIndex];
-      sentenceEl.innerText = currentQ.sentence;
-      chineseEl.innerText = currentQ.chinese;
-      inputEl.value = '';
-      feedbackEl.innerText = '';
-      submitBtn.style.display = 'block';
-      nextBtn.style.display = 'none';
-      inputEl.disabled = false;
-      inputEl.focus();
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
     }
-    submitBtn.addEventListener('click', () => {
-      const userAnswer = inputEl.value.trim();
-      if (!userAnswer) return;
-      const correctAnswer = quizData[currentIndex].answer;
-      if (userAnswer === correctAnswer) {
-        feedbackEl.innerText = '答对了！太棒了 🎉';
-        feedbackEl.className = 'feedback correct';
+
+    function loadQuestion() {
+      currentAnswer = [];
+      feedbackEl.innerText = '';
+      checkBtn.style.display = 'block';
+      nextBtn.style.display = 'none';
+      
+      const q = quizData[currentIndex];
+      hintEl.innerText = q.chinese;
+      
+      answerArea.innerHTML = '';
+      bankArea.innerHTML = '';
+      
+      // 渲染底部词库
+      shuffle([...q.blocks]).forEach(text => {
+        const btn = document.createElement('div');
+        btn.className = 'block bank';
+        btn.innerText = text;
+        btn.onclick = () => moveToAnswer(btn);
+        bankArea.appendChild(btn);
+      });
+    }
+
+    function moveToAnswer(btn) {
+      // 如果已经检查过了，不允许再移动
+      if (checkBtn.style.display === 'none') return;
+      
+      btn.classList.remove('bank');
+      btn.classList.add('placeholder'); // 变透明占位，防止页面抖动
+      btn.onclick = null;
+      
+      const newBtn = document.createElement('div');
+      newBtn.className = 'block selected';
+      newBtn.innerText = btn.innerText;
+      newBtn.dataset.sourceIndex = Array.from(bankArea.children).indexOf(btn);
+      
+      newBtn.onclick = () => moveToBank(newBtn, btn);
+      
+      answerArea.appendChild(newBtn);
+      currentAnswer.push(btn.innerText);
+    }
+
+    function moveToBank(newBtn, originalBtn) {
+      if (checkBtn.style.display === 'none') return;
+
+      answerArea.removeChild(newBtn);
+      const idx = currentAnswer.indexOf(newBtn.innerText);
+      if (idx > -1) currentAnswer.splice(idx, 1);
+      
+      originalBtn.classList.remove('placeholder');
+      originalBtn.classList.add('bank');
+      originalBtn.onclick = () => moveToAnswer(originalBtn);
+    }
+
+    checkBtn.onclick = () => {
+      const q = quizData[currentIndex];
+      const userStr = currentAnswer.join('');
+      
+      if (userStr === q.answer) {
+        feedbackEl.innerText = '太棒了！完全正确 🎉';
+        feedbackEl.className = 'feedback correct-text';
+        playAudio(q.answer); // 答对自动播放
       } else {
-        feedbackEl.innerText = '答错了，正确答案是：' + correctAnswer + ' 😢';
-        feedbackEl.className = 'feedback incorrect';
+        feedbackEl.innerText = '不对哦，再想想语序和助词 🤔';
+        feedbackEl.className = 'feedback wrong-text';
       }
-      submitBtn.style.display = 'none';
+      
+      checkBtn.style.display = 'none';
       nextBtn.style.display = 'block';
-      inputEl.disabled = true;
-    });
-    inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') submitBtn.click(); });
-    nextBtn.addEventListener('click', () => {
+    };
+
+    nextBtn.onclick = () => {
       currentIndex = (currentIndex + 1) % quizData.length;
       loadQuestion();
-    });
-    playBtn.addEventListener('click', () => {
-      const currentQ = quizData[currentIndex];
-      const fullSentence = currentQ.sentence.replace('＿', currentQ.answer);
-      const utterance = new SpeechSynthesisUtterance(fullSentence);
+    };
+
+    function playAudio(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'ja-JP';
-      utterance.rate = 0.9;
+      utterance.rate = 0.85;
       window.speechSynthesis.speak(utterance);
-    });
+    }
+
+    playBtn.onclick = () => {
+      playAudio(quizData[currentIndex].answer);
+    };
+
     loadQuestion();
   </script>
 </body>
