@@ -1,5 +1,5 @@
 ---
-// 极致物理阻尼滚动 + 动态模糊 + 3D深渊穿透
+// 纯黑底 + 电影级纵深滚动 + 英国华丽手写体
 ---
 <html lang="en">
   <head>
@@ -11,89 +11,99 @@
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Pinyon+Script&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- 滚动占位符，用于撑开原生滚动条 -->
-    <div class="scroll-track"></div>
-
-    <!-- 固定的视觉层 -->
-    <div class="fixed-viewport">
-      <div class="text-container">
-        <h1 class="text-main">Make do</h1>
-        <h2 class="text-sub">aesthetic offline today</h2>
+    <!-- 制造向下滚动的空间 -->
+    <div class="scroll-container">
+      <!-- 固定不动的视口镜头 -->
+      <div class="sticky-wrapper">
+        <h1 class="text-1">Make do</h1>
+        <h2 class="text-2">aesthetic offline today</h2>
       </div>
-      <!-- 动态反色遮罩层 -->
-      <div class="invert-overlay"></div>
+      
+      <!-- 滚动提示 -->
+      <div class="scroll-hint">
+        <span>SCROLL DOWN</span>
+        <div class="line"></div>
+      </div>
     </div>
 
+    <!-- 引入顶级动画库 GSAP 和 丝滑滚动库 Lenis -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
     <script is:inline>
-      // 核心物理引擎：自定义平滑滚动 (Lerp + Velocity)
-      const textMain = document.querySelector('.text-main');
-      const textSub = document.querySelector('.text-sub');
-      const textContainer = document.querySelector('.text-container');
-      const overlay = document.querySelector('.invert-overlay');
-
-      let currentScroll = 0;
-      let targetScroll = 0;
-      let scrollVelocity = 0;
-      let lastScroll = 0;
-
-      // 获取最大可滚动距离
-      const getMaxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
-      
-      let maxScroll = getMaxScroll();
-      window.addEventListener('resize', () => { maxScroll = getMaxScroll(); });
-
-      // 监听滚动输入
-      window.addEventListener('scroll', () => {
-        targetScroll = window.scrollY;
-      });
-
-      // 动画主循环 (60fps)
-      function render() {
-        // 1. 阻尼插值 (0.08 是阻尼系数，越小越丝滑)
-        currentScroll += (targetScroll - currentScroll) * 0.08;
+      // 等待库加载
+      window.addEventListener('load', () => {
         
-        // 2. 计算滑动速度
-        scrollVelocity = currentScroll - lastScroll;
-        lastScroll = currentScroll;
+        // 1. 初始化丝滑滚动 (Lenis)
+        const lenis = new Lenis({
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          touchMultiplier: 2,
+        });
 
-        // 3. 计算进度 (0 到 1)
-        const progress = Math.min(Math.max(currentScroll / maxScroll, 0), 1);
-
-        // 4. 根据进度和速度，应用 3D 变换
-        // 第一句话：随着滚动，向屏幕深处推进，伴随速度拉扯形变
-        const scaleMain = 1 + progress * 15; // 放大 15 倍
-        const opacityMain = progress > 0.6 ? 1 - (progress - 0.6) * 2.5 : 1;
-        const skewMain = scrollVelocity * 0.5; // 速度越快，倾斜越大
-        const blurMain = Math.min(Math.abs(scrollVelocity) * 0.2, 10); // 动态模糊
-
-        // 只有当文字还没完全穿过屏幕时才渲染主句
-        if (progress <= 1) {
-          textMain.style.transform = `translate3d(0, ${progress * -20}vh, ${progress * 1000}px) scale(${scaleMain}) skewX(${skewMain}deg)`;
-          textMain.style.opacity = Math.max(opacityMain, 0);
-          textMain.style.filter = `blur(${blurMain}px)`;
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
         }
+        requestAnimationFrame(raf);
 
-        // 第二句话：在滚动到 40% 后，从背景深处猛地拉回前景
-        const subProgress = Math.min(Math.max((progress - 0.4) / 0.6, 0), 1);
-        const scaleSub = 15 - (subProgress * 14); // 从极大缩回正常
-        const opacitySub = subProgress; // 浮现
-        const skewSub = scrollVelocity * -0.5; // 反向形变
+        // 2. 注册 GSAP 滚动触发器
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // 让 ScrollTrigger 和 Lenis 同步
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
 
-        textSub.style.transform = `translate3d(0, ${(1 - subProgress) * 50}vh, ${1000 - subProgress * 1000}px) scale(${scaleSub}) skewX(${skewSub}deg)`;
-        textSub.style.opacity = opacitySub;
-        textSub.style.filter = `blur(${Math.min(Math.abs(scrollVelocity) * 0.2, 10)}px)`;
+        // 3. 核心电影级镜头动画
+        // 第一句：放大、虚化、隐去
+        gsap.to(".text-1", {
+          scale: 1.8,
+          opacity: 0,
+          filter: "blur(24px)",
+          scrollTrigger: {
+            trigger: ".scroll-container",
+            start: "top top",
+            end: "50% top",
+            scrub: 1.5, // 平滑追随滚动
+          }
+        });
 
-        // 5. 滚动到 85% 时，触发极致的高对比度黑白反转
-        if (progress > 0.85) {
-          overlay.style.opacity = 1;
-        } else {
-          overlay.style.opacity = 0;
-        }
+        // 第二句：从极小的深渊中浮现、聚焦、清晰
+        gsap.fromTo(".text-2", 
+          {
+            scale: 0.6,
+            opacity: 0,
+            filter: "blur(20px)",
+            y: 100
+          },
+          {
+            scale: 1,
+            opacity: 1,
+            filter: "blur(0px)",
+            y: 0,
+            scrollTrigger: {
+              trigger: ".scroll-container",
+              start: "40% top",
+              end: "90% top",
+              scrub: 1.5,
+            }
+          }
+        );
 
-        requestAnimationFrame(render);
-      }
-
-      render();
+        // 滚动提示淡出
+        gsap.to(".scroll-hint", {
+          opacity: 0,
+          scrollTrigger: {
+            trigger: ".scroll-container",
+            start: "top top",
+            end: "20% top",
+            scrub: true,
+          }
+        });
+      });
     </script>
   </body>
 </html>
@@ -106,86 +116,87 @@
   }
 
   html, body {
+    width: 100%;
     background-color: #000000;
     color: #ffffff;
-    font-family: 'Pinyon Script', cursive;
-    /* 隐藏系统原生滚动条，但保留滚动能力 */
+    overflow-x: hidden;
+    /* 隐藏系统默认滚动条，让画面更纯粹 */
     scrollbar-width: none;
-    -ms-overflow-style: none;
   }
-  
-  html::-webkit-scrollbar { display: none; }
+  body::-webkit-scrollbar {
+    display: none;
+  }
 
-  /* 撑开 300vh 的高度，给滚动留出极大的物理空间 */
-  .scroll-track {
+  /* 制造 300vh 的滚动距离，给足镜头推进的空间 */
+  .scroll-container {
     height: 300vh;
-    width: 100%;
-    pointer-events: none;
+    position: relative;
   }
 
-  /* 固定视口，所有的视觉都在这里面发生 */
-  .fixed-viewport {
+  /* 视口镜头：死死钉在屏幕上 */
+  .sticky-wrapper {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100vh;
+    width: 100vw;
+    height: 100dvh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    overflow: hidden;
-    /* 增加 3D 透视景深 */
-    perspective: 1000px; 
+    justify-content: center;
+    pointer-events: none; /* 防止文字拦截滚动 */
   }
 
-  .text-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
+  .text-1, .text-2 {
+    position: absolute;
+    font-family: 'Pinyon Script', cursive;
+    font-weight: 400;
+    color: #ffffff;
+    text-align: center;
+    /* 极致的平滑渲染 */
+    -webkit-font-smoothing: antialiased;
+    will-change: transform, opacity, filter;
+  }
+
+  .text-1 {
+    font-size: clamp(8rem, 20vw, 25rem);
+    line-height: 1;
+  }
+
+  .text-2 {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(4rem, 10vw, 12rem);
+    line-height: 1.2;
+    /* 初始隐藏，等待 GSAP 唤醒 */
+    opacity: 0; 
+  }
+
+  /* 右下角的极简滚动提示 */
+  .scroll-hint {
+    position: fixed;
+    bottom: 3rem;
+    right: 3rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    transform-style: preserve-3d;
-  }
-
-  .text-main, .text-sub {
-    position: absolute;
-    white-space: nowrap;
-    will-change: transform, opacity, filter;
-    /* 尽量让浏览器硬件加速 3D 渲染 */
-    backface-visibility: hidden;
-  }
-
-  .text-main {
-    font-size: clamp(6rem, 18vw, 20rem);
-    line-height: 1;
-    color: #ffffff;
-    z-index: 2;
-    /* 初始位置居中 */
-    transform-origin: center center;
-  }
-
-  .text-sub {
-    font-family: 'Great Vibes', cursive;
-    font-size: clamp(2.5rem, 6vw, 7rem);
-    color: #a0a0a0;
-    z-index: 1;
-    /* 初始位置偏下 */
-    margin-top: 20vh;
-    transform-origin: center center;
-    opacity: 0;
-  }
-
-  /* 全屏反色遮罩 */
-  .invert-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: #ffffff;
-    mix-blend-mode: difference; /* 使用差值混合模式产生高级反转 */
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    gap: 1rem;
+    font-family: monospace;
+    font-size: 0.7rem;
+    color: #666;
+    letter-spacing: 0.2em;
     z-index: 10;
+  }
+
+  .scroll-hint .line {
+    width: 1px;
+    height: 50px;
+    background-color: #333;
+    animation: pulse 2s infinite;
+    transform-origin: top;
+  }
+
+  @keyframes pulse {
+    0% { transform: scaleY(0); opacity: 1; }
+    50% { transform: scaleY(1); opacity: 1; }
+    100% { transform: scaleY(1); opacity: 0; }
   }
 </style>
