@@ -10,8 +10,8 @@
   <body>
     <main class="container">
       <header>
-        <h1>日语回忆层</h1>
-        <p class="subtitle">与 Duolingo 搭配使用 · 纯本地无 API 版</p>
+        <h1>多邻国 · 专属回忆层</h1>
+        <p class="subtitle">中文场景提示 · 词块拼图模式 (解决选择题盲猜)</p>
       </header>
 
       <section class="card prompt-card">
@@ -20,8 +20,14 @@
       </section>
 
       <section class="card input-card">
-        <label for="answer">你的日文回答：</label>
-        <textarea id="answer" placeholder="在此输入你的日语... (例如: 水をください)"></textarea>
+        <label>点击下方词块，拼出正确的日语句子：</label>
+        
+        <!-- 用户拼写区域 -->
+        <div id="answer-area" class="word-blocks-area answer-blocks"></div>
+        
+        <!-- 备选词块区域 -->
+        <div id="pool-area" class="word-blocks-area pool-blocks"></div>
+
         <div class="actions">
           <button id="submit-btn">提交检查</button>
           <button id="next-btn" style="display: none; background: #666;">下一题</button>
@@ -36,16 +42,36 @@
     </main>
 
     <script is:inline>
+      // 结合多邻国早期课程的经典题库（中文提示）
       const questionBank = [
-        { prompt: "Ask for water politely.", answer: "水をください", keywords: ["水", "ください"] },
-        { prompt: "I am a student.", answer: "私は学生です", keywords: ["私", "学生"] },
-        { prompt: "Where is the restroom?", answer: "トイレはどこですか", keywords: ["トイレ", "どこ"] }
+        { 
+          prompt: "那是什么？", 
+          answer: "それは何ですか", 
+          blocks: ["それは", "何", "です", "か", "水", "を"] // 包含干扰项
+        },
+        { 
+          prompt: "请给我一杯水（礼貌）。", 
+          answer: "水をください", 
+          blocks: ["水", "を", "ください", "寿司", "は"] 
+        },
+        { 
+          prompt: "我是学生。", 
+          answer: "私は学生です", 
+          blocks: ["私", "は", "学生", "です", "か", "先生"] 
+        },
+        { 
+          prompt: "这是寿司。", 
+          answer: "これはすしです", 
+          blocks: ["これ", "は", "すし", "です", "何", "を"] 
+        }
       ];
 
       let currentQuestion = 0;
+      let currentUserAnswer = []; // 用户当前拼的句子
 
       const promptText = document.getElementById('prompt-text');
-      const answerInput = document.getElementById('answer');
+      const answerArea = document.getElementById('answer-area');
+      const poolArea = document.getElementById('pool-area');
       const submitBtn = document.getElementById('submit-btn');
       const nextBtn = document.getElementById('next-btn');
       const feedbackCard = document.getElementById('feedback');
@@ -54,73 +80,104 @@
       const playAudioBtn = document.getElementById('play-audio-btn');
 
       function loadQuestion() {
-        if (!promptText || !answerInput || !submitBtn || !nextBtn || !feedbackCard || !playAudioBtn) return;
-        promptText.textContent = questionBank[currentQuestion].prompt;
-        answerInput.value = '';
-        answerInput.disabled = false;
+        const q = questionBank[currentQuestion];
+        promptText.textContent = q.prompt;
+        
+        // 重置状态
+        currentUserAnswer = [];
+        answerArea.innerHTML = '';
+        poolArea.innerHTML = '';
         submitBtn.style.display = 'inline-block';
         nextBtn.style.display = 'none';
         feedbackCard.style.display = 'none';
         playAudioBtn.style.display = 'none';
-        answerInput.focus();
+        answerArea.classList.remove('correct-bg', 'error-bg');
+
+        // 渲染备选词块（打乱顺序）
+        const shuffledBlocks = [...q.blocks].sort(() => Math.random() - 0.5);
+        
+        shuffledBlocks.forEach(blockText => {
+          const el = document.createElement('div');
+          el.className = 'word-block';
+          el.textContent = blockText;
+          el.onclick = () => moveBlockToAnswer(blockText, el);
+          poolArea.appendChild(el);
+        });
       }
 
-      function checkAnswer() {
-        if (!answerInput || !feedbackCard || !feedbackTag || !feedbackContent || !playAudioBtn || !submitBtn || !nextBtn) return;
+      function moveBlockToAnswer(text, el) {
+        if(submitBtn.style.display === 'none') return; // 提交后不能修改
+
+        // 从备选区移除
+        el.remove();
         
-        const userAnswer = answerInput.value.trim();
-        const correctAnswer = questionBank[currentQuestion].answer;
-        const keywords = questionBank[currentQuestion].keywords;
+        // 添加到答题区
+        const answerEl = document.createElement('div');
+        answerEl.className = 'word-block';
+        answerEl.textContent = text;
+        answerEl.onclick = () => moveBlockToPool(text, answerEl);
+        answerArea.appendChild(answerEl);
 
-        const isCorrect = keywords.every(function(kw) { return userAnswer.includes(kw); });
+        currentUserAnswer.push(text);
+      }
 
-        feedbackCard.style.display = 'block';
-        playAudioBtn.style.display = 'inline-block';
-        answerInput.disabled = true;
-        submitBtn.style.display = 'none';
-        nextBtn.style.display = 'inline-block';
+      function moveBlockToPool(text, el) {
+        if(submitBtn.style.display === 'none') return; // 提交后不能修改
 
-        if (isCorrect) {
-          feedbackTag.textContent = "✅ 回答正确";
-          feedbackTag.style.color = "#58cc02";
-          feedbackContent.innerHTML = "<p>非常棒！你成功回忆出了：<strong>" + correctAnswer + "</strong></p>";
-        } else {
-          feedbackTag.textContent = "❌ 需要复习";
-          feedbackTag.style.color = "#ff4b4b";
-          feedbackContent.innerHTML = "<p>还差一点，正确的说法是：<strong>" + correctAnswer + "</strong></p><p style='color: #666; font-size: 0.9rem;'>提示关键词：" + keywords.join('、') + "</p>";
+        el.remove();
+        
+        // 放回备选区
+        const poolEl = document.createElement('div');
+        poolEl.className = 'word-block';
+        poolEl.textContent = text;
+        poolEl.onclick = () => moveBlockToAnswer(text, poolEl);
+        poolArea.appendChild(poolEl);
+
+        // 从答案数组中移除
+        const index = currentUserAnswer.indexOf(text);
+        if (index > -1) {
+          currentUserAnswer.splice(index, 1);
         }
       }
 
-      if (submitBtn) submitBtn.addEventListener('click', checkAnswer);
+      function checkAnswer() {
+        const q = questionBank[currentQuestion];
+        const userString = currentUserAnswer.join(''); // 拼接用户答案
+        
+        feedbackCard.style.display = 'block';
+        playAudioBtn.style.display = 'inline-block';
+        submitBtn.style.display = 'none';
+        nextBtn.style.display = 'inline-block';
 
-      if (answerInput) {
-        answerInput.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-            checkAnswer();
-          }
-        });
+        if (userString === q.answer) {
+          feedbackTag.textContent = "✅ 回答正确";
+          feedbackTag.style.color = "#58cc02";
+          answerArea.classList.add('correct-bg');
+          feedbackContent.innerHTML = "<p>太棒了！你成功拼出了：<strong>" + q.answer + "</strong></p>";
+        } else {
+          feedbackTag.textContent = "❌ 需要复习";
+          feedbackTag.style.color = "#ff4b4b";
+          answerArea.classList.add('error-bg');
+          feedbackContent.innerHTML = "<p>顺序或用词不对，正确的说法是：<strong>" + q.answer + "</strong></p>";
+        }
       }
 
-      if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
-          currentQuestion = (currentQuestion + 1) % questionBank.length;
-          loadQuestion();
-        });
-      }
+      submitBtn.addEventListener('click', checkAnswer);
 
-      if (playAudioBtn) {
-        playAudioBtn.addEventListener('click', function() {
-          const text = questionBank[currentQuestion].answer;
-          if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ja-JP';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-          } else {
-            alert('你的浏览器不支持语音朗读功能');
-          }
-        });
-      }
+      nextBtn.addEventListener('click', () => {
+        currentQuestion = (currentQuestion + 1) % questionBank.length;
+        loadQuestion();
+      });
+
+      playAudioBtn.addEventListener('click', () => {
+        const text = questionBank[currentQuestion].answer;
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'ja-JP';
+          utterance.rate = 0.9;
+          window.speechSynthesis.speak(utterance);
+        }
+      });
 
       loadQuestion();
     </script>
@@ -166,19 +223,49 @@
   }
   .tag-green { background: #e5f9e5; }
   .prompt-card h2 { margin: 0; font-size: 1.4rem; }
-  label { display: block; margin-bottom: 0.8rem; font-weight: 500;}
-  textarea {
-    width: 100%;
-    height: 100px;
-    padding: 1rem;
+  
+  /* 词块拼图样式 */
+  .word-blocks-area {
+    min-height: 60px;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  .answer-blocks {
+    border-bottom: 2px dashed #e0e0e0;
+    background: #fafafa;
+    min-height: 80px;
+    align-content: flex-start;
+  }
+  .pool-blocks {
+    background: #fff;
+  }
+  .word-block {
+    background: white;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
-    font-size: 1rem;
-    resize: vertical;
-    box-sizing: border-box;
-    font-family: inherit;
+    padding: 8px 16px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 0 #e0e0e0;
+    user-select: none;
+    transition: all 0.1s;
   }
-  textarea:focus { outline: none; border-color: var(--primary); }
+  .word-block:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+  .word-block:hover {
+    background: #f0f0f0;
+  }
+  
+  /* 判卷反馈背景 */
+  .correct-bg { background: #e5f9e5 !important; border-color: #58cc02; }
+  .error-bg { background: #ffe5e5 !important; border-color: #ff4b4b; }
+
   .actions { margin-top: 1rem; display: flex; justify-content: flex-end; gap: 10px; }
   button {
     background: var(--primary);
