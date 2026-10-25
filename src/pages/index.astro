@@ -1,228 +1,112 @@
 ---
-// 极简印刷风 + 纸张质感 + 物理错位交互
+// 纯黑底 + 极度夸张狂草手写错落排版
 ---
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MIYAMIZU</title>
+    <title>凑合看</title>
+    <!-- 引入 Google Fonts 中最夸张的中文狂草手写体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div class="cursor" id="cursor"></div>
-    
-    <main class="grid-layout" id="layout">
-      <header class="top-bar">
-        <span>MIYAMIZU.COM</span>
-        <span>EST. 2024</span>
-      </header>
-
-      <section class="content">
-        <h1 class="title">
-          TOO <br>
-          LAZY <br>
-          <span class="italic">to do it.</span>
-        </h1>
-      </section>
-
-      <footer class="bottom-bar">
-        <p class="sub">Bought the domain. <br>Just make do with it.</p>
-        <div class="action-hint">
-          <span class="crosshair">[ + ]</span>
-          <span>CLICK TO INTERRUPT</span>
-        </div>
-      </footer>
+    <main class="wrapper">
+      <!-- 第一句：巨大、左上倾斜 -->
+      <h1 class="text-main">凑合看</h1>
+      
+      <!-- 第二句：略小、右下倾斜、穿插 -->
+      <h2 class="text-sub">今天审美不在线</h2>
     </main>
 
     <script is:inline>
-      const cursor = document.getElementById('cursor');
-      const layout = document.getElementById('layout');
-      let isHovering = false;
+      // 极其微弱的鼠标跟随倾斜，增加一点物理呼吸感，不花哨
+      const main = document.querySelector('.text-main');
+      const sub = document.querySelector('.text-sub');
 
-      // 鼠标跟随逻辑
       document.addEventListener('mousemove', (e) => {
-        // 使用 requestAnimationFrame 优化性能
-        requestAnimationFrame(() => {
-          cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-        });
-      });
+        const x = (e.clientX / window.innerWidth - 0.5) * 15;
+        const y = (e.clientY / window.innerHeight - 0.5) * 15;
 
-      // 点击时的物理错位感
-      document.addEventListener('pointerdown', (e) => {
-        document.body.classList.add('glitch');
-        
-        // 随机生成错位参数
-        const shiftX = (Math.random() - 0.5) * 30;
-        const shiftY = (Math.random() - 0.5) * 30;
-        
-        document.documentElement.style.setProperty('--shift-x', `${shiftX}px`);
-        document.documentElement.style.setProperty('--shift-y', `${shiftY}px`);
-        
-        setTimeout(() => {
-          document.body.classList.remove('glitch');
-        }, 250);
+        // 对角线反向移动，产生错位错觉
+        main.style.transform = `rotate(-8deg) translate(${x}px, ${y}px)`;
+        sub.style.transform = `rotate(5deg) translate(${-x}px, ${-y}px)`;
       });
-
-      // 移动端隐藏自定义光标
-      if (window.matchMedia('(pointer: coarse)').matches) {
-        cursor.style.display = 'none';
-      }
     </script>
   </body>
 </html>
 
 <style is:global>
-  :root {
-    --bg: #F4F4F0; /* 温暖的纸张底色 */
-    --ink: #111111; /* 炭黑墨水 */
-    --accent: #FF4B00; /* 国际亮橙，用于点缀 */
-    --font-serif: 'Instrument Serif', serif;
-    --font-mono: 'Space Mono', monospace;
-    --shift-x: 0px;
-    --shift-y: 0px;
-  }
-
   * {
     box-sizing: border-box;
-  }
-
-  body {
     margin: 0;
     padding: 0;
-    background-color: var(--bg);
-    color: var(--ink);
-    font-family: var(--font-mono);
-    cursor: none; /* 隐藏系统默认光标 */
-    overflow: hidden;
-    height: 100vh;
-    height: 100dvh;
-    /* 注入极细微的 SVG 纸张噪点纹理，增加高级质感 */
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
   }
 
-  /* 高级自定义光标 */
-  .cursor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 20px;
-    height: 20px;
-    background-color: var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 100;
-    margin-left: -10px;
-    margin-top: -10px;
-    /* 使用混合模式让光标在浅色背景上产生类似印刷的叠印效果 */
-    mix-blend-mode: difference; 
-    transition: width 0.2s, height 0.2s, margin 0.2s, border-radius 0.2s;
-    will-change: transform;
+  html, body {
+    width: 100%;
+    height: 100dvh; /* 锁定高度，禁止滑动 */
+    overflow: hidden; /* 彻底禁用滚动 */
+    background-color: #000000; /* 纯黑背景 */
+    color: #ffffff;
+    cursor: crosshair; /* 保持一点点锐利感 */
   }
 
-  /* 点击时光标变大，像墨水晕开 */
-  body.glitch .cursor {
-    width: 120px;
-    height: 120px;
-    margin-left: -60px;
-    margin-top: -60px;
-    border-radius: 40%;
-  }
-
-  /* 严格对齐的网格系统 */
-  .grid-layout {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
+  .wrapper {
+    position: relative;
+    width: 100%;
     height: 100%;
-    padding: 2rem 3rem;
-    position: relative;
-    z-index: 10;
-    transition: transform 0.1s cubic-bezier(0.1, 0.8, 0.2, 1);
-  }
-
-  /* 点击时的随机错位扰动 */
-  body.glitch .grid-layout {
-    transform: translate(var(--shift-x), var(--shift-y));
-  }
-
-  .top-bar, .bottom-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .top-bar {
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 1rem;
-  }
-
-  /* 核心排版区 */
-  .content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-
-  .title {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: clamp(6rem, 20vw, 24rem);
-    line-height: 0.75;
-    letter-spacing: -0.03em;
-    margin: 0;
-    text-align: center;
     display: flex;
     flex-direction: column;
+    justify-content: center;
   }
 
-  .title .italic {
-    font-style: italic;
-    font-size: 0.35em;
-    line-height: 1;
-    align-self: flex-end;
-    letter-spacing: -0.02em;
-    margin-right: 15%;
-    margin-top: 0.1em;
+  /* 字体基础设置：狂草手写、夸张的粗细对比 */
+  .text-main, .text-sub {
+    font-family: 'Zhi Mang Xing', cursive;
+    font-weight: 400;
+    position: absolute;
+    white-space: nowrap;
+    /* 初始过渡，让跟随效果更平滑 */
+    transition: transform 0.1s linear; 
+    will-change: transform;
+    /* 极简的高级感：纯白字，不加任何发光、渐变 */
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .bottom-bar {
-    border-top: 1px solid var(--ink);
-    padding-top: 1rem;
-    align-items: flex-start;
+  /* 主句：极度放大，占据视觉中心偏左 */
+  .text-main {
+    font-size: clamp(10rem, 35vw, 40rem);
+    top: 5%;
+    left: -5%;
+    transform: rotate(-8deg);
+    z-index: 2;
   }
 
-  .sub {
-    margin: 0;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    text-transform: none;
-    letter-spacing: 0;
+  /* 副句：穿插在主句右下角，形成压迫感 */
+  .text-sub {
+    font-size: clamp(4rem, 12vw, 15rem);
+    bottom: 10%;
+    right: -2%;
+    transform: rotate(5deg);
+    z-index: 1;
+    /* 稍微给一点点暗白色，拉开层次 */
+    color: #e0e0e0; 
   }
 
-  .action-hint {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--accent);
-  }
-
-  .crosshair {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  /* 响应式适配 */
+  /* 针对小屏幕适配 */
   @media (max-width: 768px) {
-    .grid-layout { padding: 1.5rem; }
-    .title { font-size: 22vw; line-height: 0.85; }
-    .title .italic { align-self: center; margin-right: 0; font-size: 0.3em; margin-top: 0.5em; }
-    .cursor { display: none; }
-    body { cursor: auto; }
+    .text-main {
+      font-size: 35vw;
+      top: 15%;
+      left: -10%;
+    }
+    .text-sub {
+      font-size: 14vw;
+      bottom: 20%;
+      right: 0;
+    }
   }
 </style>
