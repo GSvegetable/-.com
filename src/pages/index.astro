@@ -1,22 +1,100 @@
 ---
-// 纯黑底 + 极简居中 + 英国华丽手写体
+// 极致物理阻尼滚动 + 动态模糊 + 3D深渊穿透
 ---
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Make do</title>
-    <!-- 引入英国华丽手写体 (Pinyon Script 和 Great Vibes) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Pinyon+Script&display=swap" rel="stylesheet">
   </head>
   <body>
-    <main class="wrapper">
-      <!-- 翻译: 凑合看 / 今天审美不在线 -->
-      <h1 class="text-main">Make do</h1>
-      <h2 class="text-sub">aesthetic offline today</h2>
-    </main>
+    <!-- 滚动占位符，用于撑开原生滚动条 -->
+    <div class="scroll-track"></div>
+
+    <!-- 固定的视觉层 -->
+    <div class="fixed-viewport">
+      <div class="text-container">
+        <h1 class="text-main">Make do</h1>
+        <h2 class="text-sub">aesthetic offline today</h2>
+      </div>
+      <!-- 动态反色遮罩层 -->
+      <div class="invert-overlay"></div>
+    </div>
+
+    <script is:inline>
+      // 核心物理引擎：自定义平滑滚动 (Lerp + Velocity)
+      const textMain = document.querySelector('.text-main');
+      const textSub = document.querySelector('.text-sub');
+      const textContainer = document.querySelector('.text-container');
+      const overlay = document.querySelector('.invert-overlay');
+
+      let currentScroll = 0;
+      let targetScroll = 0;
+      let scrollVelocity = 0;
+      let lastScroll = 0;
+
+      // 获取最大可滚动距离
+      const getMaxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
+      
+      let maxScroll = getMaxScroll();
+      window.addEventListener('resize', () => { maxScroll = getMaxScroll(); });
+
+      // 监听滚动输入
+      window.addEventListener('scroll', () => {
+        targetScroll = window.scrollY;
+      });
+
+      // 动画主循环 (60fps)
+      function render() {
+        // 1. 阻尼插值 (0.08 是阻尼系数，越小越丝滑)
+        currentScroll += (targetScroll - currentScroll) * 0.08;
+        
+        // 2. 计算滑动速度
+        scrollVelocity = currentScroll - lastScroll;
+        lastScroll = currentScroll;
+
+        // 3. 计算进度 (0 到 1)
+        const progress = Math.min(Math.max(currentScroll / maxScroll, 0), 1);
+
+        // 4. 根据进度和速度，应用 3D 变换
+        // 第一句话：随着滚动，向屏幕深处推进，伴随速度拉扯形变
+        const scaleMain = 1 + progress * 15; // 放大 15 倍
+        const opacityMain = progress > 0.6 ? 1 - (progress - 0.6) * 2.5 : 1;
+        const skewMain = scrollVelocity * 0.5; // 速度越快，倾斜越大
+        const blurMain = Math.min(Math.abs(scrollVelocity) * 0.2, 10); // 动态模糊
+
+        // 只有当文字还没完全穿过屏幕时才渲染主句
+        if (progress <= 1) {
+          textMain.style.transform = `translate3d(0, ${progress * -20}vh, ${progress * 1000}px) scale(${scaleMain}) skewX(${skewMain}deg)`;
+          textMain.style.opacity = Math.max(opacityMain, 0);
+          textMain.style.filter = `blur(${blurMain}px)`;
+        }
+
+        // 第二句话：在滚动到 40% 后，从背景深处猛地拉回前景
+        const subProgress = Math.min(Math.max((progress - 0.4) / 0.6, 0), 1);
+        const scaleSub = 15 - (subProgress * 14); // 从极大缩回正常
+        const opacitySub = subProgress; // 浮现
+        const skewSub = scrollVelocity * -0.5; // 反向形变
+
+        textSub.style.transform = `translate3d(0, ${(1 - subProgress) * 50}vh, ${1000 - subProgress * 1000}px) scale(${scaleSub}) skewX(${skewSub}deg)`;
+        textSub.style.opacity = opacitySub;
+        textSub.style.filter = `blur(${Math.min(Math.abs(scrollVelocity) * 0.2, 10)}px)`;
+
+        // 5. 滚动到 85% 时，触发极致的高对比度黑白反转
+        if (progress > 0.85) {
+          overlay.style.opacity = 1;
+        } else {
+          overlay.style.opacity = 0;
+        }
+
+        requestAnimationFrame(render);
+      }
+
+      render();
+    </script>
   </body>
 </html>
 
@@ -28,41 +106,86 @@
   }
 
   html, body {
-    width: 100%;
-    height: 100dvh; /* 锁死高度 */
-    overflow: hidden; /* 彻底禁用上下滑动 */
-    background-color: #000000; /* 纯黑背景 */
+    background-color: #000000;
     color: #ffffff;
+    font-family: 'Pinyon Script', cursive;
+    /* 隐藏系统原生滚动条，但保留滚动能力 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  html::-webkit-scrollbar { display: none; }
+
+  /* 撑开 300vh 的高度，给滚动留出极大的物理空间 */
+  .scroll-track {
+    height: 300vh;
+    width: 100%;
+    pointer-events: none;
   }
 
-  .wrapper {
+  /* 固定视口，所有的视觉都在这里面发生 */
+  .fixed-viewport {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /* 增加 3D 透视景深 */
+    perspective: 1000px; 
+  }
+
+  .text-container {
+    position: relative;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* 绝对水平居中，无任何 transform 或旋转 */
+    transform-style: preserve-3d;
   }
 
-  /* 主句：极度夸张华丽的英文手写体 */
+  .text-main, .text-sub {
+    position: absolute;
+    white-space: nowrap;
+    will-change: transform, opacity, filter;
+    /* 尽量让浏览器硬件加速 3D 渲染 */
+    backface-visibility: hidden;
+  }
+
   .text-main {
-    font-family: 'Pinyon Script', cursive;
     font-size: clamp(6rem, 18vw, 20rem);
     line-height: 1;
-    font-weight: 400;
-    /* 极简的纯白，无渐变 */
     color: #ffffff;
-    /* 稍微往下压一点点，给副标题留出呼吸空间 */
-    margin-bottom: -2vw; 
+    z-index: 2;
+    /* 初始位置居中 */
+    transform-origin: center center;
   }
 
-  /* 副句：同样用手写体，但字号小一些，拉开视觉层次 */
   .text-sub {
     font-family: 'Great Vibes', cursive;
     font-size: clamp(2.5rem, 6vw, 7rem);
-    line-height: 1.5;
-    font-weight: 400;
-    color: #a0a0a0; /* 稍微灰一点点，不抢主句风头 */
+    color: #a0a0a0;
+    z-index: 1;
+    /* 初始位置偏下 */
+    margin-top: 20vh;
+    transform-origin: center center;
+    opacity: 0;
+  }
+
+  /* 全屏反色遮罩 */
+  .invert-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: #ffffff;
+    mix-blend-mode: difference; /* 使用差值混合模式产生高级反转 */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
   }
 </style>
