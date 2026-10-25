@@ -1,208 +1,202 @@
 ---
 ---
-<!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>多邻国日语 - 第一课点餐练习</title>
-  <style>
-    :root { --duo-green: #58cc02; --duo-green-shadow: #46a302; --duo-blue: #1cb0f6; }
-    body { font-family: "Nunito", -apple-system, sans-serif; background: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; color: #4b4b4b; user-select: none; }
-    
-    .top-bar { width: 100%; max-width: 600px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
-    .progress-text { font-weight: bold; color: #afafaf; font-size: 16px; }
-
-    .main-content { width: 100%; max-width: 600px; padding: 20px; flex: 1; display: flex; flex-direction: column; }
-    .question-hint { font-size: 22px; font-weight: bold; margin-bottom: 30px; }
-    
-    .answer-area { min-height: 100px; border-bottom: 2px solid #e5e5e5; margin-bottom: 40px; display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; padding-bottom: 10px; }
-    
-    .block { padding: 10px 16px; border-radius: 12px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.1s; }
-    
-    .block.selected { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; color: #4b4b4b; }
-    .block.selected:active { border-bottom-width: 2px; transform: translateY(2px); }
-    
-    .block.bank { background: #f7f7f7; border: 2px solid #e5e5e5; border-bottom-width: 4px; color: #4b4b4b; }
-    .block.bank:active { border-bottom-width: 2px; transform: translateY(2px); }
-    .block.placeholder { background: #f0f0f0; color: transparent; pointer-events: none; border: 2px solid transparent; }
-
-    .bottom-panel { width: 100%; max-width: 600px; border-top: 2px solid #e5e5e5; background: #fff; padding: 20px; box-sizing: border-box; position: fixed; bottom: 0; }
-    .feedback-box { display: none; margin-bottom: 15px; padding: 15px; border-radius: 12px; background: #ddf4ff; }
-    .feedback-title { font-size: 20px; font-weight: bold; margin-bottom: 5px; color: var(--duo-blue); }
-    .feedback-title.error { color: #ea2b2b; }
-    .feedback-desc { font-size: 16px; color: #4b4b4b; }
-    
-    button.action-btn { width: 100%; padding: 16px; border-radius: 16px; font-size: 18px; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; transition: all 0.1s; }
-    #check-btn { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-shadow); }
-    #check-btn:disabled { background: #e5e5e5; box-shadow: none; color: #afafaf; cursor: not-allowed; }
-    #check-btn:active:not(:disabled) { box-shadow: 0 0 0; transform: translateY(4px); }
-    #next-btn { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-shadow); display: none; }
-    #next-btn:active { box-shadow: 0 0 0; transform: translateY(4px); }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日语回忆练习</title>
+<style is:global>
+:root{--g:#58cc02;--gs:#46a302;--b:#1cb0f6;--r:#ea2b2b;--line:#e5e5e5;--ink:#3c3c3c;--mute:#9a9a9a}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP","Noto Sans SC",sans-serif;color:var(--ink);background:#fff;min-height:100dvh;display:flex;justify-content:center}
+.app{width:100%;max-width:560px;padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--g);border-radius:7px;transition:width .3s}
+.pill{font-size:13px;font-weight:700;color:var(--b);background:#ddf4ff;padding:4px 10px;border-radius:12px;white-space:nowrap}
+.tip{margin:0;font-size:13px;color:var(--mute)}
+.card{position:relative;border:2px solid var(--line);border-radius:18px;padding:22px 20px;display:flex;flex-direction:column;gap:14px}
+.tag{min-height:18px;font-size:14px;font-weight:700;color:var(--b)}
+.tag.err{color:var(--r)}
+.zh{font-size:26px;font-weight:800;line-height:1.35}
+.ja{font-size:28px;line-height:1.7;min-height:48px}
+.blank{display:inline-block;min-width:3.4em;text-align:center;border-bottom:3px solid var(--b);color:var(--b);font-weight:700}
+.fill{color:#58a700;font-weight:800}
+.icon{position:absolute;top:12px;right:12px;border:none;background:#f3f3f3;border-radius:50%;width:38px;height:38px;font-size:18px;cursor:pointer}
+#ans{width:100%;font-size:24px;padding:14px 16px;border:2px solid var(--line);border-radius:14px;outline:none;font-family:inherit;color:var(--ink)}
+#ans:focus{border-color:var(--b)}
+.fb{display:none;padding:14px 16px;border-radius:14px}
+.fb.good{display:block;background:#d7ffb8}
+.fb.bad{display:block;background:#ffdfe0}
+.fb b{display:block;font-size:20px;margin-bottom:4px}
+.fb.good b{color:#58a700}
+.fb.bad b{color:var(--r)}
+.fb span{font-size:15px}
+.big{width:100%;padding:16px;border:none;border-radius:16px;font-size:18px;font-weight:800;color:#fff;background:var(--g);box-shadow:0 4px 0 var(--gs);cursor:pointer;font-family:inherit}
+.big:active:not(:disabled){box-shadow:none;transform:translateY(4px)}
+.big:disabled{background:var(--line);color:#afafaf;box-shadow:none;cursor:not-allowed}
+.row{display:flex;justify-content:space-between;gap:10px}
+.link{border:none;background:none;color:var(--mute);font-size:15px;font-weight:700;padding:8px 4px;cursor:pointer;font-family:inherit}
+</style>
 </head>
 <body>
-  <div class="top-bar">
-    <div class="progress-text">Unit 1 · 点餐与饮料</div>
-  </div>
+<main class="app">
+  <div class="top"><div class="bar"><i id="bar"></i></div><span class="pill" id="pill"></span></div>
+  <p class="tip">用罗马字输入就行，会自动变成假名（例：mizu → みず；长音按 - 键）</p>
+  <section class="card">
+    <div class="tag" id="tag"></div>
+    <div class="zh" id="zh"></div>
+    <div class="ja" id="ja"></div>
+    <button class="icon" id="spk" aria-label="发音">🔊</button>
+  </section>
+  <input id="ans" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="在这里输入">
+  <div class="fb" id="fb"><b id="fbt"></b><span id="fbd"></span></div>
+  <button class="big" id="main">检查</button>
+  <div class="row"><button class="link" id="hint">💡 提示</button><button class="link" id="giveup">不会，看答案</button></div>
+</main>
 
-  <div class="main-content">
-    <div class="question-hint">翻译这句话：<br><span id="chinese-hint" style="color:#333; font-size:28px;">请给我水</span></div>
-    <div class="answer-area" id="answer-area"></div>
-    <div style="font-size: 14px; color: #afafaf; margin-bottom: 20px;">点击下方词块拼出日文</div>
-    <div class="bank-area" id="bank-area" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
-  </div>
+<script is:inline>
+const ITEMS=[
+ {id:'mizu',w:'みず',s:'＿をください',zh:'请给我水',zw:'水',ex:'「を」标记想要的东西，「ください」= 请给我。'},
+ {id:'ocha',w:'おちゃ',s:'これは＿です',zh:'这是茶',zw:'茶',ex:'「です」表示判断，相当于“是…”。'},
+ {id:'sushi',w:'すし',s:'＿をください',zh:'请给我寿司',zw:'寿司',ex:'名词 + をください，就能点单。'},
+ {id:'gohan',w:'ごはん',s:'＿とおちゃをください',zh:'请给我饭和茶',zw:'饭',ex:'「ごはん」是饭，也指一顿饭。'},
+ {id:'to',w:'と',s:'ごはん＿おちゃをください',zh:'请给我饭和茶',zw:'和（连接两个名词）',ex:'「と」放在两个名词中间，表示“和”。'},
+ {id:'koohii',w:'コーヒー',s:'＿をください',zh:'请给我咖啡',zw:'咖啡',ex:'外来语用片假名，长音写成「ー」（输入 ko-hi-）。'},
+ {id:'juusu',w:'ジュース',s:'＿をください',zh:'请给我果汁',zw:'果汁',ex:'外来语用片假名（输入 ju-su）。'},
+ {id:'gyuunyuu',w:'ぎゅうにゅう',s:'＿をください',zh:'请给我牛奶',zw:'牛奶',ex:'「ゅ」是小字（输入 gyuunyuu）。'},
+ {id:'pan',w:'パン',s:'＿をください',zh:'请给我面包',zw:'面包',ex:'「パン」是外来语，用片假名。'},
+ {id:'kudasai',w:'ください',s:'みずを＿',zh:'请给我水',zw:'请给我…（句末）',ex:'「ください」放在句末，表示“请给我…”。'}
+];
 
-  <div class="bottom-panel">
-    <div class="feedback-box" id="feedback-box">
-      <div class="feedback-title" id="feedback-title">太棒了！</div>
-      <div class="feedback-desc" id="feedback-desc"></div>
-    </div>
-    <button class="action-btn" id="check-btn" disabled>检查</button>
-    <button class="action-btn" id="next-btn">继续</button>
-  </div>
-
-  <script>
-    // 完全基于多邻国 Section 1, Unit 1 "Order food and drinks" 真实语料
-    const quizData = [
-      { 
-        chinese: "请给我水", 
-        answer: "みずください", 
-        blocks: ["ください", "みず", "です"],
-        explain: "「ください」放在名词后面，表示“请给我...”。"
-      },
-      { 
-        chinese: "是茶", 
-        answer: "おちゃです", 
-        blocks: ["です", "おちゃ", "ください"],
-        explain: "「です」表示判断，相当于“是...”。"
-      },
-      { 
-        chinese: "请给我寿司", 
-        answer: "すしください", 
-        blocks: ["ください", "ごはん", "すし"],
-        explain: "「すし」是寿司。多邻国非常喜欢让你点寿司。"
-      },
-      { 
-        chinese: "请给我饭和茶", 
-        answer: "ごはんとおちゃください", 
-        blocks: ["おちゃ", "ごはん", "と", "ください"],
-        explain: "「と」连接两个名词，表示“和”。"
-      },
-      { 
-        chinese: "是水", 
-        answer: "みずです", 
-        blocks: ["みず", "ください", "です"],
-        explain: "非常直接的判断句。"
-      }
-    ];
-
-    let currentIndex = 0;
-    let currentSelectedBlocks = [];
-    let isAnswered = false;
-
-    const chineseHint = document.getElementById('chinese-hint');
-    const answerArea = document.getElementById('answer-area');
-    const bankArea = document.getElementById('bank-area');
-    const checkBtn = document.getElementById('check-btn');
-    const nextBtn = document.getElementById('next-btn');
-    const feedbackBox = document.getElementById('feedback-box');
-    const feedbackTitle = document.getElementById('feedback-title');
-    const feedbackDesc = document.getElementById('feedback-desc');
-
-    function shuffle(array) {
-      return array.sort(() => Math.random() - 0.5);
+/* ---------- romaji → kana ---------- */
+const V='aiueo',SM={a:'ゃ',u:'ゅ',o:'ょ'};
+const R={k:'かきくけこ',s:'さしすせそ',t:'たちつてと',n:'なにぬねの',h:'はひふへほ',m:'まみむめも',r:'らりるれろ',g:'がぎぐげご',z:'ざじずぜぞ',d:'だぢづでど',b:'ばびぶべぼ',p:'ぱぴぷぺぽ'};
+const M={a:'あ',i:'い',u:'う',e:'え',o:'お',ya:'や',yu:'ゆ',yo:'よ',wa:'わ',wo:'を',shi:'し',chi:'ち',tsu:'つ',fu:'ふ',ji:'じ'};
+for(const c in R){[...V].forEach((v,i)=>{M[c+v]=R[c][i]});for(const y of 'auo')M[c+'y'+y]=R[c][1]+SM[y];}
+for(const y of 'auo'){M['sh'+y]='し'+SM[y];M['ch'+y]='ち'+SM[y];M['j'+y]='じ'+SM[y];M['jy'+y]='じ'+SM[y];}
+function toKana(s,fin){
+  s=s.replace(/[A-Z]/g,c=>c.toLowerCase());
+  let o='',i=0;
+  while(i<s.length){
+    const c=s[i],n=s[i+1];
+    if(c==='-'){o+='ー';i++;continue}
+    if(c===n&&/[bcdfghjklmpqrstvwxyz]/.test(c)){o+='っ';i++;continue}
+    let m=0;
+    if(m)continue;
+    if(c==='n'){
+      if(n===undefined){if(fin){o+='ん'}else{o+='n'}i++;continue}
     }
+    if(c==="'"){i++;continue}
+    o+=c;i++;
+  }
+  return o;
+}
+const norm=s=>s.replace(/\s/g,'').replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-96));
 
-    function loadQuestion() {
-      isAnswered = false;
-      currentSelectedBlocks = [];
-      feedbackBox.style.display = 'none';
-      checkBtn.style.display = 'block';
-      nextBtn.style.display = 'none';
-      checkBtn.disabled = true;
-      
-      const q = quizData[currentIndex];
-      chineseHint.innerText = q.chinese;
-      
-      answerArea.innerHTML = '';
-      bankArea.innerHTML = '';
-      
-      shuffle([...q.blocks]).forEach(text => {
-        const btn = document.createElement('div');
-        btn.className = 'block bank';
-        btn.innerText = text;
-        btn.onclick = () => moveToAnswer(btn);
-        bankArea.appendChild(btn);
-      });
-    }
+/* ---------- storage ---------- */
+const KEY='jp-recall-v1';
+let store={};try{store=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){store={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}};
+const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toLocaleDateString('sv')};
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
 
-    function moveToAnswer(btn) {
-      if (isAnswered) return;
-      btn.classList.remove('bank');
-      btn.classList.add('placeholder');
-      btn.onclick = null;
-      
-      const newBtn = document.createElement('div');
-      newBtn.className = 'block selected';
-      newBtn.innerText = btn.innerText;
-      newBtn.onclick = () => moveToBank(newBtn, btn);
-      
-      answerArea.appendChild(newBtn);
-      currentSelectedBlocks.push(btn.innerText);
-      checkBtn.disabled = currentSelectedBlocks.length === 0;
-    }
+/* ---------- elements ---------- */
+const $=id=>document.getElementById(id);
+const bar=$('bar'),pill=$('pill'),tag=$('tag'),zh=$('zh'),ja=$('ja'),spk=$('spk'),inp=$('ans'),fb=$('fb'),fbt=$('fbt'),fbd=$('fbd'),main=$('main'),hintBtn=$('hint'),giveBtn=$('giveup');
 
-    function moveToBank(newBtn, originalBtn) {
-      if (isAnswered) return;
-      answerArea.removeChild(newBtn);
-      const idx = currentSelectedBlocks.indexOf(newBtn.innerText);
-      if (idx > -1) currentSelectedBlocks.splice(idx, 1);
-      
-      originalBtn.classList.remove('placeholder');
-      originalBtn.classList.add('bank');
-      originalBtn.onclick = () => moveToAnswer(originalBtn);
-      checkBtn.disabled = currentSelectedBlocks.length === 0;
-    }
+/* ---------- session ---------- */
+let queue=[],total=0,done=0,stats={pass:0,other:0},cur=null,state='ask',hinted=false,mode='cloze',pending=null;
 
-    checkBtn.onclick = () => {
-      isAnswered = true;
-      checkBtn.disabled = true;
-      
-      const q = quizData[currentIndex];
-      const userAnswer = currentSelectedBlocks.join('');
-      
-      if (userAnswer === q.answer) {
-        feedbackBox.style.display = 'block';
-        feedbackBox.style.background = '#d7ffb8';
-        feedbackTitle.className = 'feedback-title';
-        feedbackTitle.style.color = '#58a700';
-        feedbackTitle.innerText = '太棒了！回答正确！';
-        feedbackDesc.innerText = q.explain;
-        
-        const utterance = new SpeechSynthesisUtterance(q.answer);
-        utterance.lang = 'ja-JP';
-        utterance.rate = 0.85;
-        window.speechSynthesis.speak(utterance);
-      } else {
-        feedbackBox.style.display = 'block';
-        feedbackBox.style.background = '#ffdfe0';
-        feedbackTitle.className = 'feedback-title error';
-        feedbackTitle.style.color = '#ea2b2b';
-        feedbackTitle.innerText = '正确答案是：';
-        feedbackDesc.innerHTML = `<b style="font-size:20px; color:#333;">${q.answer}</b><br><br>${q.explain}`;
-      }
-      
-      checkBtn.style.display = 'none';
-      nextBtn.style.display = 'block';
-    };
+function startSession(all){
+  const t=addDays(0);
+  const seen=ITEMS.filter(i=>store[i.id]);
+  const rev=shuffle(all?seen:seen.filter(i=>store[i.id].due<=t)).slice(0,10).map(i=>({it:i,kind:'test',clean:true,misses:0}));
+  queue=[...rev,...fresh];total=queue.length;done=0;stats={pass:0,other:0};
+  next();
+}
+function next(){
+  cur=queue.shift();hinted=false;state='ask';
+  render();
+}
+function finish(){
+  state='end';cur=null;
+  tag.textContent='';tag.className='tag';pill.textContent='';
+  zh.textContent=total?'本轮完成 🎉':'今天没有要复习的内容';
+  ja.textContent=total?('一次答对 '+stats.pass+' / '+total):'明天再来，或者再练一轮';
+  bar.style.width='100%';
+  inp.style.display='none';fb.className='fb';hintBtn.hidden=true;giveBtn.hidden=true;spk.hidden=true;
+  main.textContent='再练一轮';main.disabled=false;
+}
+function render(){
+  const it=cur.it,s=store[it.id],lv=s?s.lv:0,study=cur.kind==='study';
+  mode=study?'copy':(lv>=2?'word':'cloze');
+  const reveal=study||state!=='ask';
+  const ht=it.w.length>1?it.w[0]+'＿'.repeat(it.w.length-1):'＿';
+  const showHint=hinted||(mode==='cloze'&&lv===0);
+  const parts=it.s.split('＿');
+  const blank=reveal?'<span class="fill">'+it.w+'</span>':'<span class="blank">'+(showHint?ht:'')+'</span>';
+  zh.textContent=mode==='word'?('「'+it.zw+'」用日语怎么说？'):it.zh;
+  tag.className='tag';
+  tag.textContent=state==='retype'?'照着上面的答案，再输入一遍':(study?'新词 · 先看一遍，再照着输入':'');
+  pill.textContent=study?'新词':(lv===0?'有提示':(lv===1?'填空':'只看中文'));
+  bar.style.width=(total?done/total*100:0)+'%';
+  inp.style.display='';inp.disabled=false;inp.value='';inp.placeholder=study||state==='retype'?'照着输入':'用罗马字输入';
+  fb.className='fb';spk.hidden=false;
+  main.textContent='检查';main.disabled=true;
+  giveBtn.hidden=!(state==='ask'&&cur.kind==='test');
+  inp.focus();
+}
+function showFb(type,title,desc,after){
+  fb.className='fb '+type;fbt.textContent=title;fbd.textContent=desc||'';
+  state='fb';pending=after;inp.disabled=true;
+  main.textContent='继续';main.disabled=false;hintBtn.hidden=true;giveBtn.hidden=true;
+}
+function settle(res){
+  const s=store[cur.it.id]||(store[cur.it.id]={lv:0,due:addDays(0),ok:0});
+  if(res==='pass'){if(s.lv<2){s.lv++;s.due=addDays(1)}else{s.ok++;s.due=addDays(s.ok>=2?7:3)}}
+  else if(res==='hint'){s.due=addDays(1)}
+  else{s.lv=Math.max(0,s.lv-1);s.due=addDays(1)}
+  save();
+}
+function complete(){done++;stats[cur.clean?'pass':'other']++;next()}
+function requeue(){queue.splice(Math.min(3,queue.length),0,cur);next()}
+function miss(){
+  settle('miss');cur.clean=false;cur.misses++;
+  showFb('bad','正确答案：'+cur.it.w,cur.it.ex,()=>{state='retype';render()});
+}
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
 
-    nextBtn.onclick = () => {
-      currentIndex = (currentIndex + 1) % quizData.length;
-      loadQuestion();
-    };
+main.onclick=()=>{
+  if(state==='end'){startSession(true);return}
+  if(state==='fb'){pending&&pending();return}
+  const v=toKana(inp.value,true);inp.value=v;
+  const it=cur.it,ok=norm(v)===norm(it.w);
+  if(state==='retype'||cur.kind==='study'){
+    if(cur.kind==='study'){
+      store[it.id]={lv:0,due:addDays(0),ok:0};save();
+      cur={it:it,kind:'test',clean:true,misses:0};
+      showFb('good','记住了，等一下再考你',it.s.replace('＿',it.w),()=>requeue());
+    }else{cur.misses>=2?complete():requeue()}
+    return;
+  }
+  if(ok){
+    settle(hinted?'hint':'pass');if(hinted)cur.clean=false;
+    say(it.s.replace('＿',it.w));
+    state='fb';render0();
+    showFb('good',hinted?'对了（用了提示，明天再考）':'答对了！',it.ex,()=>complete());
+  }else miss();
+};
+function render0(){ja.innerHTML=ja.innerHTML}  /* placeholder keeps layout stable */
+hintBtn.onclick=()=>{hinted=true;render()};
+giveBtn.onclick=()=>{state='fb';miss()};
+spk.onclick=()=>{if(cur)say(mode==='word'&&state==='ask'?'':cur.it.s.replace('＿',cur.it.w))};
+inp.addEventListener('input',()=>{
+  const v=toKana(inp.value,false);
+  if(v!==inp.value){inp.value=v;inp.setSelectionRange(v.length,v.length)}
+});
 
-    loadQuestion();
-  </script>
+startSession(false);
+</script>
 </body>
 </html>
